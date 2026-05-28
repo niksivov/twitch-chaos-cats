@@ -1,0 +1,10 @@
+Структура папок тома Windows
+Серийный номер тома: 86A6-C28B
+C:\USERS\НИКИТА\TWITCH-CHAOS-CATS\APPS\SERVER\SRC\NETWORK
+    GameBroadcaster.ts
+    network_structure.txt
+    types.ts
+    WebSocketServer.ts
+    
+Подпапки отсутствуют 
+

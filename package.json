@@ -1,0 +1,15 @@
+{
+  "name": "twitch-chaos-cats",
+  "private": true,
+  "scripts": {
+    "dev:client": "pnpm --filter client dev",
+    "dev:server": "pnpm --filter server dev",
+    "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "dependencies": {
+    "tmi.js": "^1.8.5"
+  }
+}

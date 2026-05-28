@@ -1,0 +1,24 @@
+Структура папок тома Windows
+Серийный номер тома: 86A6-C28B
+C:\USERS\НИКИТА\TWITCH-CHAOS-CATS\APPS\CLIENT\SRC
+¦   App.css
+¦   App.tsx
+¦   client_structure.txt
+¦   index.css
+¦   main.tsx
+¦   
++---assets
+¦       hero.png
+¦       react.svg
+¦       vite.svg
+¦       
++---lib
++---network
+¦       socket.ts
+¦       
++---store
+¦       gameStore.ts
+¦       
+L---types
+        network.ts
+        

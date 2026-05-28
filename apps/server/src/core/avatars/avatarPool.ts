@@ -1,0 +1,22 @@
+export const avatarPool = [
+  'builder-cat',
+  'doctor-cat',
+  'pilot-cat',
+  'chef-cat',
+  'police-cat',
+  'firefighter-cat',
+  'detective-cat',
+  'samurai-cat',
+  'wizard-cat',
+  'cyber-cat',
+  'pirate-cat',
+  'viking-cat',
+  'ninja-cat',
+  'king-cat',
+  'farmer-cat',
+  'miner-cat',
+  'streamer-cat',
+  'dj-cat',
+  'boxer-cat',
+  'scientist-cat'
+]

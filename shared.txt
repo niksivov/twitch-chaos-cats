@@ -1,0 +1,10 @@
+Структура папок тома Windows
+Серийный номер тома: 86A6-C28B
+C:\USERS\НИКИТА\TWITCH-CHAOS-CATS\PACKAGES\SHARED-TYPES
+¦   package.json
+¦   
+L---src
+        index.ts
+        match.ts
+        network.ts
+        

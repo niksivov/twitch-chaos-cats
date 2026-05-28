@@ -1,0 +1,6 @@
+Структура папок тома Windows
+Серийный номер тома: 86A6-C28B
+C:\USERS\НИКИТА\TWITCH-CHAOS-CATS\APPS\SERVER\SRC\NETWORK\SERVER\SRC\NETWORK
+Путь задан неправильно: \USERS\НИКИТА\TWITCH-CHAOS-CATS\APPS\SERVER\SRC\NETWORK\SERVER\SRC\NETWORK
+Подпапки отсутствуют 
+
