@@ -67,6 +67,13 @@ function App() {
     socketClient.connect()
   }, [])
 
+  useEffect(() => {
+    console.log(
+      "PLAYERS STATE:",
+      players
+    )
+  }, [players])
+
   const currentPlayer =
     players.find(
       (player) =>
@@ -155,6 +162,28 @@ function App() {
               : "OFFLINE"}
           </div>
         </div>
+      </div>
+
+      <div
+        style={{
+          marginBottom: 16,
+
+          padding: 12,
+
+          borderRadius: 12,
+
+          background:
+            "#1a1f26",
+
+          border:
+            "1px solid #2d3742",
+
+          fontSize: 13,
+        }}
+      >
+        Players count:
+        {" "}
+        {players.length}
       </div>
 
       <div

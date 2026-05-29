@@ -1,6 +1,14 @@
-import {
-  PlayerSnapshot,
-} from "@twitch-chaos-cats/shared-types"
+interface PlayerSnapshot {
+  id: string
+
+  nickname: string
+
+  avatarId: string
+
+  points: number
+
+  eliminated: boolean
+}
 
 interface Props {
   player: PlayerSnapshot

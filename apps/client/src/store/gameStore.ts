@@ -1,12 +1,54 @@
 import { create } from "zustand"
 
-import {
-  MatchPhase,
-  PlayerSnapshot,
-  MatchEventSnapshot,
-  BoosterSnapshot,
-  StateUpdatePayload,
-} from "@twitch-chaos-cats/shared-types"
+type MatchPhase =
+  | "LOBBY"
+  | "STARTING"
+  | "IN_PROGRESS"
+  | "FINISHED"
+
+interface PlayerSnapshot {
+  id: string
+
+  nickname: string
+
+  avatarId: string
+
+  points: number
+
+  eliminated: boolean
+}
+
+interface MatchEventSnapshot {
+  id: string
+
+  message: string
+}
+
+interface BoosterSnapshot {
+  slot: number
+
+  boosterName: string
+}
+
+interface StateUpdatePayload {
+  roomId: string
+
+  phase: MatchPhase
+
+  tick: number
+
+  currentTurnPlayerId?: string
+
+  currentTurnStartedAt?: number
+
+  leaderPlayerId?: string
+
+  players: PlayerSnapshot[]
+
+  recentEvents: MatchEventSnapshot[]
+
+  boosterSet: BoosterSnapshot[]
+}
 
 interface GameState {
   connected: boolean
@@ -101,4 +143,3 @@ export const useGameStore =
           snapshot.boosterSet,
       }),
   }))
-}

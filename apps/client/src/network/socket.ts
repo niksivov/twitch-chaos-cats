@@ -1,18 +1,12 @@
-import {
-  ServerMessage,
-  StateUpdatePayload,
-} from "@twitch-chaos-cats/shared-types"
-
 import { useGameStore } from "../store/gameStore"
 
 class SocketClient {
-  private socket?: WebSocket
-
-  private reconnectTimeout?: number
+  private socket: WebSocket | null =
+    null
 
   connect() {
     this.socket = new WebSocket(
-      "ws://localhost:3001"
+      "ws://localhost:8080"
     )
 
     this.socket.onopen = () => {
@@ -21,7 +15,7 @@ class SocketClient {
         .setConnected(true)
 
       console.log(
-        "[WS] connected"
+        "websocket connected"
       )
     }
 
@@ -31,41 +25,137 @@ class SocketClient {
         .setConnected(false)
 
       console.log(
-        "[WS] disconnected"
+        "websocket disconnected"
       )
 
-      this.scheduleReconnect()
+      setTimeout(() => {
+        this.connect()
+      }, 2000)
     }
 
     this.socket.onmessage = (
       event
     ) => {
-      const message: ServerMessage<StateUpdatePayload> =
-        JSON.parse(event.data)
+      try {
+        const message =
+          JSON.parse(
+            event.data
+          )
 
-      switch (message.type) {
-        case "STATE_UPDATE":
-          useGameStore
-            .getState()
-            .applySnapshot(
-              message.payload
-            )
-          break
+        if (
+          message.type !==
+          "MATCH_STATE"
+        ) {
+          return
+        }
+
+        const match =
+          message.payload
+            ?.match
+
+        if (!match) {
+          return
+        }
+
+        const players =
+          (
+            match.players ??
+            []
+          ).map(
+            (player: any) => ({
+              id: player.id,
+
+              nickname:
+                player.username,
+
+              avatarId:
+                player.username
+                  ?.slice(
+                    0,
+                    2
+                  )
+                  .toUpperCase() ??
+                "CAT",
+
+              points:
+                player.score,
+
+              eliminated:
+                !player.isAlive,
+            })
+          )
+
+        const recentEvents =
+          (
+            match.state
+              ?.eventLog ?? []
+          ).map(
+            (event: any) => ({
+              id:
+                event.id ??
+                crypto.randomUUID(),
+
+              message:
+                event.message ??
+                "",
+            })
+          )
+
+        const boosterSet =
+          (
+            match.state
+              ?.boosterSet ??
+            []
+          ).map(
+            (
+              booster: any,
+              index: number
+            ) => ({
+              slot: index + 1,
+
+              boosterName:
+                booster.name ??
+                "Unknown Booster",
+            })
+          )
+
+        useGameStore
+          .getState()
+          .applySnapshot({
+            roomId:
+              match.id ?? "",
+
+            phase:
+              match.phase ??
+              "LOBBY",
+
+            tick:
+              match.state
+                ?.tick ?? 0,
+
+            currentTurnPlayerId:
+              match.currentPlayerId,
+
+            currentTurnStartedAt:
+              match.state
+                ?.turnStartedAt ??
+              undefined,
+
+            leaderPlayerId:
+              match.state
+                ?.leaderId ??
+              undefined,
+
+            players,
+
+            recentEvents,
+
+            boosterSet,
+          })
+      } catch (error) {
+        console.error(error)
       }
     }
-  }
-
-  private scheduleReconnect() {
-    if (this.reconnectTimeout) {
-      clearTimeout(
-        this.reconnectTimeout
-      )
-    }
-
-    this.reconnectTimeout =
-      window.setTimeout(() => {
-        this.connect()
-      }, 2000)
   }
 }
 

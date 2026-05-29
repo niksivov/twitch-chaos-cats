@@ -4,32 +4,22 @@ import { MatchPhase } from "./matchPhase"
 
 import { BoosterEngine } from "./boosters/BoosterEngine"
 
-const TURN_DURATION_MS =
-  15000
-
 export class TurnTimerEngine {
   private boosterEngine =
     new BoosterEngine()
 
   process(match: Match) {
-    const now = Date.now()
-
     if (
-      match.phase ===
-      MatchPhase.TURN_START
+      match.phase !==
+      MatchPhase.BOOSTER_SELECTION
     ) {
-      match.state.turnStartedAt =
-        now
-
-      match.state.turnEndsAt =
-        now + TURN_DURATION_MS
-
       return
     }
 
     if (
-      match.phase !==
-      MatchPhase.BOOSTER_SELECTION
+      match.state
+        .turnResolvedAt !==
+      null
     ) {
       return
     }
@@ -40,12 +30,17 @@ export class TurnTimerEngine {
       return
     }
 
+    const now = Date.now()
+
     if (
       now <
       match.state.turnEndsAt
     ) {
       return
     }
+
+    match.state.turnResolvedAt =
+      now
 
     this.activateRandomBooster(
       match
@@ -82,6 +77,10 @@ export class TurnTimerEngine {
     ) {
       return
     }
+
+    match.transition(
+      MatchPhase.BOOSTER_RESOLUTION
+    )
 
     this.boosterEngine.activateBooster(
       match,

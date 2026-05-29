@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto"
+
 import { MatchPhase } from "./matchPhase"
 
 import { MatchStateMachine } from "./MatchStateMachine"
@@ -8,19 +10,34 @@ import { ActiveEffect } from "./effects/EffectEngine"
 
 import { EventLogEntry } from "./events/EventLog"
 
+export const DISCONNECT_GRACE_MS =
+  30000
+
+const EMPTY_MATCH_TIMEOUT_MS =
+  60000
+
+const MATCH_RESET_DELAY_MS =
+  5000
+
 export interface MatchPlayer {
   id: string
 
   username: string
+
+  runtimeId: string
 
   score: number
 
   isAlive: boolean
 
   connected: boolean
+
+  disconnectedAt: number | null
 }
 
 export interface MatchInternalState {
+  runtimeId: string
+
   tick: number
 
   paused: boolean
@@ -32,6 +49,12 @@ export interface MatchInternalState {
   turnStartedAt: number | null
 
   turnEndsAt: number | null
+
+  turnResolvedAt: number | null
+
+  matchEndedAt: number | null
+
+  emptySince: number | null
 
   boosterPool: string[]
 
@@ -89,6 +112,8 @@ export class Match {
     this.players = []
 
     this.state = {
+      runtimeId: randomUUID(),
+
       tick: 0,
 
       paused: false,
@@ -100,6 +125,12 @@ export class Match {
       turnStartedAt: null,
 
       turnEndsAt: null,
+
+      turnResolvedAt: null,
+
+      matchEndedAt: null,
+
+      emptySince: null,
 
       boosterPool: [],
 
@@ -132,7 +163,27 @@ export class Match {
     id: string,
 
     username: string
-  ): void {
+  ): MatchPlayer {
+    const existing =
+      this.state.playersById[
+        id
+      ]
+
+    if (existing) {
+      existing.connected = true
+
+      existing.disconnectedAt =
+        null
+
+      existing.runtimeId =
+        randomUUID()
+
+      this.state.emptySince =
+        null
+
+      return existing
+    }
+
     if (
       this.phase !==
       MatchPhase.WAITING_FOR_PLAYERS
@@ -142,27 +193,23 @@ export class Match {
       )
     }
 
-    const alreadyExists =
-      this.players.some(
-        (player) =>
-          player.id === id
-      )
-
-    if (alreadyExists) {
-      return
-    }
-
     const player: MatchPlayer =
       {
         id,
 
         username,
 
+        runtimeId:
+          randomUUID(),
+
         score: 0,
 
         isAlive: true,
 
         connected: true,
+
+        disconnectedAt:
+          null,
       }
 
     this.players.push(player)
@@ -170,6 +217,216 @@ export class Match {
     this.state.playersById[
       id
     ] = player
+
+    this.state.emptySince =
+      null
+
+    return player
+  }
+
+  public validateRuntime(
+    runtimeId: string
+  ): boolean {
+    return (
+      runtimeId ===
+      this.state.runtimeId
+    )
+  }
+
+  public validatePlayerRuntime(
+    player: MatchPlayer,
+
+    runtimeId: string
+  ): boolean {
+    return (
+      player.runtimeId ===
+      runtimeId
+    )
+  }
+
+  public disconnectPlayer(
+    playerId: string
+  ): void {
+    const player =
+      this.state.playersById[
+        playerId
+      ]
+
+    if (!player) {
+      return
+    }
+
+    player.connected = false
+
+    player.disconnectedAt =
+      Date.now()
+
+    if (
+      this.getActivePlayers()
+        .length === 0
+    ) {
+      this.state.emptySince =
+        Date.now()
+    }
+  }
+
+  public reconnectPlayer(
+    playerId: string,
+
+    matchRuntimeId: string,
+
+    playerRuntimeId: string
+  ): boolean {
+    if (
+      !this.validateRuntime(
+        matchRuntimeId
+      )
+    ) {
+      return false
+    }
+
+    const player =
+      this.state.playersById[
+        playerId
+      ]
+
+    if (!player) {
+      return false
+    }
+
+    if (
+      !this.validatePlayerRuntime(
+        player,
+
+        playerRuntimeId
+      )
+    ) {
+      return false
+    }
+
+    player.connected = true
+
+    player.disconnectedAt =
+      null
+
+    this.state.emptySince =
+      null
+
+    return true
+  }
+
+  public cleanupExpiredDisconnectedPlayers(): string[] {
+    const removedPlayerIds:
+      string[] = []
+
+    const now = Date.now()
+
+    for (const player of [
+      ...this.players,
+    ]) {
+      if (player.connected) {
+        continue
+      }
+
+      if (
+        !player.disconnectedAt
+      ) {
+        continue
+      }
+
+      const expired =
+        now -
+          player.disconnectedAt >
+        DISCONNECT_GRACE_MS
+
+      if (!expired) {
+        continue
+      }
+
+      removedPlayerIds.push(
+        player.id
+      )
+
+      this.removePlayer(
+        player.id
+      )
+    }
+
+    return removedPlayerIds
+  }
+
+  public isPlayerActive(
+    player: MatchPlayer
+  ): boolean {
+    if (player.connected) {
+      return true
+    }
+
+    if (
+      !player.disconnectedAt
+    ) {
+      return false
+    }
+
+    return (
+      Date.now() -
+        player.disconnectedAt <
+      DISCONNECT_GRACE_MS
+    )
+  }
+
+  public getAlivePlayers(): MatchPlayer[] {
+    return this.players.filter(
+      (player) =>
+        player.isAlive
+    )
+  }
+
+  public getActivePlayers(): MatchPlayer[] {
+    return this
+      .getAlivePlayers()
+      .filter((player) =>
+        this.isPlayerActive(
+          player
+        )
+      )
+  }
+
+  public isAbandoned(): boolean {
+    if (
+      this.state.emptySince ===
+      null
+    ) {
+      return false
+    }
+
+    return (
+      Date.now() -
+        this.state.emptySince >
+      EMPTY_MATCH_TIMEOUT_MS
+    )
+  }
+
+  public shouldReset(): boolean {
+    if (
+      this.phase !==
+      MatchPhase.MATCH_END
+    ) {
+      return false
+    }
+
+    if (
+      this.state.matchEndedAt ===
+      null
+    ) {
+      return false
+    }
+
+    return (
+      Date.now() -
+        this.state.matchEndedAt >
+      MATCH_RESET_DELAY_MS
+    )
   }
 
   public removePlayer(
@@ -189,6 +446,14 @@ export class Match {
 
     delete this.state
       .playersById[id]
+
+    if (
+      this.getActivePlayers()
+        .length === 0
+    ) {
+      this.state.emptySince =
+        Date.now()
+    }
   }
 
   public start(): void {
@@ -207,6 +472,29 @@ export class Match {
     this.round = 1
 
     this.turn = 1
+
+    this.currentPlayerId =
+      null
+
+    this.winnerId = null
+
+    this.state.turnStartedAt =
+      null
+
+    this.state.turnEndsAt =
+      null
+
+    this.state.turnResolvedAt =
+      null
+
+    this.state.matchEndedAt =
+      null
+
+    this.state.selectedBooster =
+      null
+
+    this.state.emptySince =
+      null
 
     this.transition(
       MatchPhase.ROUND_START
@@ -236,17 +524,28 @@ export class Match {
     player.isAlive = false
   }
 
-  public getAlivePlayers(): MatchPlayer[] {
-    return this.players.filter(
-      (player) =>
-        player.isAlive
-    )
-  }
-
   public finish(
     winnerId: string
   ): void {
     this.winnerId = winnerId
+
+    this.currentPlayerId =
+      null
+
+    this.state.turnStartedAt =
+      null
+
+    this.state.turnEndsAt =
+      null
+
+    this.state.turnResolvedAt =
+      null
+
+    this.state.matchEndedAt =
+      Date.now()
+
+    this.state.selectedBooster =
+      null
 
     this.transition(
       MatchPhase.MATCH_END
@@ -254,10 +553,6 @@ export class Match {
   }
 
   public reset(): void {
-    this.transition(
-      MatchPhase.RESETTING
-    )
-
     this.round = 0
 
     this.turn = 0
@@ -268,6 +563,9 @@ export class Match {
     this.winnerId = null
 
     this.players.length = 0
+
+    this.state.runtimeId =
+      randomUUID()
 
     this.state.tick = 0
 
@@ -283,6 +581,15 @@ export class Match {
       null
 
     this.state.turnEndsAt =
+      null
+
+    this.state.turnResolvedAt =
+      null
+
+    this.state.matchEndedAt =
+      null
+
+    this.state.emptySince =
       null
 
     this.state.boosterPool =

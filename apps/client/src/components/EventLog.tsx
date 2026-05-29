@@ -1,6 +1,8 @@
-import {
-  MatchEventSnapshot,
-} from "@twitch-chaos-cats/shared-types"
+interface MatchEventSnapshot {
+  id: string
+
+  message: string
+}
 
 interface Props {
   events: MatchEventSnapshot[]
@@ -21,6 +23,8 @@ export function EventLog({
         borderRadius: 12,
 
         padding: 16,
+
+        height: "100%",
       }}
     >
       <div
@@ -43,6 +47,10 @@ export function EventLog({
             "column",
 
           gap: 8,
+
+          maxHeight: 400,
+
+          overflowY: "auto",
         }}
       >
         {events.map((event) => {
@@ -50,19 +58,29 @@ export function EventLog({
             <div
               key={event.id}
               style={{
-                fontSize: 13,
+                background:
+                  "#101418",
 
-                opacity: 0.9,
+                border:
+                  "1px solid #2d3742",
+
+                borderRadius: 10,
+
+                padding:
+                  "10px 12px",
+
+                fontSize: 13,
 
                 lineHeight: 1.4,
               }}
             >
-              {event.text}
+              {event.message}
             </div>
           )
         })}
 
-        {events.length === 0 && (
+        {events.length ===
+          0 && (
           <div
             style={{
               opacity: 0.5,

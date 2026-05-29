@@ -1,6 +1,8 @@
-import {
-  BoosterSnapshot,
-} from "@twitch-chaos-cats/shared-types"
+interface BoosterSnapshot {
+  slot: number
+
+  boosterName: string
+}
 
 interface Props {
   boosters: BoosterSnapshot[]

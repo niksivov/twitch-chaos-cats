@@ -1,20 +1,20 @@
+import { randomUUID } from "crypto"
+
 import { Match } from "./Match"
 
+import { SessionManager } from "./SessionManager"
+
 export class MatchManager {
-  private readonly matches =
+  private matches =
     new Map<string, Match>()
 
-  createMatch(
-    matchId: string
-  ): Match {
-    const existing =
-      this.matches.get(
-        matchId
-      )
+  constructor(
+    private sessionManager: SessionManager
+  ) {}
 
-    if (existing) {
-      return existing
-    }
+  createMatch(): Match {
+    const matchId =
+      randomUUID()
 
     const match =
       new Match(matchId)
@@ -27,74 +27,77 @@ export class MatchManager {
     return match
   }
 
+  getMatch(
+    matchId: string
+  ): Match | null {
+    return (
+      this.matches.get(
+        matchId
+      ) ?? null
+    )
+  }
+
+  getAllMatches(): Match[] {
+    return Array.from(
+      this.matches.values()
+    )
+  }
+
   removeMatch(
     matchId: string
-  ) {
+  ): void {
+    this.sessionManager.removeMatchSessions(
+      matchId
+    )
+
     this.matches.delete(
       matchId
     )
   }
 
-  getMatch(
-    matchId: string
-  ): Match | undefined {
-    return this.matches.get(
-      matchId
-    )
-  }
-
-  getAllMatches(): Match[] {
-    return [
-      ...this.matches.values(),
-    ]
-  }
-
-  joinPlayer(
+  addPlayerToMatch(
     matchId: string,
 
     playerId: string,
 
     username: string
-  ): Match {
-    let match =
+  ) {
+    const match =
       this.matches.get(
         matchId
       )
 
     if (!match) {
-      match =
-        this.createMatch(
-          matchId
-        )
+      throw new Error(
+        "Match not found"
+      )
     }
 
-    const existingPlayer =
-      match.players.find(
-        (player) =>
-          player.id ===
-          playerId
+    const player =
+      match.addPlayer(
+        playerId,
+        username
       )
 
-    if (existingPlayer) {
-      existingPlayer.connected =
-        true
-
-      return match
-    }
-
-    match.addPlayer(
-      playerId,
-      username
+    this.sessionManager.createSession(
+      player.id,
+      player.username,
+      match.id,
+      match.state.runtimeId,
+      player.runtimeId
     )
 
-    return match
+    return {
+      match,
+      player,
+    }
   }
 
   disconnectPlayer(
     matchId: string,
 
     playerId: string
-  ) {
+  ): void {
     const match =
       this.matches.get(
         matchId
@@ -104,65 +107,87 @@ export class MatchManager {
       return
     }
 
-    const player =
-      match.players.find(
-        (p) =>
-          p.id === playerId
-      )
+    match.disconnectPlayer(
+      playerId
+    )
 
-    if (!player) {
-      return
-    }
-
-    player.connected = false
+    this.sessionManager.disconnect(
+      playerId
+    )
   }
 
   reconnectPlayer(
-    matchId: string,
-
     playerId: string
-  ) {
+  ): boolean {
+    const session =
+      this.sessionManager.getSession(
+        playerId
+      )
+
+    if (!session) {
+      return false
+    }
+
     const match =
       this.matches.get(
-        matchId
+        session.matchId
       )
 
     if (!match) {
-      return
+      return false
     }
 
-    const player =
-      match.players.find(
-        (p) =>
-          p.id === playerId
+    const success =
+      match.reconnectPlayer(
+        playerId,
+        session.matchRuntimeId,
+        session.playerRuntimeId
       )
 
-    if (!player) {
-      return
+    if (!success) {
+      return false
     }
 
-    player.connected = true
+    this.sessionManager.reconnect(
+      playerId
+    )
+
+    return true
   }
 
-  cleanupEmptyMatches() {
+  cleanupEmptyMatches(): void {
     for (const [
       matchId,
       match,
     ] of this.matches) {
-      const connectedPlayers =
-        match.players.filter(
-          (player) =>
-            player.connected
-        )
-
       if (
-        connectedPlayers.length ===
-        0
+        match.players.length ===
+          0 &&
+        match.phase ===
+          "WAITING_FOR_PLAYERS"
       ) {
-        this.matches.delete(
+        this.removeMatch(
           matchId
         )
       }
     }
+  }
+
+  syncMatchRuntime(
+    matchId: string
+  ): void {
+    const match =
+      this.matches.get(
+        matchId
+      )
+
+    if (!match) {
+      return
+    }
+
+    this.sessionManager.updateMatchRuntime(
+      matchId,
+      match.state.runtimeId
+    )
   }
 }

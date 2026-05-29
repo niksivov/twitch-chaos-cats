@@ -81,6 +81,13 @@ export class CommandProcessor {
     }
 
     switch (command.type) {
+      case "JOIN":
+        this.handleJoin(
+          match,
+          command
+        )
+        break
+
       case "SELECT_BOOSTER":
         this.handleSelectBooster(
           match,
@@ -88,6 +95,31 @@ export class CommandProcessor {
         )
         break
     }
+  }
+
+  private handleJoin(
+    match: any,
+
+    command: GameCommand
+  ) {
+    const existingPlayer =
+      match.players.find(
+        (player: any) =>
+          player.id ===
+          command.playerId
+      )
+
+    if (existingPlayer) {
+      return
+    }
+
+    match.addPlayer(
+      command.playerId,
+
+      command.payload
+        ?.nickname ??
+        "unknown_cat"
+    )
   }
 
   private handleSelectBooster(
@@ -98,6 +130,14 @@ export class CommandProcessor {
     if (
       match.phase !==
       MatchPhase.BOOSTER_SELECTION
+    ) {
+      return
+    }
+
+    if (
+      match.state
+        .turnResolvedAt !==
+      null
     ) {
       return
     }
@@ -137,6 +177,13 @@ export class CommandProcessor {
     ) {
       return
     }
+
+    match.state.turnResolvedAt =
+      now
+
+    match.transition(
+      MatchPhase.BOOSTER_RESOLUTION
+    )
 
     this.boosterEngine.activateBooster(
       match,

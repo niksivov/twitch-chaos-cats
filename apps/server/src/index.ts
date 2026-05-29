@@ -1,52 +1,81 @@
 import { CommandProcessor } from "./core/CommandProcessor"
-import { CommandQueue } from "./core/CommandQueue"
+
 import { GameLoop } from "./core/GameLoop"
+
 import { MatchManager } from "./core/MatchManager"
-import { PlayerManager } from "./core/PlayerManager"
+
+import { SessionManager } from "./core/SessionManager"
 
 import { GameBroadcaster } from "./network/GameBroadcaster"
+
 import { GameWebSocketServer } from "./network/WebSocketServer"
 
-const matchManager = new MatchManager()
+const sessionManager =
+  new SessionManager()
 
-const playerManager = new PlayerManager()
+const matchManager =
+  new MatchManager(
+    sessionManager
+  )
 
-const commandQueue = new CommandQueue()
-
-const commandProcessor = new CommandProcessor(
-  matchManager,
-  playerManager,
-  commandQueue
-)
+const commandProcessor =
+  new CommandProcessor(
+    matchManager
+  )
 
 const websocketServer =
   new GameWebSocketServer(8080)
 
-const broadcaster = new GameBroadcaster(
-  websocketServer
+const broadcaster =
+  new GameBroadcaster(
+    websocketServer
+  )
+
+const gameLoop =
+  new GameLoop(
+    matchManager,
+    commandProcessor,
+    broadcaster
+  )
+
+const match =
+  matchManager.createMatch()
+
+console.log(
+  "MATCH ID:",
+  match.id
 )
 
-const gameLoop = new GameLoop(
-  matchManager,
-  commandProcessor,
-  broadcaster
-)
+commandProcessor.enqueue({
+  type: "JOIN",
 
-const match = matchManager.createMatch("room_test")
-
-commandQueue.enqueue({
-  roomId: match.state.roomId,
+  matchId: match.id,
 
   playerId: "player_1",
 
-  nickname: "catViewer",
-
-  command: "!join",
+  payload: {
+    nickname: "catViewer",
+  },
 
   createdAt: Date.now(),
 })
 
+console.log(
+  "PLAYERS AFTER ENQUEUE:",
+  match.players
+)
+
+setTimeout(() => {
+  console.log(
+    "PLAYERS AFTER PROCESS:",
+    match.players
+  )
+}, 3000)
+
 gameLoop.start()
 
 console.log("server started")
-console.log("websocket running on :8080")
+
+console.log(
+  "websocket running on :8080"
+)

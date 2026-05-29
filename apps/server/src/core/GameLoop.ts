@@ -72,6 +72,22 @@ export class GameLoop {
   }
 
   private processMatch(match: Match) {
+    if (
+      match.isAbandoned()
+    ) {
+      this.resetMatch(match)
+
+      return
+    }
+
+    if (
+      match.shouldReset()
+    ) {
+      this.resetMatch(match)
+
+      return
+    }
+
     const state = match.state
 
     if (state.paused) {
@@ -122,10 +138,6 @@ export class GameLoop {
       case MatchPhase.MATCH_END:
         this.handleMatchEnd(match)
         break
-
-      case MatchPhase.RESETTING:
-        this.handleResetting(match)
-        break
     }
 
     this.turnTimerEngine.process(
@@ -146,6 +158,16 @@ export class GameLoop {
 
     this.broadcaster.broadcastMatchState(
       match
+    )
+  }
+
+  private resetMatch(
+    match: Match
+  ) {
+    match.reset()
+
+    this.matchManager.syncMatchRuntime(
+      match.id
     )
   }
 
@@ -186,9 +208,50 @@ export class GameLoop {
   private handleTurnStart(
     match: Match
   ) {
-    this.turnEngine.process(
+    match.state.turnResolvedAt =
+      null
+
+    match.state.selectedBooster =
+      null
+
+    this.turnEngine.startTurn(
       match
     )
+
+    if (
+      !match.currentPlayerId
+    ) {
+      return
+    }
+
+    const currentPlayer =
+      match.state.playersById[
+        match.currentPlayerId
+      ]
+
+    if (
+      !currentPlayer
+    ) {
+      return
+    }
+
+    if (
+      !match.isPlayerActive(
+        currentPlayer
+      )
+    ) {
+      match.transition(
+        MatchPhase.TURN_END
+      )
+
+      return
+    }
+
+    match.state.turnStartedAt =
+      Date.now()
+
+    match.state.turnEndsAt =
+      Date.now() + 15000
 
     match.transition(
       MatchPhase.BOOSTER_SELECTION
@@ -197,7 +260,37 @@ export class GameLoop {
 
   private handleBoosterSelection(
     match: Match
-  ) {}
+  ) {
+    if (
+      !match.currentPlayerId
+    ) {
+      return
+    }
+
+    const currentPlayer =
+      match.state.playersById[
+        match.currentPlayerId
+      ]
+
+    if (
+      !currentPlayer
+    ) {
+      return
+    }
+
+    if (
+      !match.isPlayerActive(
+        currentPlayer
+      )
+    ) {
+      match.state.turnResolvedAt =
+        Date.now()
+
+      match.transition(
+        MatchPhase.TURN_END
+      )
+    }
+  }
 
   private handleBoosterResolution(
     match: Match
@@ -210,12 +303,14 @@ export class GameLoop {
   private handleTurnEnd(
     match: Match
   ) {
-    const alivePlayers =
-      match.getAlivePlayers()
+    const activePlayers =
+      match.getActivePlayers()
 
-    if (alivePlayers.length <= 1) {
+    if (
+      activePlayers.length <= 1
+    ) {
       const winner =
-        alivePlayers[0]
+        activePlayers[0]
 
       if (winner) {
         match.finish(
@@ -244,16 +339,6 @@ export class GameLoop {
   }
 
   private handleMatchEnd(
-    match: Match
-  ) {
-    setTimeout(() => {
-      match.reset()
-    }, 5000)
-  }
-
-  private handleResetting(
-    match: Match
-  ) {
-    match.reset()
-  }
+    _match: Match
+  ) {}
 }

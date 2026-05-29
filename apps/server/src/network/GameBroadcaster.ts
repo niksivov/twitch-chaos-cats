@@ -1,142 +1,190 @@
-import { Server } from "ws"
+import { ServerWebSocket } from "bun"
 
 import { Match } from "../core/Match"
 
-import { ActiveEffect } from "../core/effects/EffectEngine"
+import { StreamerSession } from "../core/StreamerSession"
 
-import { EventLogEntry } from "../core/events/EventLog"
+import {
+  WS_EVENTS,
+  WsMessage,
+  MatchStatePayload,
+} from "./wsEvents"
+
+interface ClientData {
+  channel: string
+
+  sessionId: string
+}
 
 export class GameBroadcaster {
+  private clients =
+    new Set<
+      ServerWebSocket<ClientData>
+    >()
+
   constructor(
-    private readonly wss: Server
-  ) {}
+    private streamerSession: StreamerSession
+  ) {
+    setInterval(() => {
+      this.validateClients()
+    }, 5000)
+
+    setInterval(() => {
+      this.pingClients()
+    }, 5000)
+  }
+
+  addClient(
+    ws: ServerWebSocket<ClientData>
+  ) {
+    const data = ws.data
+
+    if (!data) {
+      ws.close()
+
+      return
+    }
+
+    const valid =
+      this.streamerSession.validateSession(
+        data.channel,
+        data.sessionId
+      )
+
+    if (!valid) {
+      ws.close()
+
+      return
+    }
+
+    this.clients.add(ws)
+  }
+
+  removeClient(
+    ws: ServerWebSocket<ClientData>
+  ) {
+    this.clients.delete(ws)
+
+    const data = ws.data
+
+    if (!data?.channel) {
+      return
+    }
+
+    const activeSession =
+      this.streamerSession.getSession(
+        data.channel
+      )
+
+    if (!activeSession) {
+      return
+    }
+
+    const sameSession =
+      activeSession.sessionId ===
+      data.sessionId
+
+    if (!sameSession) {
+      return
+    }
+
+    this.streamerSession.disconnect(
+      data.channel
+    )
+  }
+
+  validateClient(
+    ws: ServerWebSocket<ClientData>
+  ): boolean {
+    const data = ws.data
+
+    if (!data) {
+      ws.close()
+
+      return false
+    }
+
+    const valid =
+      this.streamerSession.validateSession(
+        data.channel,
+        data.sessionId
+      )
+
+    if (!valid) {
+      ws.close()
+
+      this.clients.delete(ws)
+
+      return false
+    }
+
+    return true
+  }
+
+  private validateClients() {
+    for (const client of this
+      .clients) {
+      this.validateClient(
+        client
+      )
+    }
+  }
+
+  private pingClients() {
+    const payload: WsMessage<
+      typeof WS_EVENTS.PING
+    > = {
+      type: WS_EVENTS.PING,
+    }
+
+    const encoded =
+      JSON.stringify(payload)
+
+    for (const client of this
+      .clients) {
+      const valid =
+        this.validateClient(
+          client
+        )
+
+      if (!valid) {
+        continue
+      }
+
+      client.send(encoded)
+    }
+  }
 
   broadcastMatchState(
     match: Match
   ) {
-    const payload = {
-      type: "MATCH_STATE",
+    const payload: WsMessage<
+      typeof WS_EVENTS.MATCH_STATE,
+      MatchStatePayload
+    > = {
+      type:
+        WS_EVENTS.MATCH_STATE,
 
-      data: {
-        id: match.id,
-
-        phase: match.phase,
-
-        round: match.round,
-
-        turn: match.turn,
-
-        currentPlayerId:
-          match.currentPlayerId,
-
-        winnerId:
-          match.winnerId,
-
-        leaderId:
-          match.state.leaderId,
-
-        tick:
-          match.state.tick,
-
-        turnStartedAt:
-          match.state
-            .turnStartedAt,
-
-        turnEndsAt:
-          match.state.turnEndsAt,
-
-        selectedBooster:
-          match.state
-            .selectedBooster,
-
-        boosterSet:
-          match.state
-            .boosterSet,
-
-        players:
-          match.players.map(
-            (player) => ({
-              id: player.id,
-
-              username:
-                player.username,
-
-              score:
-                player.score,
-
-              isAlive:
-                player.isAlive,
-
-              connected:
-                player.connected,
-
-              isCurrentTurn:
-                player.id ===
-                match.currentPlayerId,
-
-              isLeader:
-                player.id ===
-                match.state
-                  .leaderId,
-            })
-          ),
-
-        effects:
-          (
-            match.state
-              .effects ??
-            []
-          ).map(
-            (
-              effect: ActiveEffect
-            ) => ({
-              id: effect.id,
-
-              type:
-                effect.type,
-
-              playerId:
-                effect.playerId,
-
-              expiresAt:
-                effect.expiresAt,
-            })
-          ),
-
-        eventLog:
-          (
-            match.state
-              .eventLog ??
-            []
-          ).map(
-            (
-              event: EventLogEntry
-            ) => ({
-              id: event.id,
-
-              message:
-                event.message,
-
-              createdAt:
-                event.createdAt,
-            })
-          ),
+      payload: {
+        match,
       },
     }
 
-    const serialized =
+    const encoded =
       JSON.stringify(payload)
 
-    for (const client of this.wss
+    for (const client of this
       .clients) {
-      if (
-        client.readyState !==
-        client.OPEN
-      ) {
+      const valid =
+        this.validateClient(
+          client
+        )
+
+      if (!valid) {
         continue
       }
 
-      client.send(serialized)
+      client.send(encoded)
     }
   }
 }
