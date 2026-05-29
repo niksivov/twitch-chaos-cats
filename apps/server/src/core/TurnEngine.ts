@@ -1,11 +1,23 @@
 import { Match } from "./Match"
 
 export class TurnEngine {
-  process(match: Match) {
+  startTurn(match: Match) {
     const alivePlayers =
       match.getAlivePlayers()
 
-    if (alivePlayers.length === 0) {
+    if (
+      alivePlayers.length === 0
+    ) {
+      return
+    }
+
+    if (
+      !match.currentPlayerId
+    ) {
+      match.setCurrentPlayer(
+        alivePlayers[0].id
+      )
+
       return
     }
 
@@ -16,13 +28,20 @@ export class TurnEngine {
           match.currentPlayerId
       )
 
+    if (currentIndex === -1) {
+      match.setCurrentPlayer(
+        alivePlayers[0].id
+      )
+
+      return
+    }
+
+    const nextIndex =
+      (currentIndex + 1) %
+      alivePlayers.length
+
     const nextPlayer =
-      currentIndex === -1
-        ? alivePlayers[0]
-        : alivePlayers[
-            (currentIndex + 1) %
-              alivePlayers.length
-          ]
+      alivePlayers[nextIndex]
 
     if (!nextPlayer) {
       return

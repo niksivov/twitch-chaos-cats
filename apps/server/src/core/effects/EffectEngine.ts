@@ -15,17 +15,9 @@ export interface ActiveEffect {
 }
 
 export class EffectEngine {
-  private readonly effects =
-    new Map<
-      string,
-      ActiveEffect[]
-    >()
-
   process(match: Match) {
     const effects =
-      this.effects.get(
-        match.id
-      ) ?? []
+      match.state.effects ?? []
 
     if (effects.length === 0) {
       return
@@ -33,7 +25,7 @@ export class EffectEngine {
 
     const now = Date.now()
 
-    const activeEffects =
+    match.state.effects =
       effects.filter(
         (effect) => {
           if (
@@ -49,11 +41,6 @@ export class EffectEngine {
           )
         }
       )
-
-    this.effects.set(
-      match.id,
-      activeEffects
-    )
   }
 
   addEffect(
@@ -61,16 +48,15 @@ export class EffectEngine {
 
     effect: ActiveEffect
   ) {
-    const effects =
-      this.effects.get(
-        match.id
-      ) ?? []
+    if (
+      !match.state.effects
+    ) {
+      match.state.effects =
+        []
+    }
 
-    effects.push(effect)
-
-    this.effects.set(
-      match.id,
-      effects
+    match.state.effects.push(
+      effect
     )
   }
 
@@ -79,38 +65,31 @@ export class EffectEngine {
 
     effectId: string
   ) {
-    const effects =
-      this.effects.get(
-        match.id
-      ) ?? []
+    if (
+      !match.state.effects
+    ) {
+      return
+    }
 
-    const filtered =
-      effects.filter(
+    match.state.effects =
+      match.state.effects.filter(
         (effect) =>
           effect.id !== effectId
       )
-
-    this.effects.set(
-      match.id,
-      filtered
-    )
   }
 
   clearMatchEffects(
     match: Match
   ) {
-    this.effects.delete(
-      match.id
-    )
+    match.state.effects = []
   }
 
   getEffects(
     match: Match
   ): ActiveEffect[] {
     return (
-      this.effects.get(
-        match.id
-      ) ?? []
+      match.state.effects ??
+      []
     )
   }
 
@@ -119,12 +98,9 @@ export class EffectEngine {
 
     playerId: string
   ): ActiveEffect[] {
-    const effects =
-      this.effects.get(
-        match.id
-      ) ?? []
-
-    return effects.filter(
+    return this.getEffects(
+      match
+    ).filter(
       (effect) =>
         effect.playerId ===
         playerId

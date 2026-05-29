@@ -20,6 +20,8 @@ import { TurnTimerEngine } from "./TurnTimerEngine"
 
 import { MatchPhase } from "./matchPhase"
 
+import { BoosterEngine } from "./boosters/BoosterEngine"
+
 export class GameLoop {
   private turnEngine =
     new TurnEngine()
@@ -38,6 +40,9 @@ export class GameLoop {
 
   private turnTimerEngine =
     new TurnTimerEngine()
+
+  private boosterEngine =
+    new BoosterEngine()
 
   constructor(
     private matchManager: MatchManager,
@@ -62,6 +67,8 @@ export class GameLoop {
     for (const match of matches) {
       this.processMatch(match)
     }
+
+    this.matchManager.cleanupEmptyMatches()
   }
 
   private processMatch(match: Match) {
@@ -125,9 +132,17 @@ export class GameLoop {
       match
     )
 
-    this.effectEngine.process(match)
+    this.effectEngine.process(
+      match
+    )
 
-    this.leaderEngine.process(match)
+    this.leaderEngine.process(
+      match
+    )
+
+    this.phaseEngine.process(
+      match
+    )
 
     this.broadcaster.broadcastMatchState(
       match
@@ -140,6 +155,10 @@ export class GameLoop {
     if (
       match.players.length >= 2
     ) {
+      this.boosterEngine.initialize(
+        match
+      )
+
       match.start()
     }
   }
@@ -155,7 +174,9 @@ export class GameLoop {
   private handleRoundStart(
     match: Match
   ) {
-    this.roundEngine.process(match)
+    this.roundEngine.process(
+      match
+    )
 
     match.transition(
       MatchPhase.TURN_START
@@ -165,7 +186,9 @@ export class GameLoop {
   private handleTurnStart(
     match: Match
   ) {
-    this.turnEngine.process(match)
+    this.turnEngine.process(
+      match
+    )
 
     match.transition(
       MatchPhase.BOOSTER_SELECTION
@@ -174,9 +197,7 @@ export class GameLoop {
 
   private handleBoosterSelection(
     match: Match
-  ) {
-    // waiting websocket input
-  }
+  ) {}
 
   private handleBoosterResolution(
     match: Match

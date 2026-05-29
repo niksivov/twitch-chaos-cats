@@ -2,10 +2,15 @@ import { Match } from "./Match"
 
 import { MatchPhase } from "./matchPhase"
 
+import { BoosterEngine } from "./boosters/BoosterEngine"
+
 const TURN_DURATION_MS =
   15000
 
 export class TurnTimerEngine {
+  private boosterEngine =
+    new BoosterEngine()
+
   process(match: Match) {
     const now = Date.now()
 
@@ -42,8 +47,48 @@ export class TurnTimerEngine {
       return
     }
 
-    match.transition(
-      MatchPhase.BOOSTER_RESOLUTION
+    this.activateRandomBooster(
+      match
+    )
+  }
+
+  private activateRandomBooster(
+    match: Match
+  ) {
+    const boosterSet =
+      match.state.boosterSet
+
+    if (
+      boosterSet.length === 0
+    ) {
+      return
+    }
+
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+          boosterSet.length
+      )
+
+    const randomSlot =
+      boosterSet[randomIndex]
+
+    if (!randomSlot) {
+      return
+    }
+
+    if (
+      !match.currentPlayerId
+    ) {
+      return
+    }
+
+    this.boosterEngine.activateBooster(
+      match,
+
+      match.currentPlayerId,
+
+      randomSlot.slot
     )
   }
 }

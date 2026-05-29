@@ -15,6 +15,15 @@ export class BoosterSetManager {
     new BoosterRegistry()
 
   initialize(match: Match) {
+    if (
+      match.state.boosterPool
+        .length === 0
+    ) {
+      this.fillBoosterPool(
+        match
+      )
+    }
+
     match.state.boosterSet =
       []
 
@@ -30,26 +39,55 @@ export class BoosterSetManager {
     }
   }
 
+  private fillBoosterPool(
+    match: Match
+  ) {
+    const boosters =
+      this.boosterRegistry.getAll()
+
+    const pool: string[] = []
+
+    for (const booster of boosters) {
+      const copies =
+        Math.max(
+          1,
+          10 - booster.rarity
+        )
+
+      for (
+        let i = 0;
+        i < copies;
+        i++
+      ) {
+        pool.push(
+          booster.id
+        )
+      }
+    }
+
+    this.shuffle(pool)
+
+    match.state.boosterPool =
+      pool
+  }
+
   replaceSlot(
     match: Match,
 
     slot: number
   ) {
-    const pool =
+    if (
       match.state.boosterPool
-
-    if (pool.length === 0) {
-      return
+        .length === 0
+    ) {
+      this.fillBoosterPool(
+        match
+      )
     }
 
-    const randomIndex =
-      Math.floor(
-        Math.random() *
-          pool.length
-      )
-
     const boosterId =
-      pool[randomIndex]
+      match.state
+        .boosterPool.shift()
 
     if (!boosterId) {
       return
@@ -86,10 +124,30 @@ export class BoosterSetManager {
         existingIndex
       ] = setItem
     }
+  }
 
-    pool.splice(
-      randomIndex,
-      1
-    )
+  private shuffle(
+    array: string[]
+  ) {
+    for (
+      let i =
+        array.length - 1;
+      i > 0;
+      i--
+    ) {
+      const j =
+        Math.floor(
+          Math.random() *
+            (i + 1)
+        )
+
+      ;[
+        array[i],
+        array[j],
+      ] = [
+        array[j],
+        array[i],
+      ]
+    }
   }
 }

@@ -2,6 +2,8 @@ import { MatchManager } from "./MatchManager"
 
 import { MatchPhase } from "./matchPhase"
 
+import { BoosterEngine } from "./boosters/BoosterEngine"
+
 export interface GameCommand {
   type: string
 
@@ -23,6 +25,9 @@ export class CommandProcessor {
 
   private readonly cooldowns =
     new Map<string, number>()
+
+  private readonly boosterEngine =
+    new BoosterEngine()
 
   constructor(
     private readonly matchManager: MatchManager
@@ -87,6 +92,7 @@ export class CommandProcessor {
 
   private handleSelectBooster(
     match: any,
+
     command: GameCommand
   ) {
     if (
@@ -122,11 +128,22 @@ export class CommandProcessor {
       now + 1000
     )
 
-    match.state.selectedBooster =
-      command.payload
+    const slot =
+      command.payload?.slot
 
-    match.transition(
-      MatchPhase.BOOSTER_RESOLUTION
+    if (
+      typeof slot !==
+      "number"
+    ) {
+      return
+    }
+
+    this.boosterEngine.activateBooster(
+      match,
+
+      command.playerId,
+
+      slot
     )
   }
 

@@ -8,6 +8,8 @@ import { BoosterSetManager } from "./BoosterSetManager"
 
 import { EventLog } from "../events/EventLog"
 
+import { EffectEngine } from "../effects/EffectEngine"
+
 export class BoosterEngine {
   private boosterRegistry =
     new BoosterRegistry()
@@ -17,6 +19,9 @@ export class BoosterEngine {
 
   private eventLog =
     new EventLog()
+
+  private effectEngine =
+    new EffectEngine()
 
   initialize(match: Match) {
     this.boosterSetManager.initialize(
@@ -86,9 +91,15 @@ export class BoosterEngine {
       sourcePlayerId,
     })
 
+    this.applyEffects(
+      match,
+
+      sourcePlayerId
+    )
+
     this.eventLog.add(
       match,
-      `${player.nickname} used ${booster.name}`
+      `${player.username} used ${booster.name}`
     )
 
     this.boosterSetManager.replaceSlot(
@@ -112,5 +123,49 @@ export class BoosterEngine {
     match.transition(
       MatchPhase.TURN_END
     )
+  }
+
+  private applyEffects(
+    match: Match,
+
+    playerId: string
+  ) {
+    const effects =
+      this.effectEngine.getPlayerEffects(
+        match,
+
+        playerId
+      )
+
+    for (const effect of effects) {
+      switch (
+        effect.type
+      ) {
+        case "DOUBLE_POINTS":
+          this.applyDoublePoints(
+            match,
+
+            playerId
+          )
+          break
+      }
+    }
+  }
+
+  private applyDoublePoints(
+    match: Match,
+
+    playerId: string
+  ) {
+    const player =
+      match.state.playersById[
+        playerId
+      ]
+
+    if (!player) {
+      return
+    }
+
+    player.score *= 2
   }
 }

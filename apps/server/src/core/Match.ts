@@ -4,6 +4,10 @@ import { MatchStateMachine } from "./MatchStateMachine"
 
 import { BoosterSetItem } from "./boosters/BoosterSetManager"
 
+import { ActiveEffect } from "./effects/EffectEngine"
+
+import { EventLogEntry } from "./events/EventLog"
+
 export interface MatchPlayer {
   id: string
 
@@ -32,6 +36,10 @@ export interface MatchInternalState {
   boosterPool: string[]
 
   boosterSet: BoosterSetItem[]
+
+  effects: ActiveEffect[]
+
+  eventLog: EventLogEntry[]
 
   playersById: Record<
     string,
@@ -96,6 +104,10 @@ export class Match {
       boosterPool: [],
 
       boosterSet: [],
+
+      effects: [],
+
+      eventLog: [],
 
       playersById: {},
     }
@@ -278,6 +290,10 @@ export class Match {
 
     this.state.boosterSet =
       []
+
+    this.state.effects = []
+
+    this.state.eventLog = []
 
     this.state.playersById =
       {}

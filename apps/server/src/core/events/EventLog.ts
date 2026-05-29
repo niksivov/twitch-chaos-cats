@@ -1,28 +1,65 @@
-import { Match } from "../Match"
+export interface EventLogEntry {
+  id: string
+
+  message: string
+
+  createdAt: number
+}
+
+const MAX_LOG_ENTRIES = 50
 
 export class EventLog {
   add(
-    match: Match,
-    text: string
+    match: any,
+
+    message: string
   ) {
-    match.state.recentEvents.unshift(
+    if (
+      !match.state.eventLog
+    ) {
+      match.state.eventLog =
+        []
+    }
+
+    const entry: EventLogEntry =
       {
-        id:
-          Date.now().toString() +
-          Math.random()
-            .toString(36)
-            .slice(2),
+        id: [
+          Date.now(),
 
-        text,
+          Math.random(),
+        ].join("_"),
 
-        createdAt: Date.now(),
+        message,
+
+        createdAt:
+          Date.now(),
       }
+
+    match.state.eventLog.unshift(
+      entry
     )
 
-    match.state.recentEvents =
-      match.state.recentEvents.slice(
-        0,
-        5
-      )
+    if (
+      match.state.eventLog
+        .length >
+      MAX_LOG_ENTRIES
+    ) {
+      match.state.eventLog.length =
+        MAX_LOG_ENTRIES
+    }
+  }
+
+  getEntries(
+    match: any
+  ): EventLogEntry[] {
+    return (
+      match.state.eventLog ??
+      []
+    )
+  }
+
+  clear(match: any) {
+    match.state.eventLog =
+      []
   }
 }

@@ -1,154 +1,239 @@
-import { getAlivePlayers } from "./utils/getAlivePlayers"
-
-import { EventLog } from "../events/EventLog"
-
-interface BoosterExecutionContext {
+export interface BoosterContext {
   match: any
 
   sourcePlayerId: string
 }
 
-export interface Booster {
+export interface BoosterDefinition {
   id: string
 
   name: string
 
+  description: string
+
+  rarity: number
+
   execute(
-    context: BoosterExecutionContext
+    context: BoosterContext
   ): void
 }
 
-interface BoosterPoolEntry {
-  booster: Booster
-
-  copies: number
-}
-
-const eventLog =
-  new EventLog()
-
-const randomEliminationBooster: Booster =
-  {
-    id: "random_elimination",
-
-    name: "Random Elimination",
-
-    execute(context) {
-      const alivePlayers =
-        getAlivePlayers(
-          context.match
-        )
-
-      if (
-        alivePlayers.length === 0
-      ) {
-        return
-      }
-
-      const target =
-        alivePlayers[
-          Math.floor(
-            Math.random() *
-              alivePlayers.length
-          )
-        ]
-
-      target.eliminated = true
-
-      eventLog.add(
-        context.match,
-        `${target.nickname} was eliminated`
-      )
-    },
-  }
-
-const selfDestructBooster: Booster =
-  {
-    id: "self_destruct",
-
-    name: "Self Destruct",
-
-    execute(context) {
-      const player =
-        context.match.state.playersById[
-          context.sourcePlayerId
-        ]
-
-      if (!player) {
-        return
-      }
-
-      player.eliminated = true
-
-      eventLog.add(
-        context.match,
-        `${player.nickname} self destructed`
-      )
-    },
-  }
-
 export class BoosterRegistry {
-  private boosterPool: BoosterPoolEntry[] =
-    [
-      {
-        booster:
-          randomEliminationBooster,
+  private boosters =
+    new Map<
+      string,
+      BoosterDefinition
+    >()
 
-        copies: 5,
+  constructor() {
+    this.registerDefaults()
+  }
+
+  private registerDefaults() {
+    this.register({
+      id: "PLUS_20",
+
+      name: "+20 Points",
+
+      description:
+        "Add 20 points to yourself",
+
+      rarity: 1,
+
+      execute: ({
+        match,
+
+        sourcePlayerId,
+      }) => {
+        const player =
+          match.state.playersById[
+            sourcePlayerId
+          ]
+
+        if (!player) {
+          return
+        }
+
+        player.score += 20
       },
+    })
 
-      {
-        booster:
-          selfDestructBooster,
+    this.register({
+      id: "PLUS_50",
 
-        copies: 1,
+      name: "+50 Points",
+
+      description:
+        "Add 50 points to yourself",
+
+      rarity: 2,
+
+      execute: ({
+        match,
+
+        sourcePlayerId,
+      }) => {
+        const player =
+          match.state.playersById[
+            sourcePlayerId
+          ]
+
+        if (!player) {
+          return
+        }
+
+        player.score += 50
       },
-    ]
+    })
 
-  getRandom(): Booster {
-    const expandedPool: Booster[] =
-      []
+    this.register({
+      id: "MINUS_30_RANDOM",
 
-    for (const entry of this
-      .boosterPool) {
-      for (
-        let i = 0;
-        i < entry.copies;
-        i++
-      ) {
-        expandedPool.push(
-          entry.booster
-        )
-      }
-    }
+      name:
+        "-30 Random Enemy",
 
-    return expandedPool[
-      Math.floor(
-        Math.random() *
-          expandedPool.length
-      )
+      description:
+        "Remove 30 points from random enemy",
+
+      rarity: 2,
+
+      execute: ({
+        match,
+
+        sourcePlayerId,
+      }) => {
+        const targets =
+          match
+            .getAlivePlayers()
+            .filter(
+              (
+                player: any
+              ) =>
+                player.id !==
+                sourcePlayerId
+            )
+
+        if (
+          targets.length === 0
+        ) {
+          return
+        }
+
+        const randomTarget =
+          targets[
+            Math.floor(
+              Math.random() *
+                targets.length
+            )
+          ]
+
+        randomTarget.score -= 30
+
+        if (
+          randomTarget.score < 0
+        ) {
+          randomTarget.score = 0
+        }
+      },
+    })
+
+    this.register({
+      id: "RANDOM_REMOVE",
+
+      name:
+        "Random Elimination",
+
+      description:
+        "Remove random enemy from game",
+
+      rarity: 5,
+
+      execute: ({
+        match,
+
+        sourcePlayerId,
+      }) => {
+        const targets =
+          match
+            .getAlivePlayers()
+            .filter(
+              (
+                player: any
+              ) =>
+                player.id !==
+                sourcePlayerId
+            )
+
+        if (
+          targets.length === 0
+        ) {
+          return
+        }
+
+        const randomTarget =
+          targets[
+            Math.floor(
+              Math.random() *
+                targets.length
+            )
+          ]
+
+        randomTarget.isAlive =
+          false
+      },
+    })
+
+    this.register({
+      id: "DOUBLE_SELF",
+
+      name:
+        "Double Points",
+
+      description:
+        "Double your current score",
+
+      rarity: 4,
+
+      execute: ({
+        match,
+
+        sourcePlayerId,
+      }) => {
+        const player =
+          match.state.playersById[
+            sourcePlayerId
+          ]
+
+        if (!player) {
+          return
+        }
+
+        player.score =
+          player.score * 2
+      },
+    })
+  }
+
+  register(
+    booster: BoosterDefinition
+  ) {
+    this.boosters.set(
+      booster.id,
+      booster
+    )
+  }
+
+  getAll(): BoosterDefinition[] {
+    return [
+      ...this.boosters.values(),
     ]
   }
 
   getById(
-    boosterId: string
-  ): Booster | undefined {
-    const expandedPool: Booster[] =
-      []
-
-    for (const entry of this
-      .boosterPool) {
-      expandedPool.push(
-        entry.booster
-      )
-    }
-
-    return expandedPool.find(
-      (booster) => {
-        return (
-          booster.id === boosterId
-        )
-      }
-    )
+    id: string
+  ):
+    | BoosterDefinition
+    | undefined {
+    return this.boosters.get(id)
   }
 }
