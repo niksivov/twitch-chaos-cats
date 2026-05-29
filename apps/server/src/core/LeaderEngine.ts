@@ -2,29 +2,26 @@ import { Match } from "./Match"
 
 export class LeaderEngine {
   process(match: Match) {
-    const state = match.state
+    const alivePlayers =
+      match.getAlivePlayers()
 
-    const players =
-      state.playerOrder
-        .map((playerId) => {
-          return state.playersById[playerId]
-        })
-        .filter((player) => {
-          return !player.eliminated
-        })
-
-    if (players.length === 0) {
-      state.leaderPlayerId =
-        undefined
-
+    if (alivePlayers.length === 0) {
       return
     }
 
-    players.sort((a, b) => {
-      return b.points - a.points
-    })
+    let leader =
+      alivePlayers[0]
 
-    state.leaderPlayerId =
-      players[0].id
+    for (const player of alivePlayers) {
+      if (
+        player.score >
+        leader.score
+      ) {
+        leader = player
+      }
+    }
+
+    match.state.leaderId =
+      leader.id
   }
 }

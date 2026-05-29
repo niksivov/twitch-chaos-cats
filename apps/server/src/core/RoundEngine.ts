@@ -1,23 +1,20 @@
 import { Match } from "./Match"
 
 export class RoundEngine {
-  private turnsPerRound = 5
-
   process(match: Match) {
-    const state = match.state
+    const alivePlayers =
+      match.getAlivePlayers()
 
-    if (state.phase !== "MAIN_LOOP") {
+    if (alivePlayers.length <= 1) {
       return
     }
 
-    if (
-      state.tick %
-        this.turnsPerRound !==
-      0
-    ) {
-      return
-    }
+    match.round += 1
 
-    state.round++
+    for (const player of alivePlayers) {
+      if (player.score < 0) {
+        player.score = 0
+      }
+    }
   }
 }

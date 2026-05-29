@@ -2,71 +2,94 @@ import { Match } from "../Match"
 
 import { BoosterRegistry } from "./BoosterRegistry"
 
+export interface BoosterSetItem {
+  slot: number
+
+  boosterId: string
+}
+
+const BOOSTER_SET_SIZE = 3
+
 export class BoosterSetManager {
   private boosterRegistry =
     new BoosterRegistry()
 
   initialize(match: Match) {
-    const targetSize =
-      match.state.settings
-        .boosterSetSize
+    match.state.boosterSet =
+      []
 
-    while (
-      match.state.boosterSet.length <
-      targetSize
+    for (
+      let i = 0;
+      i < BOOSTER_SET_SIZE;
+      i++
     ) {
-      this.addRandomBooster(
-        match
+      this.replaceSlot(
+        match,
+        i
       )
     }
   }
 
   replaceSlot(
     match: Match,
+
     slot: number
   ) {
-    match.state.boosterSet =
-      match.state.boosterSet.filter(
-        (item) => {
-          return item.slot !== slot
-        }
-      )
+    const pool =
+      match.state.boosterPool
 
-    this.addRandomBooster(
-      match,
-      slot
-    )
-  }
-
-  private addRandomBooster(
-    match: Match,
-    forcedSlot?: number
-  ) {
-    const booster =
-      this.boosterRegistry.getRandom()
-
-    const usedSlots =
-      match.state.boosterSet.map(
-        (item) => item.slot
-      )
-
-    let slot =
-      forcedSlot ?? 1
-
-    if (!forcedSlot) {
-      while (
-        usedSlots.includes(slot)
-      ) {
-        slot++
-      }
+    if (pool.length === 0) {
+      return
     }
 
-    match.state.boosterSet.push({
-      slot,
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+          pool.length
+      )
 
-      boosterId: booster.id,
+    const boosterId =
+      pool[randomIndex]
 
-      boosterName: booster.name,
-    })
+    if (!boosterId) {
+      return
+    }
+
+    const booster =
+      this.boosterRegistry.getById(
+        boosterId
+      )
+
+    if (!booster) {
+      return
+    }
+
+    const existingIndex =
+      match.state.boosterSet.findIndex(
+        (item) =>
+          item.slot === slot
+      )
+
+    const setItem: BoosterSetItem =
+      {
+        slot,
+
+        boosterId,
+      }
+
+    if (existingIndex === -1) {
+      match.state.boosterSet.push(
+        setItem
+      )
+    } else {
+      match.state.boosterSet[
+        existingIndex
+      ] = setItem
+    }
+
+    pool.splice(
+      randomIndex,
+      1
+    )
   }
 }

@@ -1,199 +1,75 @@
 import { Match } from "./Match"
 
-import { BoosterSetManager } from "./boosters/BoosterSetManager"
+import { MatchPhase } from "./matchPhase"
 
 export class PhaseEngine {
-  private boosterSetManager =
-    new BoosterSetManager()
-
-  private cleanupDelayMs =
-    60000
-
   process(match: Match) {
-    const state = match.state
+    switch (match.phase) {
+      case MatchPhase.WAITING_FOR_PLAYERS:
+        return
 
-    switch (state.phase) {
-      case "LOBBY":
-        this.processLobby(match)
-        break
+      case MatchPhase.STARTING:
+        return
 
-      case "PREPARATION":
-        this.processPreparation(match)
-        break
+      case MatchPhase.ROUND_START:
+        return
 
-      case "MAIN_LOOP":
-        this.processMainLoop(match)
-        break
+      case MatchPhase.TURN_START:
+        return
 
-      case "ENDGAME":
-        this.processEndgame(match)
-        break
+      case MatchPhase.BOOSTER_SELECTION:
+        return
 
-      case "FINISHED":
-        this.processFinished(match)
-        break
+      case MatchPhase.BOOSTER_RESOLUTION:
+        return
+
+      case MatchPhase.TURN_END:
+        return
+
+      case MatchPhase.ROUND_END:
+        return
+
+      case MatchPhase.MATCH_END:
+        return
+
+      case MatchPhase.RESETTING:
+        return
     }
   }
 
-  private processLobby(
+  isGameplayPhase(
     match: Match
-  ) {
-    const state = match.state
+  ): boolean {
+    return [
+      MatchPhase.ROUND_START,
 
-    const playerCount =
-      state.playerOrder.length
+      MatchPhase.TURN_START,
 
-    if (playerCount < 2) {
-      return
-    }
+      MatchPhase.BOOSTER_SELECTION,
 
-    state.phase =
-      "PREPARATION"
+      MatchPhase.BOOSTER_RESOLUTION,
 
-    state.startedAt =
-      Date.now()
+      MatchPhase.TURN_END,
 
-    state.tick = 0
-
-    state.round = 1
-
-    this.boosterSetManager.initialize(
-      match
-    )
-
-    console.log(
-      `[${state.roomId}] preparation started`
-    )
+      MatchPhase.ROUND_END,
+    ].includes(match.phase)
   }
 
-  private processPreparation(
+  isFinished(
     match: Match
-  ) {
-    const state = match.state
-
-    if (state.tick < 5) {
-      return
-    }
-
-    state.phase =
-      "MAIN_LOOP"
-
-    state.tick = 0
-
-    state.round = 1
-
-    console.log(
-      `[${state.roomId}] main loop started`
+  ): boolean {
+    return (
+      match.phase ===
+      MatchPhase.MATCH_END
     )
   }
 
-  private processMainLoop(
+  canAcceptInputs(
     match: Match
-  ) {
-    const state = match.state
-
-    const alivePlayers =
-      state.playerOrder.filter((playerId) => {
-        const player =
-          state.playersById[playerId]
-
-        return !player.eliminated
-      })
-
-    if (alivePlayers.length <= 1) {
-      state.phase =
-        "ENDGAME"
-
-      state.tick = 0
-
-      console.log(
-        `[${state.roomId}] endgame started`
-      )
-    }
-  }
-
-  private processEndgame(
-    match: Match
-  ) {
-    const state = match.state
-
-    if (state.tick < 5) {
-      return
-    }
-
-    state.phase =
-      "FINISHED"
-
-    state.finishedAt =
-      Date.now()
-
-    state.tick = 0
-
-    console.log(
-      `[${state.roomId}] match finished`
-    )
-  }
-
-  private processFinished(
-    match: Match
-  ) {
-    const state = match.state
-
-    if (!state.finishedAt) {
-      return
-    }
-
-    const elapsed =
-      Date.now() -
-      state.finishedAt
-
-    if (
-      elapsed <
-      this.cleanupDelayMs
-    ) {
-      return
-    }
-
-    this.resetMatch(match)
-  }
-
-  private resetMatch(
-    match: Match
-  ) {
-    const state = match.state
-
-    state.phase =
-      "LOBBY"
-
-    state.tick = 0
-
-    state.round = 1
-
-    state.playersById = {}
-
-    state.playerOrder = []
-
-    state.currentTurnPlayerId =
-      undefined
-
-    state.currentTurnStartedAt =
-      undefined
-
-    state.leaderPlayerId =
-      undefined
-
-    state.recentEvents = []
-
-    state.boosterSet = []
-
-    state.startedAt =
-      undefined
-
-    state.finishedAt =
-      undefined
-
-    console.log(
-      `[${state.roomId}] match reset`
+  ): boolean {
+    return (
+      match.phase ===
+      MatchPhase.BOOSTER_SELECTION
     )
   }
 }

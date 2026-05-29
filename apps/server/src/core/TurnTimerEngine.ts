@@ -1,71 +1,49 @@
 import { Match } from "./Match"
 
-import { TurnEngine } from "./TurnEngine"
+import { MatchPhase } from "./matchPhase"
 
-import { EventLog } from "./events/EventLog"
+const TURN_DURATION_MS =
+  15000
 
 export class TurnTimerEngine {
-  private turnEngine =
-    new TurnEngine()
-
-  private eventLog =
-    new EventLog()
-
   process(match: Match) {
-    const state = match.state
+    const now = Date.now()
 
     if (
-      state.phase !==
-      "MAIN_LOOP"
+      match.phase ===
+      MatchPhase.TURN_START
+    ) {
+      match.state.turnStartedAt =
+        now
+
+      match.state.turnEndsAt =
+        now + TURN_DURATION_MS
+
+      return
+    }
+
+    if (
+      match.phase !==
+      MatchPhase.BOOSTER_SELECTION
     ) {
       return
     }
 
-    const currentTurnPlayerId =
-      state.currentTurnPlayerId
-
-    if (!currentTurnPlayerId) {
-      return
-    }
-
     if (
-      !state.currentTurnStartedAt
-    ) {
-      state.currentTurnStartedAt =
-        Date.now()
-
-      return
-    }
-
-    const elapsedSeconds =
-      Math.floor(
-        (Date.now() -
-          state.currentTurnStartedAt) /
-          1000
-      )
-
-    const limit =
-      state.settings
-        .turnTimeSeconds
-
-    if (
-      elapsedSeconds < limit
+      !match.state.turnEndsAt
     ) {
       return
     }
 
-    const player =
-      state.playersById[
-        currentTurnPlayerId
-      ]
+    if (
+      now <
+      match.state.turnEndsAt
+    ) {
+      return
+    }
 
-    this.eventLog.add(
-      match,
-      `${player.nickname} missed the turn`
-    )
-
-    this.turnEngine.moveToNextPlayer(
-      match
+    match.transition(
+      MatchPhase.BOOSTER_RESOLUTION
     )
   }
 }

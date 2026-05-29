@@ -2,109 +2,34 @@ import { Match } from "./Match"
 
 export class TurnEngine {
   process(match: Match) {
-    const state = match.state
-
-    if (
-      state.phase !==
-      "MAIN_LOOP"
-    ) {
-      return
-    }
-
     const alivePlayers =
-      state.playerOrder.filter(
-        (playerId) => {
-          const player =
-            state.playersById[
-              playerId
-            ]
+      match.getAlivePlayers()
 
-          return !player.eliminated
-        }
-      )
-
-    if (
-      alivePlayers.length === 0
-    ) {
-      return
-    }
-
-    if (
-      !state.currentTurnPlayerId
-    ) {
-      state.currentTurnPlayerId =
-        alivePlayers[0]
-
-      state.currentTurnStartedAt =
-        Date.now()
-
-      return
-    }
-
-    const currentStillAlive =
-      alivePlayers.includes(
-        state.currentTurnPlayerId
-      )
-
-    if (
-      !currentStillAlive
-    ) {
-      state.currentTurnPlayerId =
-        alivePlayers[0]
-
-      state.currentTurnStartedAt =
-        Date.now()
-    }
-  }
-
-  moveToNextPlayer(
-    match: Match
-  ) {
-    const state = match.state
-
-    const alivePlayers =
-      state.playerOrder.filter(
-        (playerId) => {
-          const player =
-            state.playersById[
-              playerId
-            ]
-
-          return !player.eliminated
-        }
-      )
-
-    if (
-      alivePlayers.length === 0
-    ) {
-      return
-    }
-
-    if (
-      !state.currentTurnPlayerId
-    ) {
-      state.currentTurnPlayerId =
-        alivePlayers[0]
-
-      state.currentTurnStartedAt =
-        Date.now()
-
+    if (alivePlayers.length === 0) {
       return
     }
 
     const currentIndex =
-      alivePlayers.indexOf(
-        state.currentTurnPlayerId
+      alivePlayers.findIndex(
+        (player) =>
+          player.id ===
+          match.currentPlayerId
       )
 
-    const nextIndex =
-      (currentIndex + 1) %
-      alivePlayers.length
+    const nextPlayer =
+      currentIndex === -1
+        ? alivePlayers[0]
+        : alivePlayers[
+            (currentIndex + 1) %
+              alivePlayers.length
+          ]
 
-    state.currentTurnPlayerId =
-      alivePlayers[nextIndex]
+    if (!nextPlayer) {
+      return
+    }
 
-    state.currentTurnStartedAt =
-      Date.now()
+    match.setCurrentPlayer(
+      nextPlayer.id
+    )
   }
 }

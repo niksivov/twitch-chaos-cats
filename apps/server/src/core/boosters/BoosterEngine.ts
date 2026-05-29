@@ -1,5 +1,7 @@
 import { Match } from "../Match"
 
+import { MatchPhase } from "../matchPhase"
+
 import { BoosterRegistry } from "./BoosterRegistry"
 
 import { BoosterSetManager } from "./BoosterSetManager"
@@ -24,13 +26,31 @@ export class BoosterEngine {
 
   activateBooster(
     match: Match,
+
     sourcePlayerId: string,
+
     slot: number
   ) {
+    if (
+      match.phase !==
+      MatchPhase.BOOSTER_SELECTION
+    ) {
+      return
+    }
+
+    if (
+      sourcePlayerId !==
+      match.currentPlayerId
+    ) {
+      return
+    }
+
     const setItem =
       match.state.boosterSet.find(
         (item) => {
-          return item.slot === slot
+          return (
+            item.slot === slot
+          )
         }
       )
 
@@ -52,6 +72,14 @@ export class BoosterEngine {
         sourcePlayerId
       ]
 
+    if (!player) {
+      return
+    }
+
+    match.transition(
+      MatchPhase.BOOSTER_RESOLUTION
+    )
+
     booster.execute({
       match,
 
@@ -66,6 +94,23 @@ export class BoosterEngine {
     this.boosterSetManager.replaceSlot(
       match,
       slot
+    )
+
+    match.state.selectedBooster =
+      {
+        boosterId:
+          booster.id,
+
+        sourcePlayerId,
+
+        slot,
+
+        activatedAt:
+          Date.now(),
+      }
+
+    match.transition(
+      MatchPhase.TURN_END
     )
   }
 }

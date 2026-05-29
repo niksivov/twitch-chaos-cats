@@ -1,108 +1,157 @@
-import {
-  CommandQueue,
-  QueuedCommand,
-} from "./CommandQueue"
-
 import { MatchManager } from "./MatchManager"
 
-import { PlayerManager } from "./PlayerManager"
+import { MatchPhase } from "./matchPhase"
 
-import { createGameEvent } from "./events/createGameEvent"
+export interface GameCommand {
+  type: string
 
-import { GameEventEmitter } from "./events/GameEventEmitter"
+  matchId: string
 
-import { AntiSpamService } from "./antiSpam/AntiSpamService"
+  playerId: string
 
-import { SessionManager } from "./sessions/SessionManager"
+  payload?: any
+
+  createdAt: number
+}
 
 export class CommandProcessor {
-  private antiSpamService =
-    new AntiSpamService()
+  private queue: GameCommand[] =
+    []
 
-  private sessionManager =
-    new SessionManager()
+  private readonly processedKeys =
+    new Set<string>()
 
-  private playerManager =
-    new PlayerManager(
-      this.sessionManager
-    )
+  private readonly cooldowns =
+    new Map<string, number>()
 
   constructor(
-    private commandQueue: CommandQueue,
-
-    private matchManager: MatchManager,
-
-    private eventEmitter: GameEventEmitter
+    private readonly matchManager: MatchManager
   ) {}
 
+  enqueue(
+    command: GameCommand
+  ) {
+    const key =
+      this.buildCommandKey(
+        command
+      )
+
+    if (
+      this.processedKeys.has(key)
+    ) {
+      return
+    }
+
+    this.processedKeys.add(key)
+
+    this.queue.push(command)
+  }
+
   process() {
-    const commands =
-      this.commandQueue.drain()
+    const commands = [
+      ...this.queue,
+    ]
+
+    this.queue.length = 0
 
     for (const command of commands) {
-      this.processCommand(command)
+      this.processCommand(
+        command
+      )
     }
+
+    this.cleanup()
   }
 
   private processCommand(
-    command: QueuedCommand
+    command: GameCommand
   ) {
     const match =
       this.matchManager.getMatch(
-        command.roomId
+        command.matchId
       )
 
     if (!match) {
       return
     }
 
-    const allowed =
-      this.antiSpamService.canExecute(
-        command.playerId
-      )
-
-    if (!allowed) {
-      return
-    }
-
-    this.sessionManager.heartbeat(
-      command.playerId
-    )
-
     switch (command.type) {
-      case "JOIN_GAME":
-        this.handleJoinCommand(
+      case "SELECT_BOOSTER":
+        this.handleSelectBooster(
           match,
           command
-        )
-        break
-
-      case "CHAT_MESSAGE":
-        this.eventEmitter.emit(
-          createGameEvent(
-            "CHAT_MESSAGE",
-            `${command.playerId}: ${command.payload.message}`
-          )
         )
         break
     }
   }
 
-  private handleJoinCommand(
+  private handleSelectBooster(
     match: any,
-    command: QueuedCommand
+    command: GameCommand
   ) {
-    const player =
-      this.playerManager.addPlayer(
-        match,
-        command.playerId
-      )
+    if (
+      match.phase !==
+      MatchPhase.BOOSTER_SELECTION
+    ) {
+      return
+    }
 
-    this.eventEmitter.emit(
-      createGameEvent(
-        "PLAYER_JOINED",
-        `${player.nickname} joined the match`
-      )
+    if (
+      command.playerId !==
+      match.currentPlayerId
+    ) {
+      return
+    }
+
+    const cooldownKey =
+      `${command.playerId}:SELECT_BOOSTER`
+
+    const now = Date.now()
+
+    const cooldown =
+      this.cooldowns.get(
+        cooldownKey
+      ) ?? 0
+
+    if (now < cooldown) {
+      return
+    }
+
+    this.cooldowns.set(
+      cooldownKey,
+      now + 1000
     )
+
+    match.state.selectedBooster =
+      command.payload
+
+    match.transition(
+      MatchPhase.BOOSTER_RESOLUTION
+    )
+  }
+
+  private buildCommandKey(
+    command: GameCommand
+  ): string {
+    return [
+      command.type,
+
+      command.matchId,
+
+      command.playerId,
+
+      JSON.stringify(
+        command.payload
+      ),
+    ].join(":")
+  }
+
+  private cleanup() {
+    if (
+      this.processedKeys.size >
+      10000
+    ) {
+      this.processedKeys.clear()
+    }
   }
 }

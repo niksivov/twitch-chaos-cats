@@ -1,30 +1,81 @@
-import {
-  ServerMessage,
-  StateUpdatePayload,
-} from "@twitch-chaos-cats/shared-types"
+import { Server } from "ws"
 
 import { Match } from "../core/Match"
 
-import { GameWebSocketServer } from "./WebSocketServer"
-
-import { createStateSnapshot } from "./snapshot"
-
 export class GameBroadcaster {
   constructor(
-    private websocketServer: GameWebSocketServer
+    private readonly wss: Server
   ) {}
 
-  broadcastMatchState(match: Match) {
-    const payload: StateUpdatePayload =
-      createStateSnapshot(match)
+  broadcastMatchState(
+    match: Match
+  ) {
+    const payload = {
+      type: "MATCH_STATE",
 
-    const message: ServerMessage<StateUpdatePayload> =
-      {
-        type: "STATE_UPDATE",
+      data: {
+        id: match.id,
 
-        payload,
+        phase: match.phase,
+
+        round: match.round,
+
+        turn: match.turn,
+
+        currentPlayerId:
+          match.currentPlayerId,
+
+        winnerId:
+          match.winnerId,
+
+        leaderId:
+          match.state.leaderId,
+
+        turnStartedAt:
+          match.state
+            .turnStartedAt,
+
+        turnEndsAt:
+          match.state.turnEndsAt,
+
+        selectedBooster:
+          match.state
+            .selectedBooster,
+
+        players:
+          match.players.map(
+            (player) => ({
+              id: player.id,
+
+              username:
+                player.username,
+
+              score:
+                player.score,
+
+              isAlive:
+                player.isAlive,
+
+              connected:
+                player.connected,
+            })
+          ),
+      },
+    }
+
+    const serialized =
+      JSON.stringify(payload)
+
+    for (const client of this.wss
+      .clients) {
+      if (
+        client.readyState !==
+        client.OPEN
+      ) {
+        continue
       }
 
-    this.websocketServer.broadcast(message)
+      client.send(serialized)
+    }
   }
 }
