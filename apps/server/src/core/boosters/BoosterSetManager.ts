@@ -6,6 +6,8 @@ export interface BoosterSetItem {
   slot: number
 
   boosterId: string
+
+  boosterName: string
 }
 
 const BOOSTER_SET_SIZE = 3
@@ -113,6 +115,9 @@ export class BoosterSetManager {
         slot,
 
         boosterId,
+
+        boosterName:
+          booster.name,
       }
 
     if (existingIndex === -1) {

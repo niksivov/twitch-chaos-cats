@@ -44,7 +44,7 @@ class SocketClient {
 
         if (
           message.type !==
-          "MATCH_STATE"
+          "match_state"
         ) {
           return
         }
@@ -107,14 +107,12 @@ class SocketClient {
               ?.boosterSet ??
             []
           ).map(
-            (
-              booster: any,
-              index: number
-            ) => ({
-              slot: index + 1,
+            (booster: any) => ({
+              slot:
+                booster.slot,
 
               boosterName:
-                booster.name ??
+                booster.boosterName ??
                 "Unknown Booster",
             })
           )

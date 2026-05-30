@@ -60,6 +60,20 @@ commandProcessor.enqueue({
   createdAt: Date.now(),
 })
 
+commandProcessor.enqueue({
+  type: "JOIN",
+
+  matchId: match.id,
+
+  playerId: "player_2",
+
+  payload: {
+    nickname: "secondCat",
+  },
+
+  createdAt: Date.now(),
+})
+
 console.log(
   "PLAYERS AFTER ENQUEUE:",
   match.players
