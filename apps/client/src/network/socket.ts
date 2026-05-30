@@ -155,6 +155,29 @@ class SocketClient {
       }
     }
   }
+
+  selectBooster(
+    slot: number
+  ) {
+    if (
+      !this.socket ||
+      this.socket.readyState !==
+        WebSocket.OPEN
+    ) {
+      return
+    }
+
+    this.socket.send(
+      JSON.stringify({
+        type:
+          "SELECT_BOOSTER",
+
+        data: {
+          slot,
+        },
+      })
+    )
+  }
 }
 
 export const socketClient =

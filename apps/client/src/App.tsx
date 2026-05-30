@@ -10,6 +10,8 @@ import { EventLog } from "./components/EventLog"
 
 import { BoosterSet } from "./components/BoosterSet"
 
+import { DeveloperPanel } from "./components/DeveloperPanel"
+
 import { TurnTimer } from "./components/TurnTimer"
 
 function App() {
@@ -255,6 +257,12 @@ function App() {
           />
 
           <BoosterSet
+            boosters={
+              boosterSet
+            }
+          />
+
+          <DeveloperPanel
             boosters={
               boosterSet
             }
