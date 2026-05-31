@@ -36,17 +36,20 @@ export function BoosterSet({
           fontSize: 16,
         }}
       >
-        Booster Set
+        Бустеры
       </div>
 
       <div
         style={{
-          display: "flex",
+          display: "grid",
 
-          flexDirection:
-            "column",
+          gridTemplateColumns:
+            "repeat(auto-fill, 105px)",
 
-          gap: 10,
+          justifyContent:
+            "center",
+
+          gap: 12,
         }}
       >
         {boosters.map(
@@ -57,6 +60,9 @@ export function BoosterSet({
                   booster.slot
                 }
                 style={{
+                  position:
+                    "relative",
+
                   background:
                     "#101418",
 
@@ -65,22 +71,42 @@ export function BoosterSet({
 
                   borderRadius: 10,
 
+                  width: 100,
+
+                  minHeight: 120,
+
                   padding:
-                    "10px 12px",
+                    "14px 6px 6px",
 
                   display: "flex",
+
+                  flexDirection:
+                    "column",
 
                   alignItems:
                     "center",
 
-                  gap: 12,
+                  justifyContent:
+                    "center",
+
+                  gap: 4,
                 }}
               >
                 <div
                   style={{
-                    minWidth: 28,
+                    position:
+                      "absolute",
 
-                    height: 28,
+                    top: 8,
+
+                    left: 8,
+
+                    minWidth: 26,
+
+                    height: 26,
+
+                    padding:
+                      "0 8px",
 
                     borderRadius: 8,
 
@@ -98,6 +124,8 @@ export function BoosterSet({
                     fontWeight: 700,
 
                     fontSize: 14,
+
+                    opacity: 0.9,
                   }}
                 >
                   {
@@ -107,9 +135,9 @@ export function BoosterSet({
 
                 <div
                   style={{
-                    width: 64,
+                    width: 86,
 
-                    height: 64,
+                    height: 86,
 
                     borderRadius: 8,
 
@@ -126,8 +154,6 @@ export function BoosterSet({
 
                     overflow:
                       "hidden",
-
-                    flexShrink: 0,
                   }}
                 >
                   <img
@@ -148,9 +174,18 @@ export function BoosterSet({
 
                 <div
                   style={{
-                    fontSize: 14,
+                    textAlign:
+                      "center",
+
+                    fontSize: 11,
 
                     fontWeight: 600,
+
+                    lineHeight:
+                      "18px",
+
+                    wordBreak:
+                      "break-word",
                   }}
                 >
                   {

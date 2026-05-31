@@ -23,8 +23,6 @@ export function EventLog({
         borderRadius: 12,
 
         padding: 16,
-
-        height: "100%",
       }}
     >
       <div
@@ -36,7 +34,7 @@ export function EventLog({
           fontSize: 16,
         }}
       >
-        Event Log
+        События
       </div>
 
       <div
@@ -46,38 +44,41 @@ export function EventLog({
           flexDirection:
             "column",
 
-          gap: 8,
-
-          maxHeight: 400,
+          maxHeight: 200,
 
           overflowY: "auto",
+
+          paddingRight: 4,
         }}
       >
-        {events.map((event) => {
-          return (
-            <div
-              key={event.id}
-              style={{
-                background:
-                  "#101418",
+        {events.map(
+          (event, index) => {
+            const isLast =
+              index ===
+              events.length - 1
 
-                border:
-                  "1px solid #2d3742",
+            return (
+              <div
+                key={event.id}
+                style={{
+                  padding:
+                    "10px 0",
 
-                borderRadius: 10,
+                  fontSize: 14,
 
-                padding:
-                  "10px 12px",
+                  lineHeight: 1.5,
 
-                fontSize: 13,
-
-                lineHeight: 1.4,
-              }}
-            >
-              {event.message}
-            </div>
-          )
-        })}
+                  borderBottom:
+                    isLast
+                      ? "none"
+                      : "1px solid #2d3742",
+                }}
+              >
+                ⚡ {event.message}
+              </div>
+            )
+          }
+        )}
 
         {events.length ===
           0 && (
@@ -88,7 +89,7 @@ export function EventLog({
               fontSize: 13,
             }}
           >
-            No events yet
+            Событий пока нет
           </div>
         )}
       </div>

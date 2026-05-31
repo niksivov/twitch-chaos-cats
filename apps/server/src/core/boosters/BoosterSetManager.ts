@@ -12,7 +12,7 @@ export interface BoosterSetItem {
   boosterIcon: string
 }
 
-const BOOSTER_SET_SIZE = 3
+const BOOSTER_SET_SIZE = 30
 
 export class BoosterSetManager {
   private boosterRegistry =
@@ -32,8 +32,8 @@ export class BoosterSetManager {
       []
 
     for (
-      let i = 0;
-      i < BOOSTER_SET_SIZE;
+      let i = 1;
+      i <= BOOSTER_SET_SIZE;
       i++
     ) {
       this.replaceSlot(

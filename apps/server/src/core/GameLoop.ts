@@ -22,6 +22,8 @@ import { MatchPhase } from "./matchPhase"
 
 import { BoosterEngine } from "./boosters/BoosterEngine"
 
+import { EventLog } from "./events/EventLog"
+
 export class GameLoop {
   private turnEngine =
     new TurnEngine()
@@ -43,6 +45,9 @@ export class GameLoop {
 
   private boosterEngine =
     new BoosterEngine()
+
+  private eventLog =
+    new EventLog()
 
   constructor(
     private matchManager: MatchManager,
@@ -197,6 +202,11 @@ export class GameLoop {
     match: Match
   ) {
     match.resetRoundProgress()
+
+    this.eventLog.add(
+      match,
+      `⚔️ Начался ${match.round} раунд`
+    )
 
     this.boosterEngine.initialize(
       match

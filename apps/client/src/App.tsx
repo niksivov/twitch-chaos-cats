@@ -206,6 +206,8 @@ function App() {
             "1fr 320px",
 
           gap: 20,
+
+          marginBottom: 20,
         }}
       >
         <div>
@@ -244,16 +246,7 @@ function App() {
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-
-            flexDirection:
-              "column",
-
-            gap: 20,
-          }}
-        >
+        <div>
           <TurnTimer
             startedAt={
               currentTurnStartedAt
@@ -265,26 +258,38 @@ function App() {
               currentPlayer?.nickname
             }
           />
-
-          <BoosterSet
-            boosters={
-              boosterSet
-            }
-          />
-
-          <DeveloperPanel
-            boosters={
-              boosterSet
-            }
-          />
-
-          <EventLog
-            events={
-              recentEvents
-            }
-          />
         </div>
       </div>
+
+      <div
+        style={{
+          marginBottom: 20,
+        }}
+      >
+        <BoosterSet
+          boosters={
+            boosterSet
+          }
+        />
+      </div>
+
+      <div
+        style={{
+          marginBottom: 20,
+        }}
+      >
+        <EventLog
+          events={
+            recentEvents
+          }
+        />
+      </div>
+
+      <DeveloperPanel
+        boosters={
+          boosterSet
+        }
+      />
     </div>
   )
 }
