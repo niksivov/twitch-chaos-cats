@@ -114,6 +114,10 @@ class SocketClient {
               boosterName:
                 booster.boosterName ??
                 "Unknown Booster",
+
+              boosterIcon:
+                booster.boosterIcon ??
+                "",
             })
           )
 
@@ -130,6 +134,9 @@ class SocketClient {
             tick:
               match.state
                 ?.tick ?? 0,
+
+            round:
+              match.round ?? 0,
 
             currentTurnPlayerId:
               match.currentPlayerId,

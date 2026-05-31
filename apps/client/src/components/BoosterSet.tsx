@@ -2,6 +2,8 @@ interface BoosterSnapshot {
   slot: number
 
   boosterName: string
+
+  boosterIcon: string
 }
 
 interface Props {
@@ -101,6 +103,47 @@ export function BoosterSet({
                   {
                     booster.slot
                   }
+                </div>
+
+                <div
+                  style={{
+                    width: 64,
+
+                    height: 64,
+
+                    borderRadius: 8,
+
+                    background:
+                      "#2b3542",
+
+                    display: "flex",
+
+                    alignItems:
+                      "center",
+
+                    justifyContent:
+                      "center",
+
+                    overflow:
+                      "hidden",
+
+                    flexShrink: 0,
+                  }}
+                >
+                  <img
+                    src={`/boosters/${booster.boosterIcon}.png`}
+                    alt={
+                      booster.boosterName
+                    }
+                    style={{
+                      width: "100%",
+
+                      height: "100%",
+
+                      objectFit:
+                        "contain",
+                    }}
+                  />
                 </div>
 
                 <div

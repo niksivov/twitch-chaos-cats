@@ -31,6 +31,10 @@ function App() {
     (state) => state.tick
   )
 
+  const round = useGameStore(
+    (state) => state.round
+  )
+
   const currentTurnPlayerId =
     useGameStore(
       (state) =>
@@ -144,6 +148,12 @@ function App() {
             fontSize: 14,
           }}
         >
+          <div>
+            Round:
+            {" "}
+            {round}
+          </div>
+
           <div>
             Phase:
             {" "}

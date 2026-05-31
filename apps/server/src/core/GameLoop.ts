@@ -196,6 +196,12 @@ export class GameLoop {
   private handleRoundStart(
     match: Match
   ) {
+    match.resetRoundProgress()
+
+    this.boosterEngine.initialize(
+      match
+    )
+
     this.roundEngine.process(
       match
     )
@@ -240,6 +246,8 @@ export class GameLoop {
         currentPlayer
       )
     ) {
+      match.markCurrentPlayerAsPlayed()
+
       match.transition(
         MatchPhase.TURN_END
       )
@@ -283,6 +291,8 @@ export class GameLoop {
         currentPlayer
       )
     ) {
+      match.markCurrentPlayerAsPlayed()
+
       match.state.turnResolvedAt =
         Date.now()
 
@@ -295,6 +305,8 @@ export class GameLoop {
   private handleBoosterResolution(
     match: Match
   ) {
+    match.markCurrentPlayerAsPlayed()
+
     match.transition(
       MatchPhase.TURN_END
     )
@@ -321,6 +333,16 @@ export class GameLoop {
       return
     }
 
+    if (
+      match.hasRoundFinished()
+    ) {
+      match.transition(
+        MatchPhase.ROUND_END
+      )
+
+      return
+    }
+
     match.turn += 1
 
     match.transition(
@@ -332,6 +354,9 @@ export class GameLoop {
     match: Match
   ) {
     match.round += 1
+
+    match.currentPlayerId =
+      null
 
     match.transition(
       MatchPhase.ROUND_START

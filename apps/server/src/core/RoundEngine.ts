@@ -9,12 +9,31 @@ export class RoundEngine {
       return
     }
 
-    match.round += 1
+    const groupedPlayers =
+      [...match.players]
 
-    for (const player of alivePlayers) {
-      if (player.score < 0) {
-        player.score = 0
+    groupedPlayers.sort(
+      (a, b) => {
+        if (
+          a.score ===
+          b.score
+        ) {
+          return (
+            Math.random() - 0.5
+          )
+        }
+
+        return (
+          a.score -
+          b.score
+        )
       }
-    }
+    )
+
+    match.players.length = 0
+
+    match.players.push(
+      ...groupedPlayers
+    )
   }
 }

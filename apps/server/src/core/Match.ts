@@ -64,6 +64,8 @@ export interface MatchInternalState {
 
   eventLog: EventLogEntry[]
 
+  roundPlayedPlayerIds: string[]
+
   playersById: Record<
     string,
     MatchPlayer
@@ -139,6 +141,8 @@ export class Match {
       effects: [],
 
       eventLog: [],
+
+      roundPlayedPlayerIds: [],
 
       playersById: {},
     }
@@ -392,6 +396,43 @@ export class Match {
       )
   }
 
+  public markCurrentPlayerAsPlayed(): void {
+    if (
+      !this.currentPlayerId
+    ) {
+      return
+    }
+
+    if (
+      this.state.roundPlayedPlayerIds.includes(
+        this.currentPlayerId
+      )
+    ) {
+      return
+    }
+
+    this.state.roundPlayedPlayerIds.push(
+      this.currentPlayerId
+    )
+  }
+
+  public hasRoundFinished(): boolean {
+    const activePlayers =
+      this.getActivePlayers()
+
+    return activePlayers.every(
+      (player) =>
+        this.state.roundPlayedPlayerIds.includes(
+          player.id
+        )
+    )
+  }
+
+  public resetRoundProgress(): void {
+    this.state.roundPlayedPlayerIds =
+      []
+  }
+
   public isAbandoned(): boolean {
     if (
       this.state.emptySince ===
@@ -495,6 +536,9 @@ export class Match {
 
     this.state.emptySince =
       null
+
+    this.state.roundPlayedPlayerIds =
+      []
 
     this.transition(
       MatchPhase.ROUND_START
@@ -601,6 +645,9 @@ export class Match {
     this.state.effects = []
 
     this.state.eventLog = []
+
+    this.state.roundPlayedPlayerIds =
+      []
 
     this.state.playersById =
       {}

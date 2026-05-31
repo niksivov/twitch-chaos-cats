@@ -82,7 +82,7 @@ export class BoosterEngine {
       `${player.username} used ${booster.name}`
     )
 
-    this.boosterSetManager.replaceSlot(
+    this.boosterSetManager.removeSlot(
       match,
       slot
     )

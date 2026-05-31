@@ -8,6 +8,8 @@ export interface BoosterSetItem {
   boosterId: string
 
   boosterName: string
+
+  boosterIcon: string
 }
 
 const BOOSTER_SET_SIZE = 3
@@ -51,10 +53,7 @@ export class BoosterSetManager {
 
     for (const booster of boosters) {
       const copies =
-        Math.max(
-          1,
-          10 - booster.rarity
-        )
+        booster.poolCount
 
       for (
         let i = 0;
@@ -118,6 +117,9 @@ export class BoosterSetManager {
 
         boosterName:
           booster.name,
+
+        boosterIcon:
+          booster.icon,
       }
 
     if (existingIndex === -1) {
@@ -129,6 +131,18 @@ export class BoosterSetManager {
         existingIndex
       ] = setItem
     }
+  }
+
+  removeSlot(
+    match: Match,
+
+    slot: number
+  ) {
+    match.state.boosterSet =
+      match.state.boosterSet.filter(
+        (item) =>
+          item.slot !== slot
+      )
   }
 
   private shuffle(

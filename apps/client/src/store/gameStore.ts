@@ -28,6 +28,8 @@ interface BoosterSnapshot {
   slot: number
 
   boosterName: string
+
+  boosterIcon: string
 }
 
 interface StateUpdatePayload {
@@ -36,6 +38,8 @@ interface StateUpdatePayload {
   phase: MatchPhase
 
   tick: number
+
+  round?: number
 
   currentTurnPlayerId?: string
 
@@ -58,6 +62,8 @@ interface GameState {
   phase: MatchPhase
 
   tick: number
+
+  round: number
 
   currentTurnPlayerId?: string
 
@@ -89,6 +95,8 @@ export const useGameStore =
     phase: "LOBBY",
 
     tick: 0,
+
+    round: 0,
 
     currentTurnPlayerId:
       undefined,
@@ -122,7 +130,11 @@ export const useGameStore =
         phase:
           snapshot.phase,
 
-        tick: snapshot.tick,
+        tick:
+          snapshot.tick,
+
+        round:
+          snapshot.round ?? 0,
 
         currentTurnPlayerId:
           snapshot.currentTurnPlayerId,
