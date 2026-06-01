@@ -7,7 +7,7 @@ export const Plus50PercentBooster: BoosterDefinition =
     id: "MULTIPLY_150",
 
     name:
-      "+50% Points",
+      "+50%",
 
     description:
       "Increase your score by 50%",

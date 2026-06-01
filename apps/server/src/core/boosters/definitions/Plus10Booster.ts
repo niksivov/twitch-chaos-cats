@@ -6,7 +6,7 @@ export const Plus10Booster: BoosterDefinition =
   {
     id: "PLUS_10",
 
-    name: "+10 Points",
+    name: "+10",
 
     description:
       "Add 10 points to yourself",

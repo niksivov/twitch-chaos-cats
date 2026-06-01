@@ -7,7 +7,7 @@ export const RandomRemoveBooster: BoosterDefinition =
     id: "RANDOM_REMOVE",
 
     name:
-      "Random Elimination",
+      "случайная смерть",
 
     description:
       "Remove random enemy from game",

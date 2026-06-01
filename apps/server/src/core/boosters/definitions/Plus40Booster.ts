@@ -6,12 +6,12 @@ export const Plus40Booster: BoosterDefinition =
   {
     id: "PLUS_40",
 
-    name: "+40 Points",
+    name: "+40",
 
     description:
       "Add 40 points to yourself",
 
-    poolCount: 10,
+    poolCount: 3,
 
     icon: "plus40",
 

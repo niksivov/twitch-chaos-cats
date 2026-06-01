@@ -79,7 +79,7 @@ export class BoosterEngine {
 
     this.eventLog.add(
       match,
-      `${player.username} used ${booster.name}`
+      `${player.username} активирует ${booster.name}`
     )
 
     this.boosterSetManager.removeSlot(

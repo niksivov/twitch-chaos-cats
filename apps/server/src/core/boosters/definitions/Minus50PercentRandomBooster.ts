@@ -7,10 +7,10 @@ export const Minus50PercentRandomBooster: BoosterDefinition =
     id: "MINUS_50_PERCENT_RANDOM",
 
     name:
-      "-50% Random Enemy",
+      "-50% случайному противнику",
 
     description:
-      "Remove 50% points from a random enemy",
+      "-50% случайному противнику",
 
     poolCount: 1,
 

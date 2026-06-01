@@ -7,7 +7,7 @@ export const Minus100RandomBooster: BoosterDefinition =
     id: "MINUS_100_RANDOM",
 
     name:
-      "-100 Случайному противнику",
+      "-100 случайному противнику",
 
     description:
       "Remove 100 points from random enemy",

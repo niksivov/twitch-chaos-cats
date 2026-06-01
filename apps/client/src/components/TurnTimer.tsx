@@ -62,45 +62,16 @@ export function TurnTimer({
   return (
     <div
       style={{
-        background:
-          "#1a1f26",
+        display: "flex",
 
-        border:
-          "1px solid #2d3742",
+        alignItems: "center",
 
-        borderRadius: 12,
-
-        padding: 16,
+        gap: 12,
       }}
     >
       <div
         style={{
-          fontSize: 13,
-
-          opacity: 0.7,
-
-          marginBottom: 6,
-        }}
-      >
-        CURRENT TURN
-      </div>
-
-      <div
-        style={{
-          fontSize: 18,
-
-          fontWeight: 700,
-
-          marginBottom: 12,
-        }}
-      >
-        {playerName ??
-          "Waiting..."}
-      </div>
-
-      <div
-        style={{
-          fontSize: 40,
+          fontSize: 42,
 
           fontWeight: 800,
 
@@ -112,7 +83,35 @@ export function TurnTimer({
           lineHeight: 1,
         }}
       >
-        {remaining}s
+        {remaining}
+      </div>
+
+      <div>
+        <div
+          style={{
+            fontSize: 12,
+
+            opacity: 0.65,
+
+            textTransform:
+              "uppercase",
+          }}
+        >
+          Ход игрока
+        </div>
+
+        <div
+          style={{
+            fontSize: 16,
+
+            fontWeight: 700,
+
+            marginTop: 2,
+          }}
+        >
+          {playerName ??
+            "Waiting..."}
+        </div>
       </div>
     </div>
   )

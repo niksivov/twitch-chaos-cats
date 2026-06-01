@@ -12,7 +12,7 @@ export interface BoosterSetItem {
   boosterIcon: string
 }
 
-const BOOSTER_SET_SIZE = 30
+const BOOSTER_SET_SIZE = 15
 
 export class BoosterSetManager {
   private boosterRegistry =

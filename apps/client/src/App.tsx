@@ -10,29 +10,11 @@ import { EventLog } from "./components/EventLog"
 
 import { BoosterSet } from "./components/BoosterSet"
 
-import { DeveloperPanel } from "./components/DeveloperPanel"
-
 import { TurnTimer } from "./components/TurnTimer"
 
 import backgroundImage from "./assets/backgrounds/1.png"
 
 function App() {
-  const connected = useGameStore(
-    (state) => state.connected
-  )
-
-  const roomId = useGameStore(
-    (state) => state.roomId
-  )
-
-  const phase = useGameStore(
-    (state) => state.phase
-  )
-
-  const tick = useGameStore(
-    (state) => state.tick
-  )
-
   const round = useGameStore(
     (state) => state.round
   )
@@ -165,77 +147,7 @@ function App() {
             >
               Твич, Хаос и Котики
             </div>
-
-            <div
-              style={{
-                opacity: 0.7,
-
-                marginTop: 4,
-              }}
-            >
-              Room:
-              {" "}
-              {roomId}
-            </div>
           </div>
-
-          <div
-            style={{
-              display: "flex",
-
-              gap: 16,
-
-              fontSize: 14,
-            }}
-          >
-            <div>
-              Round:
-              {" "}
-              {round}
-            </div>
-
-            <div>
-              Phase:
-              {" "}
-              {phase}
-            </div>
-
-            <div>
-              Tick:
-              {" "}
-              {tick}
-            </div>
-
-            <div>
-              WS:
-              {" "}
-              {connected
-                ? "ONLINE"
-                : "OFFLINE"}
-            </div>
-          </div>
-        </div>
-
-        <div
-          style={{
-            marginBottom: 16,
-
-            padding: 12,
-
-            borderRadius: 12,
-
-            background:
-              "#1a1f26",
-
-            border:
-              "1px solid #2d3742",
-
-            fontSize: 13,
-          }}
-        >
-          Players count:
-          {" "}
-          {players.length}
         </div>
 
         <div
@@ -246,6 +158,8 @@ function App() {
               "1fr 320px",
 
             gap: 20,
+
+            marginTop: 20,
 
             marginBottom: 20,
           }}
@@ -286,18 +200,67 @@ function App() {
             </div>
           </div>
 
-          <div>
-            <TurnTimer
-              startedAt={
-                currentTurnStartedAt
-              }
-              durationSeconds={
-                15
-              }
-              playerName={
-                currentPlayer?.nickname
-              }
-            />
+          <div
+            style={{
+              display: "flex",
+
+              flexDirection:
+                "column",
+
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+
+                alignItems:
+                  "center",
+
+                justifyContent:
+                  "space-between",
+
+                padding: 12,
+
+                borderRadius: 12,
+
+                background:
+                  "#1a1f26",
+
+                border:
+                  "1px solid #2d3742",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 20,
+
+                  fontWeight: 700,
+
+                  opacity: 0.9,
+                }}
+              >
+                Раунд {round}
+              </div>
+
+              <div
+                style={{
+                  width: 180,
+                }}
+              >
+                <TurnTimer
+                  startedAt={
+                    currentTurnStartedAt
+                  }
+                  durationSeconds={
+                    15
+                  }
+                  playerName={
+                    currentPlayer?.nickname
+                  }
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -324,12 +287,6 @@ function App() {
             }
           />
         </div>
-
-        <DeveloperPanel
-          boosters={
-            boosterSet
-          }
-        />
       </div>
     </>
   )

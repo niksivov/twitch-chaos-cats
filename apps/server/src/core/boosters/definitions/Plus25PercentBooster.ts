@@ -7,12 +7,12 @@ export const Plus25PercentBooster: BoosterDefinition =
     id: "MULTIPLY_125",
 
     name:
-      "+25% Points",
+      "+25%",
 
     description:
       "Increase your score by 25%",
 
-    poolCount: 2,
+    poolCount: 3,
 
     icon: "multiply_125",
 
