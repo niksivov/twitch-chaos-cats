@@ -17,10 +17,10 @@ export function BoosterSet({
     <div
       style={{
         background:
-          "#1a1f26",
+          "rgba(26, 31, 38, 0.0)",
 
         border:
-          "1px solid #2d3742",
+          "0px solid #2d3742",
 
         borderRadius: 12,
 
@@ -36,7 +36,7 @@ export function BoosterSet({
           fontSize: 16,
         }}
       >
-        Бустеры
+        Бустеры (в свой ход активируй один бустер командой !номербустера)
       </div>
 
       <div
@@ -67,7 +67,7 @@ export function BoosterSet({
                     "#101418",
 
                   border:
-                    "1px solid #2d3742",
+                    "1px solid #f8d407",
 
                   borderRadius: 10,
 

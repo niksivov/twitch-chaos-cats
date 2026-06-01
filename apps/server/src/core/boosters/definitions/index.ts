@@ -3,20 +3,88 @@ import {
 } from "../BoosterTypes"
 
 import {
+  Plus10Booster,
+} from "./Plus10Booster"
+
+import {
   Plus20Booster,
 } from "./Plus20Booster"
+
+import {
+  Plus30Booster,
+} from "./Plus30Booster"
+
+import {
+  Plus40Booster,
+} from "./Plus40Booster"
 
 import {
   Plus50Booster,
 } from "./Plus50Booster"
 
 import {
-  Minus30RandomBooster,
-} from "./Minus30RandomBooster"
+  Plus25PercentBooster,
+} from "./Plus25PercentBooster"
 
 import {
-  DoubleSelfBooster,
-} from "./DoubleSelfBooster"
+  Plus50PercentBooster,
+} from "./Plus50PercentBooster"
+
+import {
+  Plus75PercentBooster,
+} from "./Plus75PercentBooster"
+
+import {
+  Plus100PercentBooster,
+} from "./Plus100PercentBooster"
+
+import {
+  Minus5toallBooster,
+} from "./Minus5toallBooster"
+
+import {
+  Minus10toallBooster,
+} from "./Minus10toallBooster"
+
+import {
+  Minus15toallBooster,
+} from "./Minus15toallBooster"
+
+import {
+  Minus20toallBooster,
+} from "./Minus20toallBooster"
+
+import {
+  Minus25toallBooster,
+} from "./Minus25toallBooster"
+
+import {
+  Minus5PercenttoallBooster,
+} from "./Minus5PercenttoallBooster"
+
+import {
+  Minus10PercenttoallBooster,
+} from "./Minus10PercenttoallBooster"
+
+import {
+  Minus15PercenttoallBooster,
+} from "./Minus15PercenttoallBooster"
+
+import {
+  Minus50RandomBooster,
+} from "./Minus50RandomBooster"
+
+import {
+  Minus25PercentRandomBooster,
+} from "./Minus25PercentRandomBooster"
+
+import {
+  Minus50PercentRandomBooster,
+} from "./Minus50PercentRandomBooster"
+
+import {
+  Minus100RandomBooster,
+} from "./Minus100RandomBooster"
 
 import {
   RandomRemoveBooster,
@@ -24,13 +92,47 @@ import {
 
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
+    Plus10Booster,
+        
     Plus20Booster,
+    
+    Plus30Booster,
+
+    Plus40Booster,
 
     Plus50Booster,
 
-    Minus30RandomBooster,
+    Plus25PercentBooster,
 
-    DoubleSelfBooster,
+    Plus50PercentBooster,
+
+    Plus75PercentBooster,
+
+    Plus100PercentBooster,
+
+    Minus5toallBooster,
+
+    Minus10toallBooster,
+
+    Minus15toallBooster,
+
+    Minus20toallBooster,
+
+    Minus25toallBooster,
+
+    Minus5PercenttoallBooster,
+
+    Minus10PercenttoallBooster,
+
+    Minus15PercenttoallBooster,
+
+    Minus50RandomBooster,
+
+    Minus100RandomBooster,
+
+    Minus25PercentRandomBooster,
+
+    Minus50PercentRandomBooster,
 
     RandomRemoveBooster,
   ]

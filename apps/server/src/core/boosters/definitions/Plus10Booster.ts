@@ -2,19 +2,18 @@ import {
   BoosterDefinition,
 } from "../BoosterTypes"
 
-export const DoubleSelfBooster: BoosterDefinition =
+export const Plus10Booster: BoosterDefinition =
   {
-    id: "DOUBLE_SELF",
+    id: "PLUS_10",
 
-    name:
-      "Double Points",
+    name: "+10 Points",
 
     description:
-      "Double your current score",
+      "Add 10 points to yourself",
 
-    poolCount: 2,
+    poolCount: 10,
 
-    icon: "double_self",
+    icon: "plus10",
 
     execute: ({
       match,
@@ -29,7 +28,6 @@ export const DoubleSelfBooster: BoosterDefinition =
         return
       }
 
-      player.score =
-        player.score * 2
+      player.score += 10
     },
   }

@@ -14,6 +14,8 @@ import { DeveloperPanel } from "./components/DeveloperPanel"
 
 import { TurnTimer } from "./components/TurnTimer"
 
+import backgroundImage from "./assets/backgrounds/1.png"
+
 function App() {
   const connected = useGameStore(
     (state) => state.connected
@@ -88,209 +90,248 @@ function App() {
     )
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
+    <>
+      <img
+        src={backgroundImage}
+        alt=""
+        style={{
+          position: "fixed",
 
-        background:
-          "#101418",
+          inset: 0,
 
-        color: "white",
+          width: "100%",
 
-        padding: 20,
+          height: "100%",
 
-        fontFamily:
-          "Arial, sans-serif",
-      }}
-    >
+          objectFit: "cover",
+
+          objectPosition:
+            "center",
+
+          zIndex: -2,
+
+          pointerEvents:
+            "none",
+        }}
+      />
+
       <div
         style={{
-          display: "flex",
+          position: "fixed",
 
-          justifyContent:
-            "space-between",
+          inset: 0,
 
-          alignItems: "center",
+          background:
+            "rgba(0, 0, 0, 0.65)",
 
-          marginBottom: 20,
+          zIndex: -1,
+
+          pointerEvents:
+            "none",
+        }}
+      />
+
+      <div
+        style={{
+          minHeight: "100vh",
+
+          color: "white",
+
+          padding: 20,
+
+          fontFamily:
+            "Arial, sans-serif",
         }}
       >
-        <div>
-          <div
-            style={{
-              fontSize: 28,
+        <div
+          style={{
+            display: "flex",
 
-              fontWeight: 800,
-            }}
-          >
-            Twitch Chaos Cats
+            justifyContent:
+              "space-between",
+
+            alignItems: "center",
+
+            marginBottom: 20,
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontSize: 28,
+
+                fontWeight: 800,
+              }}
+            >
+              Твич, Хаос и Котики
+            </div>
+
+            <div
+              style={{
+                opacity: 0.7,
+
+                marginTop: 4,
+              }}
+            >
+              Room:
+              {" "}
+              {roomId}
+            </div>
           </div>
 
           <div
             style={{
-              opacity: 0.7,
+              display: "flex",
 
-              marginTop: 4,
+              gap: 16,
+
+              fontSize: 14,
             }}
           >
-            Room:
-            {" "}
-            {roomId}
+            <div>
+              Round:
+              {" "}
+              {round}
+            </div>
+
+            <div>
+              Phase:
+              {" "}
+              {phase}
+            </div>
+
+            <div>
+              Tick:
+              {" "}
+              {tick}
+            </div>
+
+            <div>
+              WS:
+              {" "}
+              {connected
+                ? "ONLINE"
+                : "OFFLINE"}
+            </div>
           </div>
         </div>
 
         <div
           style={{
-            display: "flex",
+            marginBottom: 16,
 
-            gap: 16,
+            padding: 12,
 
-            fontSize: 14,
+            borderRadius: 12,
+
+            background:
+              "#1a1f26",
+
+            border:
+              "1px solid #2d3742",
+
+            fontSize: 13,
+          }}
+        >
+          Players count:
+          {" "}
+          {players.length}
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+
+            gridTemplateColumns:
+              "1fr 320px",
+
+            gap: 20,
+
+            marginBottom: 20,
           }}
         >
           <div>
-            Round:
-            {" "}
-            {round}
+            <div
+              style={{
+                display: "grid",
+
+                gridTemplateColumns:
+                  "repeat(auto-fill, minmax(260px, 1fr))",
+
+                gap: 12,
+              }}
+            >
+              {players.map(
+                (player) => {
+                  return (
+                    <PlayerCard
+                      key={
+                        player.id
+                      }
+                      player={
+                        player
+                      }
+                      isCurrentTurn={
+                        player.id ===
+                        currentTurnPlayerId
+                      }
+                      isLeader={
+                        player.id ===
+                        leaderPlayerId
+                      }
+                    />
+                  )
+                }
+              )}
+            </div>
           </div>
 
           <div>
-            Phase:
-            {" "}
-            {phase}
-          </div>
-
-          <div>
-            Tick:
-            {" "}
-            {tick}
-          </div>
-
-          <div>
-            WS:
-            {" "}
-            {connected
-              ? "ONLINE"
-              : "OFFLINE"}
-          </div>
-        </div>
-      </div>
-
-      <div
-        style={{
-          marginBottom: 16,
-
-          padding: 12,
-
-          borderRadius: 12,
-
-          background:
-            "#1a1f26",
-
-          border:
-            "1px solid #2d3742",
-
-          fontSize: 13,
-        }}
-      >
-        Players count:
-        {" "}
-        {players.length}
-      </div>
-
-      <div
-        style={{
-          display: "grid",
-
-          gridTemplateColumns:
-            "1fr 320px",
-
-          gap: 20,
-
-          marginBottom: 20,
-        }}
-      >
-        <div>
-          <div
-            style={{
-              display: "grid",
-
-              gridTemplateColumns:
-                "repeat(auto-fill, minmax(260px, 1fr))",
-
-              gap: 12,
-            }}
-          >
-            {players.map(
-              (player) => {
-                return (
-                  <PlayerCard
-                    key={
-                      player.id
-                    }
-                    player={
-                      player
-                    }
-                    isCurrentTurn={
-                      player.id ===
-                      currentTurnPlayerId
-                    }
-                    isLeader={
-                      player.id ===
-                      leaderPlayerId
-                    }
-                  />
-                )
+            <TurnTimer
+              startedAt={
+                currentTurnStartedAt
               }
-            )}
+              durationSeconds={
+                15
+              }
+              playerName={
+                currentPlayer?.nickname
+              }
+            />
           </div>
         </div>
 
-        <div>
-          <TurnTimer
-            startedAt={
-              currentTurnStartedAt
-            }
-            durationSeconds={
-              15
-            }
-            playerName={
-              currentPlayer?.nickname
+        <div
+          style={{
+            marginBottom: 20,
+          }}
+        >
+          <BoosterSet
+            boosters={
+              boosterSet
             }
           />
         </div>
-      </div>
 
-      <div
-        style={{
-          marginBottom: 20,
-        }}
-      >
-        <BoosterSet
+        <div
+          style={{
+            marginBottom: 20,
+          }}
+        >
+          <EventLog
+            events={
+              recentEvents
+            }
+          />
+        </div>
+
+        <DeveloperPanel
           boosters={
             boosterSet
           }
         />
       </div>
-
-      <div
-        style={{
-          marginBottom: 20,
-        }}
-      >
-        <EventLog
-          events={
-            recentEvents
-          }
-        />
-      </div>
-
-      <DeveloperPanel
-        boosters={
-          boosterSet
-        }
-      />
-    </div>
+    </>
   )
 }
 

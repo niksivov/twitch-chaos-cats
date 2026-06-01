@@ -15,7 +15,7 @@ export function EventLog({
     <div
       style={{
         background:
-          "#1a1f26",
+          "rgba(26, 31, 38, 0.8)",
 
         border:
           "1px solid #2d3742",

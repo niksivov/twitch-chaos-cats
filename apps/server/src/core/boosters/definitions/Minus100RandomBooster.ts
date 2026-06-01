@@ -2,19 +2,19 @@ import {
   BoosterDefinition,
 } from "../BoosterTypes"
 
-export const Minus30RandomBooster: BoosterDefinition =
+export const Minus100RandomBooster: BoosterDefinition =
   {
-    id: "MINUS_30_RANDOM",
+    id: "MINUS_100_RANDOM",
 
     name:
-      "-30 Случайному противнику",
+      "-100 Случайному противнику",
 
     description:
-      "Remove 30 points from random enemy",
+      "Remove 100 points from random enemy",
 
-    poolCount: 5,
+    poolCount: 1,
 
-    icon: "minus30",
+    icon: "minus100",
 
     execute: ({
       match,
@@ -45,6 +45,6 @@ export const Minus30RandomBooster: BoosterDefinition =
           )
         ]
 
-      randomTarget.score -= 30
+      randomTarget.score -= 100
     },
   }
