@@ -1,93 +1,55 @@
 import { Match } from "./Match"
-
 import { MatchPhase } from "./matchPhase"
-
 import { BoosterEngine } from "./boosters/BoosterEngine"
 
 export class TurnTimerEngine {
-  private boosterEngine =
-    new BoosterEngine()
+  private boosterEngine = new BoosterEngine() // подключаем существующий BoosterEngine
 
   process(match: Match) {
-    if (
-      match.phase !==
-      MatchPhase.BOOSTER_SELECTION
-    ) {
+    // таймер работает только во время выбора бустера
+    if (match.phase !== MatchPhase.BOOSTER_SELECTION) {
       return
     }
 
-    if (
-      match.state
-        .turnResolvedAt !==
-      null
-    ) {
+    // если уже есть результат хода — ничего не делаем
+    if (match.state.turnResolvedAt !== null) {
       return
     }
 
-    if (
-      !match.state.turnEndsAt
-    ) {
+    // если таймер не установлен — выходим
+    if (!match.state.turnEndsAt) {
       return
     }
 
     const now = Date.now()
 
-    if (
-      now <
-      match.state.turnEndsAt
-    ) {
+    // ещё не время срабатывать
+    if (now < match.state.turnEndsAt) {
       return
     }
 
-    match.state.turnResolvedAt =
-      now
+    // фиксируем момент автозавершения
+    match.state.turnResolvedAt = now
 
-    this.activateRandomBooster(
-      match
-    )
+    this.activateRandomBooster(match)
   }
 
-  private activateRandomBooster(
-    match: Match
-  ) {
-    const boosterSet =
-      match.state.boosterSet
+  private activateRandomBooster(match: Match) {
+    const boosterSet = match.state.boosterSet
+    if (boosterSet.length === 0) return
+    if (!match.currentPlayerId) return
 
-    if (
-      boosterSet.length === 0
-    ) {
-      return
-    }
+    const randomIndex = Math.floor(Math.random() * boosterSet.length)
+    const randomItem = boosterSet[randomIndex]
+    if (!randomItem) return
 
-    const randomIndex =
-      Math.floor(
-        Math.random() *
-          boosterSet.length
-      )
+    // вызываем BoosterEngine, чтобы эффекты реально применились
+    this.boosterEngine.activateBooster(match, match.currentPlayerId, randomItem.slot)
 
-    const randomSlot =
-      boosterSet[randomIndex]
+    // фиксируем, что игрок сделал ход
+    match.markCurrentPlayerAsPlayed()
 
-    if (!randomSlot) {
-      return
-    }
-
-    if (
-      !match.currentPlayerId
-    ) {
-      return
-    }
-
-    match.transition(
-      MatchPhase.BOOSTER_RESOLUTION
-    )
-
-    this.boosterEngine.activateBooster(
-      match,
-
-      match.currentPlayerId,
-
-      randomSlot.slot
-    )
+    // переводим фазу в разрешение бустера
+    match.transition(MatchPhase.BOOSTER_RESOLUTION)
   }
 }

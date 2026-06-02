@@ -1,0 +1,144 @@
+Структура папок тома Windows
+Серийный номер тома: 86A6-C28B
+C:\USERS\НИКИТА\TWITCH-CHAOS-CATS\APPS\SERVER\SRC
+|   cats.ts
+|   game.ts
+|   index.ts
+|   players.ts
+|   power.ts
+|   twitch.ts
+|   
++---core
+|   |   BoosterPool.ts
+|   |   CommandProcessor.ts
+|   |   CommandQueue.ts
+|   |   createInitialMatchState.ts
+|   |   GameLoop.ts
+|   |   GameManager.ts
+|   |   handleBoosterSelection.ts
+|   |   LeaderEngine.ts
+|   |   Match.ts
+|   |   MatchManager.ts
+|   |   matchPhase.ts
+|   |   MatchStateMachine.ts
+|   |   PhaseEngine.ts
+|   |   PlayerManager.ts
+|   |   processTurnTimeout.ts
+|   |   RoundEngine.ts
+|   |   SessionManager.ts
+|   |   StreamerSession.ts
+|   |   TurnEngine.ts
+|   |   TurnManager.ts
+|   |   TurnTimer.ts
+|   |   TurnTimerEngine.ts
+|   |   updateMatchState.ts
+|   |   
+|   +---antiSpam
+|   |       AntiSpamService.ts
+|   |       
+|   +---avatars
+|   |       AvatarManager.ts
+|   |       avatarPool.ts
+|   |       
+|   +---boosters
+|   |   |   BoosterEngine.ts
+|   |   |   BoosterEvent.ts
+|   |   |   BoosterRegistry.ts
+|   |   |   BoosterSetManager.ts
+|   |   |   BoosterTypes.ts
+|   |   |   PermanentBoosterEffect.ts
+|   |   |   PermanentEffectEngine.ts
+|   |   |   
+|   |   +---definitions
+|   |   |       index.ts
+|   |   |       Minus100RandomBooster.ts
+|   |   |       Minus10PercenttoallBooster.ts
+|   |   |       Minus10toallBooster.ts
+|   |   |       Minus15PercenttoallBooster.ts
+|   |   |       Minus15toallBooster.ts
+|   |   |       Minus20toallBooster.ts
+|   |   |       Minus25PercentRandomBooster.ts
+|   |   |       Minus25toallBooster.ts
+|   |   |       Minus50PercentRandomBooster.ts
+|   |   |       Minus50RandomBooster.ts
+|   |   |       Minus5PercenttoallBooster.ts
+|   |   |       Minus5toallBooster.ts
+|   |   |       Plus100PercentBooster.ts
+|   |   |       Plus10Booster.ts
+|   |   |       Plus15Booster.ts
+|   |   |       Plus20Booster.ts
+|   |   |       Plus25Booster.ts
+|   |   |       Plus25PercentBooster.ts
+|   |   |       Plus30Booster.ts
+|   |   |       Plus35Booster.ts
+|   |   |       Plus40Booster.ts
+|   |   |       Plus45Booster.ts
+|   |   |       Plus50Booster.ts
+|   |   |       Plus50PercentBooster.ts
+|   |   |       Plus5Booster.ts
+|   |   |       Plus75PercentBooster.ts
+|   |   |       RandomRemoveBooster.ts
+|   |   |       
+|   |   +---effects
+|   |   |       BoosterEffect.ts
+|   |   |       EffectHandler.ts
+|   |   |       EffectRegistry.ts
+|   |   |       fastThinker.effect.ts
+|   |   |       fastThinker.permanent.ts
+|   |   |       FastThinkerEffect.ts
+|   |   |       plus20.effect.ts
+|   |   |       shield.effect.ts
+|   |   |       steal15.effect.ts
+|   |   |       swap.effect.ts
+|   |   |       
+|   |   +---handlers
+|   |   |       AddEffectHandler.ts
+|   |   |       AddPointsHandler.ts
+|   |   |       BoosterHandler.ts
+|   |   |       StealLeaderHandler.ts
+|   |   |       SwapLeaderHandler.ts
+|   |   |       
+|   |   \---utils
+|   |           getAlivePlayers.ts
+|   |           
+|   +---commands
+|   |       BoostCommand.ts
+|   |       BoostCommandHandler.ts
+|   |       
+|   +---effects
+|   |       createEffect.ts
+|   |       Effect.ts
+|   |       EffectEngine.ts
+|   |       
+|   +---events
+|   |       createGameEvent.ts
+|   |       EventLog.ts
+|   |       GameEvent.ts
+|   |       GameEventEmitter.ts
+|   |       MatchEventStore.ts
+|   |       
+|   +---players
+|   |       createPlayer.ts
+|   |       
+|   \---sessions
+|           SessionManager.ts
+|           
++---models
+|       ActiveEffect.ts
+|       Booster.ts
+|       MatchSettings.ts
+|       MatchState.ts
+|       Player.ts
+|       
++---network
+|       GameBroadcaster.ts
+|       GameSocketHandler.ts
+|       network_structure.txt
+|       snapshot.ts
+|       WebSocketServer.ts
+|       wsEvents.ts
+|       
+\---twitch
+        parseChatCommand.ts
+        TwitchBotService.ts
+        

@@ -1,83 +1,38 @@
 import { randomUUID } from "crypto"
-
 import { Match } from "./Match"
-
 import { SessionManager } from "./SessionManager"
+import { MatchSettings } from "./MatchSettings"
 
 export class MatchManager {
-  private matches =
-    new Map<string, Match>()
+  private matches = new Map<string, Match>()
 
-  constructor(
-    private sessionManager: SessionManager
-  ) {}
+  constructor(private sessionManager: SessionManager) {}
 
-  createMatch(): Match {
-    const matchId =
-      randomUUID()
-
-    const match =
-      new Match(matchId)
-
-    this.matches.set(
-      matchId,
-      match
-    )
-
+  createMatch(settings?: Partial<MatchSettings>): Match {
+    const matchId = randomUUID()
+    const match = new Match(matchId, settings)
+    this.matches.set(matchId, match)
     return match
   }
 
-  getMatch(
-    matchId: string
-  ): Match | null {
-    return (
-      this.matches.get(
-        matchId
-      ) ?? null
-    )
+  getMatch(matchId: string): Match | null {
+    return this.matches.get(matchId) ?? null
   }
 
   getAllMatches(): Match[] {
-    return Array.from(
-      this.matches.values()
-    )
+    return Array.from(this.matches.values())
   }
 
-  removeMatch(
-    matchId: string
-  ): void {
-    this.sessionManager.removeMatchSessions(
-      matchId
-    )
-
-    this.matches.delete(
-      matchId
-    )
+  removeMatch(matchId: string): void {
+    this.sessionManager.removeMatchSessions(matchId)
+    this.matches.delete(matchId)
   }
 
-  addPlayerToMatch(
-    matchId: string,
+  addPlayerToMatch(matchId: string, playerId: string, username: string) {
+    const match = this.matches.get(matchId)
+    if (!match) throw new Error("Match not found")
 
-    playerId: string,
-
-    username: string
-  ) {
-    const match =
-      this.matches.get(
-        matchId
-      )
-
-    if (!match) {
-      throw new Error(
-        "Match not found"
-      )
-    }
-
-    const player =
-      match.addPlayer(
-        playerId,
-        username
-      )
+    const player = match.addPlayer(playerId, username)
 
     this.sessionManager.createSession(
       player.id,
@@ -87,107 +42,47 @@ export class MatchManager {
       player.runtimeId
     )
 
-    return {
-      match,
-      player,
-    }
+    return { match, player }
   }
 
-  disconnectPlayer(
-    matchId: string,
+  disconnectPlayer(matchId: string, playerId: string): void {
+    const match = this.matches.get(matchId)
+    if (!match) return
 
-    playerId: string
-  ): void {
-    const match =
-      this.matches.get(
-        matchId
-      )
-
-    if (!match) {
-      return
-    }
-
-    match.disconnectPlayer(
-      playerId
-    )
-
-    this.sessionManager.disconnect(
-      playerId
-    )
+    match.disconnectPlayer(playerId)
+    this.sessionManager.disconnect(playerId)
   }
 
-  reconnectPlayer(
-    playerId: string
-  ): boolean {
-    const session =
-      this.sessionManager.getSession(
-        playerId
-      )
+  reconnectPlayer(playerId: string): boolean {
+    const session = this.sessionManager.getSession(playerId)
+    if (!session) return false
 
-    if (!session) {
-      return false
-    }
+    const match = this.matches.get(session.matchId)
+    if (!match) return false
 
-    const match =
-      this.matches.get(
-        session.matchId
-      )
-
-    if (!match) {
-      return false
-    }
-
-    const success =
-      match.reconnectPlayer(
-        playerId,
-        session.matchRuntimeId,
-        session.playerRuntimeId
-      )
-
-    if (!success) {
-      return false
-    }
-
-    this.sessionManager.reconnect(
-      playerId
+    const success = match.reconnectPlayer(
+      playerId,
+      session.matchRuntimeId,
+      session.playerRuntimeId
     )
 
+    if (!success) return false
+
+    this.sessionManager.reconnect(playerId)
     return true
   }
 
   cleanupEmptyMatches(): void {
-    for (const [
-      matchId,
-      match,
-    ] of this.matches) {
-      if (
-        match.players.length ===
-          0 &&
-        match.phase ===
-          "WAITING_FOR_PLAYERS"
-      ) {
-        this.removeMatch(
-          matchId
-        )
+    for (const [matchId, match] of this.matches) {
+      if (match.players.length === 0 && match.phase === "WAITING_FOR_PLAYERS") {
+        this.removeMatch(matchId)
       }
     }
   }
 
-  syncMatchRuntime(
-    matchId: string
-  ): void {
-    const match =
-      this.matches.get(
-        matchId
-      )
-
-    if (!match) {
-      return
-    }
-
-    this.sessionManager.updateMatchRuntime(
-      matchId,
-      match.state.runtimeId
-    )
+  syncMatchRuntime(matchId: string): void {
+    const match = this.matches.get(matchId)
+    if (!match) return
+    this.sessionManager.updateMatchRuntime(matchId, match.state.runtimeId)
   }
 }

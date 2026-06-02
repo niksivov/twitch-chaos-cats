@@ -11,6 +11,9 @@ export const WS_EVENTS = {
 
   STREAMER_SESSION:
     "streamer_session",
+
+  CREATE_MATCH:
+    "create_match",
 } as const
 
 export type WsEventType =
@@ -33,6 +36,14 @@ export interface StreamerSessionPayload {
   channel: string
 
   sessionId: string
+}
+
+export interface CreateMatchPayload {
+  turnTimerSeconds: number
+
+  targetPoints: number
+
+  boosterSetSize: number
 }
 
 export function isWsMessage(

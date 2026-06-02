@@ -1,39 +1,30 @@
 import { Match } from "../Match"
-
 import { BoosterRegistry } from "./BoosterRegistry"
 
 export interface BoosterSetItem {
   slot: number
-
   boosterId: string
-
   boosterName: string
-
   boosterIcon: string
 }
 
-const BOOSTER_SET_SIZE = 15
-
 export class BoosterSetManager {
-  private boosterRegistry =
-    new BoosterRegistry()
+  private boosterRegistry = new BoosterRegistry()
 
   initialize(match: Match) {
-    if (
-      match.state.boosterPool
-        .length === 0
-    ) {
-      this.fillBoosterPool(
-        match
-      )
+    if (match.state.boosterPool.length === 0) {
+      this.fillBoosterPool(match)
     }
 
-    match.state.boosterSet =
-      []
+    match.state.boosterSet = []
+
+    const setSize =
+      (match.state as any)
+        .boosterSetSize ?? 3
 
     for (
       let i = 1;
-      i <= BOOSTER_SET_SIZE;
+      i <= setSize;
       i++
     ) {
       this.replaceSlot(
@@ -74,21 +65,28 @@ export class BoosterSetManager {
 
   replaceSlot(
     match: Match,
-
     slot: number
   ) {
     if (
       match.state.boosterPool
         .length === 0
     ) {
+      const exhaustiblePool =
+        (match.state as any)
+          .exhaustiblePool ??
+        true
+
+      if (!exhaustiblePool) {
+        return
+      }
+
       this.fillBoosterPool(
         match
       )
     }
 
     const boosterId =
-      match.state
-        .boosterPool.shift()
+      match.state.boosterPool.shift()
 
     if (!boosterId) {
       return
@@ -112,17 +110,16 @@ export class BoosterSetManager {
     const setItem: BoosterSetItem =
       {
         slot,
-
         boosterId,
-
         boosterName:
           booster.name,
-
         boosterIcon:
           booster.icon,
       }
 
-    if (existingIndex === -1) {
+    if (
+      existingIndex === -1
+    ) {
       match.state.boosterSet.push(
         setItem
       )
@@ -135,7 +132,6 @@ export class BoosterSetManager {
 
   removeSlot(
     match: Match,
-
     slot: number
   ) {
     match.state.boosterSet =
@@ -154,11 +150,10 @@ export class BoosterSetManager {
       i > 0;
       i--
     ) {
-      const j =
-        Math.floor(
-          Math.random() *
-            (i + 1)
-        )
+      const j = Math.floor(
+        Math.random() *
+          (i + 1)
+      )
 
       ;[
         array[i],

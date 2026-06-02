@@ -1,191 +1,97 @@
 import { useGameStore } from "../store/gameStore"
 
+export interface MatchSettings {
+  turnTimerSeconds: number
+  targetPoints: number
+  boosterSetSize: number
+}
+
 class SocketClient {
-  private socket: WebSocket | null =
-    null
+  private socket: WebSocket | null = null
 
   connect() {
-    this.socket = new WebSocket(
-      "ws://localhost:8080"
-    )
+    this.socket = new WebSocket("ws://localhost:8080")
 
     this.socket.onopen = () => {
-      useGameStore
-        .getState()
-        .setConnected(true)
-
-      console.log(
-        "websocket connected"
-      )
+      useGameStore.getState().setConnected(true)
+      console.log("websocket connected")
     }
 
     this.socket.onclose = () => {
-      useGameStore
-        .getState()
-        .setConnected(false)
-
-      console.log(
-        "websocket disconnected"
-      )
-
-      setTimeout(() => {
-        this.connect()
-      }, 2000)
+      useGameStore.getState().setConnected(false)
+      console.log("websocket disconnected")
+      setTimeout(() => this.connect(), 2000)
     }
 
-    this.socket.onmessage = (
-      event
-    ) => {
+    this.socket.onmessage = (event) => {
       try {
-        const message =
-          JSON.parse(
-            event.data
-          )
+        const message = JSON.parse(event.data)
 
-        if (
-          message.type !==
-          "match_state"
-        ) {
+        if (message.type !== "match_state") {
           return
         }
 
-        const match =
-          message.payload
-            ?.match
+        const match = message.payload?.match
+        if (!match) return
 
-        if (!match) {
-          return
-        }
+        const players = (match.players ?? []).map((player: any) => ({
+          id: player.id,
+          nickname: player.username,
+          avatarId: player.username?.slice(0, 2).toUpperCase() ?? "CAT",
+          points: player.score,
+          eliminated: !player.isAlive,
+        }))
 
-        const players =
-          (
-            match.players ??
-            []
-          ).map(
-            (player: any) => ({
-              id: player.id,
+        const recentEvents = (match.state?.eventLog ?? []).map((event: any) => ({
+          id: event.id ?? crypto.randomUUID(),
+          message: event.message ?? "",
+        }))
 
-              nickname:
-                player.username,
+        const boosterSet = (match.state?.boosterSet ?? []).map((booster: any) => ({
+          slot: booster.slot,
+          boosterName: booster.boosterName ?? "Unknown Booster",
+          boosterIcon: booster.boosterIcon ?? "",
+        }))
 
-              avatarId:
-                player.username
-                  ?.slice(
-                    0,
-                    2
-                  )
-                  .toUpperCase() ??
-                "CAT",
-
-              points:
-                player.score,
-
-              eliminated:
-                !player.isAlive,
-            })
-          )
-
-        const recentEvents =
-          (
-            match.state
-              ?.eventLog ?? []
-          ).map(
-            (event: any) => ({
-              id:
-                event.id ??
-                crypto.randomUUID(),
-
-              message:
-                event.message ??
-                "",
-            })
-          )
-
-        const boosterSet =
-          (
-            match.state
-              ?.boosterSet ??
-            []
-          ).map(
-            (booster: any) => ({
-              slot:
-                booster.slot,
-
-              boosterName:
-                booster.boosterName ??
-                "Unknown Booster",
-
-              boosterIcon:
-                booster.boosterIcon ??
-                "",
-            })
-          )
-
-        useGameStore
-          .getState()
-          .applySnapshot({
-            roomId:
-              match.id ?? "",
-
-            phase:
-              match.phase ??
-              "LOBBY",
-
-            tick:
-              match.state
-                ?.tick ?? 0,
-
-            round:
-              match.round ?? 0,
-
-            currentTurnPlayerId:
-              match.currentPlayerId,
-
-            currentTurnStartedAt:
-              match.state
-                ?.turnStartedAt ??
-              undefined,
-
-            leaderPlayerId:
-              match.state
-                ?.leaderId ??
-              undefined,
-
-            players,
-
-            recentEvents,
-
-            boosterSet,
-          })
+        useGameStore.getState().applySnapshot({
+          roomId: match.id ?? "",
+          phase: match.phase ?? "LOBBY",
+          tick: match.state?.tick ?? 0,
+          round: match.round ?? 0,
+          currentTurnPlayerId: match.currentPlayerId,
+          currentTurnStartedAt: match.state?.turnStartedAt ?? undefined,
+          leaderPlayerId: match.state?.leaderId ?? undefined,
+          players,
+          recentEvents,
+          boosterSet,
+        })
       } catch (error) {
         console.error(error)
       }
     }
   }
 
-  selectBooster(
-    slot: number
-  ) {
-    if (
-      !this.socket ||
-      this.socket.readyState !==
-        WebSocket.OPEN
-    ) {
-      return
-    }
+  createMatch(settings: MatchSettings) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return
 
     this.socket.send(
       JSON.stringify({
-        type:
-          "SELECT_BOOSTER",
+        type: "CREATE_MATCH",
+        payload: settings,
+      })
+    )
+  }
 
-        data: {
-          slot,
-        },
+  selectBooster(slot: number) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return
+
+    this.socket.send(
+      JSON.stringify({
+        type: "SELECT_BOOSTER",
+        payload: { slot },
       })
     )
   }
 }
 
-export const socketClient =
-  new SocketClient()
+export const socketClient = new SocketClient()

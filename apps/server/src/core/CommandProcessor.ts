@@ -1,220 +1,119 @@
 import { MatchManager } from "./MatchManager"
-
 import { MatchPhase } from "./matchPhase"
-
 import { BoosterEngine } from "./boosters/BoosterEngine"
+import { MatchSettings } from "./MatchSettings"
 
 export interface GameCommand {
   type: string
-
-  matchId: string
-
-  playerId: string
-
+  matchId?: string
+  playerId?: string
   payload?: any
-
   createdAt: number
 }
 
 export class CommandProcessor {
-  private queue: GameCommand[] =
-    []
+  private queue: GameCommand[] = []
+  private readonly processedKeys = new Set<string>()
+  private readonly cooldowns = new Map<string, number>()
+  private readonly boosterEngine = new BoosterEngine()
 
-  private readonly processedKeys =
-    new Set<string>()
+  constructor(private readonly matchManager: MatchManager) {}
 
-  private readonly cooldowns =
-    new Map<string, number>()
-
-  private readonly boosterEngine =
-    new BoosterEngine()
-
-  constructor(
-    private readonly matchManager: MatchManager
-  ) {}
-
-  enqueue(
-    command: GameCommand
-  ) {
-    const key =
-      this.buildCommandKey(
-        command
-      )
-
-    if (
-      this.processedKeys.has(key)
-    ) {
-      return
-    }
-
+  enqueue(command: GameCommand) {
+    const key = this.buildCommandKey(command)
+    if (this.processedKeys.has(key)) return
     this.processedKeys.add(key)
-
     this.queue.push(command)
   }
 
   process() {
-    const commands = [
-      ...this.queue,
-    ]
-
+    const commands = [...this.queue]
     this.queue.length = 0
-
     for (const command of commands) {
-      this.processCommand(
-        command
-      )
+      this.processCommand(command)
     }
-
     this.cleanup()
   }
 
-  private processCommand(
-    command: GameCommand
-  ) {
-    const match =
-      this.matchManager.getMatch(
-        command.matchId
-      )
+  private processCommand(command: GameCommand) {
+    if (command.type === "CREATE_MATCH") {
+      const payload = command.payload ?? {}
 
-    if (!match) {
+      // Создаём матч без settings, только state
+      const match = this.matchManager.createMatch()
+
+      // Сохраняем настройки в state для MVP
+      match.state.turnTimeSeconds = payload.turnTimerSeconds ?? 15
+      match.state.targetPoints = payload.targetPoints ?? 10
+      match.state.boosterSetSize = payload.boosterSetSize ?? 3
+
+      console.log("Created match", match.id)
+
+      if (command.playerId) {
+        command.payload = {
+          ...command.payload,
+          matchId: match.id,
+        }
+      }
       return
     }
+
+    const match = this.matchManager.getMatch(command.matchId!)
+    if (!match) return
 
     switch (command.type) {
       case "JOIN":
-        this.handleJoin(
-          match,
-          command
-        )
+        this.handleJoin(match, command)
         break
-
       case "SELECT_BOOSTER":
-        this.handleSelectBooster(
-          match,
-          command
-        )
+        this.handleSelectBooster(match, command)
         break
     }
   }
 
-  private handleJoin(
-    match: any,
-
-    command: GameCommand
-  ) {
-    const existingPlayer =
-      match.players.find(
-        (player: any) =>
-          player.id ===
-          command.playerId
-      )
-
-    if (existingPlayer) {
-      return
-    }
+  private handleJoin(match: any, command: GameCommand) {
+    const existingPlayer = match.players.find(
+      (player: any) => player.id === command.playerId
+    )
+    if (existingPlayer) return
 
     match.addPlayer(
-      command.playerId,
-
-      command.payload
-        ?.nickname ??
-        "unknown_cat"
+      command.playerId!,
+      command.payload?.nickname ?? "unknown_cat"
     )
   }
 
-  private handleSelectBooster(
-    match: any,
+  private handleSelectBooster(match: any, command: GameCommand) {
+    if (match.phase !== MatchPhase.BOOSTER_SELECTION) return
+    if (match.state.turnResolvedAt !== null) return
+    if (command.playerId !== match.currentPlayerId) return
 
-    command: GameCommand
-  ) {
-    if (
-      match.phase !==
-      MatchPhase.BOOSTER_SELECTION
-    ) {
-      return
-    }
-
-    if (
-      match.state
-        .turnResolvedAt !==
-      null
-    ) {
-      return
-    }
-
-    if (
-      command.playerId !==
-      match.currentPlayerId
-    ) {
-      return
-    }
-
-    const cooldownKey =
-      `${command.playerId}:SELECT_BOOSTER`
-
+    const cooldownKey = `${command.playerId}:SELECT_BOOSTER`
     const now = Date.now()
+    const cooldown = this.cooldowns.get(cooldownKey) ?? 0
+    if (now < cooldown) return
+    this.cooldowns.set(cooldownKey, now + 1000)
 
-    const cooldown =
-      this.cooldowns.get(
-        cooldownKey
-      ) ?? 0
+    const slot = command.payload?.slot
+    if (typeof slot !== "number") return
 
-    if (now < cooldown) {
-      return
-    }
+    match.state.turnResolvedAt = now
+    match.transition(MatchPhase.BOOSTER_RESOLUTION)
 
-    this.cooldowns.set(
-      cooldownKey,
-      now + 1000
-    )
-
-    const slot =
-      command.payload?.slot
-
-    if (
-      typeof slot !==
-      "number"
-    ) {
-      return
-    }
-
-    match.state.turnResolvedAt =
-      now
-
-    match.transition(
-      MatchPhase.BOOSTER_RESOLUTION
-    )
-
-    this.boosterEngine.activateBooster(
-      match,
-
-      command.playerId,
-
-      slot
-    )
+    this.boosterEngine.activateBooster(match, command.playerId, slot)
   }
 
-  private buildCommandKey(
-    command: GameCommand
-  ): string {
+  private buildCommandKey(command: GameCommand): string {
     return [
       command.type,
-
-      command.matchId,
-
-      command.playerId,
-
-      JSON.stringify(
-        command.payload
-      ),
+      command.matchId ?? "",
+      command.playerId ?? "",
+      JSON.stringify(command.payload),
     ].join(":")
   }
 
   private cleanup() {
-    if (
-      this.processedKeys.size >
-      10000
-    ) {
+    if (this.processedKeys.size > 10000) {
       this.processedKeys.clear()
     }
   }

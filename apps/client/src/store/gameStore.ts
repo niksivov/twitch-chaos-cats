@@ -77,8 +77,26 @@ interface GameState {
 
   boosterSet: BoosterSnapshot[]
 
+  turnTimerSeconds: number
+
+  targetPoints: number
+
+  boosterSetSize: number
+
   setConnected: (
     connected: boolean
+  ) => void
+
+  setTurnTimerSeconds: (
+    value: number
+  ) => void
+
+  setTargetPoints: (
+    value: number
+  ) => void
+
+  setBoosterSetSize: (
+    value: number
   ) => void
 
   applySnapshot: (
@@ -113,11 +131,41 @@ export const useGameStore =
 
     boosterSet: [],
 
+    turnTimerSeconds: 15,
+
+    targetPoints: 100,
+
+    boosterSetSize: 3,
+
     setConnected: (
       connected
     ) =>
       set({
         connected,
+      }),
+
+    setTurnTimerSeconds: (
+      value
+    ) =>
+      set({
+        turnTimerSeconds:
+          value,
+      }),
+
+    setTargetPoints: (
+      value
+    ) =>
+      set({
+        targetPoints:
+          value,
+      }),
+
+    setBoosterSetSize: (
+      value
+    ) =>
+      set({
+        boosterSetSize:
+          value,
       }),
 
     applySnapshot: (
