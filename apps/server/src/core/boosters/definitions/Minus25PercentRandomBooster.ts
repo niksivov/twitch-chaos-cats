@@ -14,7 +14,7 @@ export const Minus25PercentRandomBooster: BoosterDefinition =
 
     poolCount: 1,
 
-    icon: "minus25percent",
+    icon: "minus25percentrandom",
 
     execute: ({
       match,

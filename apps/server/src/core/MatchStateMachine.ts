@@ -1,4 +1,4 @@
-import { MatchPhase } from './matchPhase';
+import { MatchPhase } from "./matchPhase"
 
 const transitions: Record<
   MatchPhase,
@@ -31,6 +31,7 @@ const transitions: Record<
   [MatchPhase.TURN_END]: [
     MatchPhase.TURN_START,
     MatchPhase.ROUND_END,
+    MatchPhase.MATCH_END, // мгновенная победа по очкам или выбыванию
   ],
 
   [MatchPhase.ROUND_END]: [
@@ -45,17 +46,17 @@ const transitions: Record<
   [MatchPhase.RESETTING]: [
     MatchPhase.WAITING_FOR_PLAYERS,
   ],
-};
+}
 
 export class MatchStateMachine {
-  private phase: MatchPhase;
+  private phase: MatchPhase
 
   constructor(initialPhase: MatchPhase) {
-    this.phase = initialPhase;
+    this.phase = initialPhase
   }
 
   public getPhase(): MatchPhase {
-    return this.phase;
+    return this.phase
   }
 
   public canTransition(
@@ -63,7 +64,7 @@ export class MatchStateMachine {
   ): boolean {
     return transitions[this.phase].includes(
       next,
-    );
+    )
   }
 
   public transition(
@@ -72,9 +73,9 @@ export class MatchStateMachine {
     if (!this.canTransition(next)) {
       throw new Error(
         `Invalid transition: ${this.phase} -> ${next}`,
-      );
+      )
     }
 
-    this.phase = next;
+    this.phase = next
   }
 }

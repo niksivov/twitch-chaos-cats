@@ -3,11 +3,13 @@ import { MatchPhase } from "./matchPhase"
 import { MatchStateMachine } from "./MatchStateMachine"
 import { BoosterSetItem } from "./boosters/BoosterSetManager"
 import { ActiveEffect } from "./effects/EffectEngine"
-import { EventLogEntry } from "./events/EventLog"
+import { EventLogEntry, EventLog } from "./events/EventLog"
 
 export const DISCONNECT_GRACE_MS = 30000
 const EMPTY_MATCH_TIMEOUT_MS = 60000
 const MATCH_RESET_DELAY_MS = 5000
+
+const eventLog = new EventLog()
 
 export interface MatchPlayer {
   id: string
@@ -241,14 +243,25 @@ export class Match {
   }
 
   public finish(winnerId: string): void {
+    if (this.phase === MatchPhase.MATCH_END) return
+
     this.winnerId = winnerId
     this.currentPlayerId = null
     this.state.matchEndedAt = Date.now()
     this.state.selectedBooster = null
+
+    const winner = this.state.playersById[winnerId]
+    if (winner) {
+      eventLog.add(this, `🏆 Победитель: ${winner.username}`)
+    }
+
     this.transition(MatchPhase.MATCH_END)
   }
 
   public reset(): void {
+    // ✅ переход через RESETTING для корректной проверки MatchStateMachine
+    this.transition(MatchPhase.RESETTING)
+
     this.round = 0
     this.turn = 0
     this.currentPlayerId = null
@@ -269,6 +282,7 @@ export class Match {
     this.state.eventLog = []
     this.state.roundPlayedPlayerIds = []
     this.state.playersById = {}
+
     this.transition(MatchPhase.WAITING_FOR_PLAYERS)
   }
 }

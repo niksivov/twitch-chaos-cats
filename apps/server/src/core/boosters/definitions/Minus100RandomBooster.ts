@@ -14,7 +14,7 @@ export const Minus100RandomBooster: BoosterDefinition =
 
     poolCount: 1,
 
-    icon: "minus100",
+    icon: "minus100random",
 
     execute: ({
       match,

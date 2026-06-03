@@ -5,6 +5,7 @@ type MatchPhase =
   | "STARTING"
   | "IN_PROGRESS"
   | "FINISHED"
+  | "MATCH_END"
 
 interface PlayerSnapshot {
   id: string
@@ -83,6 +84,18 @@ interface GameState {
 
   boosterSetSize: number
 
+  // =========================
+  // Для MatchResultScreen
+  // =========================
+
+  matchFinished: boolean
+
+  matchWinnerId?: string
+
+  matchPlayers: PlayerSnapshot[]
+
+  matchWinReason?: string
+
   setConnected: (
     connected: boolean
   ) => void
@@ -136,6 +149,18 @@ export const useGameStore =
     targetPoints: 100,
 
     boosterSetSize: 3,
+
+    // =========================
+    // MatchResultScreen state
+    // =========================
+
+    matchFinished: false,
+
+    matchWinnerId: undefined,
+
+    matchPlayers: [],
+
+    matchWinReason: undefined,
 
     setConnected: (
       connected

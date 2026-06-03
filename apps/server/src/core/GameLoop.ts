@@ -96,7 +96,6 @@ export class GameLoop {
 
   private handleWaitingForPlayers(match: Match) {
     if (match.players.length >= 2) {
-      // Инициализация настроек матча для MVP
       const state = match.state as any
       state.turnTimeSeconds = state.turnTimeSeconds ?? 15
       state.targetPoints = state.targetPoints ?? 10
@@ -125,7 +124,6 @@ export class GameLoop {
     this.turnEngine.startTurn(match)
 
     if (!match.currentPlayerId) return
-
     const currentPlayer = match.state.playersById[match.currentPlayerId]
     if (!currentPlayer) return
 
@@ -159,6 +157,15 @@ export class GameLoop {
   }
 
   private handleTurnEnd(match: Match) {
+    // ✅ Мгновенная победа по очкам
+    const targetPoints = (match.state as any).targetPoints ?? 10
+    const winnerByPoints = match.players.find(p => p.score >= targetPoints)
+    if (winnerByPoints) {
+      match.finish(winnerByPoints.id)
+      this.eventLog.add(match, `🏆 ${winnerByPoints.username} победил с ${winnerByPoints.score} очками`)
+      return
+    }
+
     const activePlayers = match.getActivePlayers()
     if (activePlayers.length <= 1) {
       const winner = activePlayers[0]

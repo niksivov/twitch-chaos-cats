@@ -5,32 +5,51 @@ import { PlayerCard } from "./components/PlayerCard"
 import { EventLog } from "./components/EventLog"
 import { BoosterSet } from "./components/BoosterSet"
 import { TurnTimer } from "./components/TurnTimer"
+import { MatchResultScreen } from "./components/MatchResultScreen"
 import backgroundImage from "./assets/backgrounds/1.png"
 
 function App() {
   const [started, setStarted] = useState(false)
-  const [turnTimerSeconds, setTurnTimerSeconds] = useState(15)
-  const [targetPoints, setTargetPoints] = useState(100)
-  const [boosterSetSize, setBoosterSetSize] = useState(3)
 
-  const round = useGameStore((state) => state.round)
-  const currentTurnPlayerId = useGameStore((state) => state.currentTurnPlayerId)
-  const currentTurnStartedAt = useGameStore((state) => state.currentTurnStartedAt)
-  const leaderPlayerId = useGameStore((state) => state.leaderPlayerId)
-  const players = useGameStore((state) => state.players)
-  const recentEvents = useGameStore((state) => state.recentEvents)
-  const boosterSet = useGameStore((state) => state.boosterSet)
+  const turnTimerSeconds = useGameStore((s) => s.turnTimerSeconds)
+  const targetPoints = useGameStore((s) => s.targetPoints)
+  const boosterSetSize = useGameStore((s) => s.boosterSetSize)
+
+  const round = useGameStore((s) => s.round)
+  const currentTurnPlayerId = useGameStore((s) => s.currentTurnPlayerId)
+  const currentTurnStartedAt = useGameStore((s) => s.currentTurnStartedAt)
+  const leaderPlayerId = useGameStore((s) => s.leaderPlayerId)
+  const players = useGameStore((s) => s.players)
+  const recentEvents = useGameStore((s) => s.recentEvents)
+  const boosterSet = useGameStore((s) => s.boosterSet)
+  const matchPhase = useGameStore((s) => s.phase)
+
+  // Финальный экран
+  const matchFinished = useGameStore((s) => s.matchFinished)
+  const winnerId = useGameStore((s) => s.matchWinnerId)
+  const winReason = useGameStore((s) => s.matchWinReason)
+  const matchPlayers = useGameStore((s) => s.matchPlayers)
 
   const currentPlayer = players.find((player) => player.id === currentTurnPlayerId)
 
+  // Подключение к серверу и подписка на события
   useEffect(() => {
     socketClient.connect()
+
+    // Подписка на событие "matchFinished" от сервера
+    socketClient.onMessage = (data: any) => {
+      if (data.type === "matchFinished") {
+        useGameStore.setState({
+          matchFinished: true,
+          matchWinnerId: data.winnerId,
+          matchPlayers: data.players,
+          matchWinReason: data.reason,
+        })
+      }
+    }
   }, [])
 
-  useEffect(() => {
-    console.log("PLAYERS STATE:", players)
-  }, [players])
-
+  // Стартовый экран
   if (!started) {
     return (
       <>
@@ -39,15 +58,9 @@ function App() {
           alt=""
           style={{ position: "fixed", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: -2, pointerEvents: "none" }}
         />
-        <div
-          style={{ position: "fixed", inset: 0, background: "rgba(0, 0, 0, 0.75)", zIndex: -1, pointerEvents: "none" }}
-        />
-        <div
-          style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
-        >
-          <div
-            style={{ width: 420, background: "#1a1f26", border: "1px solid #2d3742", borderRadius: 16, padding: 24, color: "white", fontFamily: "Arial, sans-serif" }}
-          >
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0, 0, 0, 0.75)", zIndex: -1, pointerEvents: "none" }} />
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ width: 420, background: "#1a1f26", border: "1px solid #2d3742", borderRadius: 16, padding: 24, color: "white", fontFamily: "Arial, sans-serif" }}>
             <div style={{ fontSize: 30, fontWeight: 800, marginBottom: 24, textAlign: "center" }}>
               Твич, Хаос и Котики
             </div>
@@ -59,7 +72,7 @@ function App() {
                   type="number"
                   min={5}
                   value={turnTimerSeconds}
-                  onChange={(e) => setTurnTimerSeconds(Number(e.target.value))}
+                  onChange={(e) => useGameStore.setState({ turnTimerSeconds: Number(e.target.value) })}
                   style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #39424f", background: "#11161d", color: "white" }}
                 />
               </label>
@@ -69,7 +82,7 @@ function App() {
                   type="number"
                   min={1}
                   value={targetPoints}
-                  onChange={(e) => setTargetPoints(Number(e.target.value))}
+                  onChange={(e) => useGameStore.setState({ targetPoints: Number(e.target.value) })}
                   style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #39424f", background: "#11161d", color: "white" }}
                 />
               </label>
@@ -80,7 +93,7 @@ function App() {
                   min={1}
                   max={10}
                   value={boosterSetSize}
-                  onChange={(e) => setBoosterSetSize(Number(e.target.value))}
+                  onChange={(e) => useGameStore.setState({ boosterSetSize: Number(e.target.value) })}
                   style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #39424f", background: "#11161d", color: "white" }}
                 />
               </label>
@@ -104,6 +117,27 @@ function App() {
     )
   }
 
+  // 🔹 Финальный экран
+  if (matchFinished && winnerId) {
+    return (
+      <MatchResultScreen
+        winnerId={winnerId}
+        players={matchPlayers.length ? matchPlayers : players}
+        reason={winReason || "points"}
+        onPlayAgain={() => {
+          useGameStore.setState({
+            matchFinished: false,
+            matchWinnerId: undefined,
+            matchPlayers: [],
+            matchWinReason: undefined,
+          })
+          setStarted(false)
+        }}
+      />
+    )
+  }
+
+  // Игровой UI
   return (
     <>
       <img

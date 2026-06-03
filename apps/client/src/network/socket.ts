@@ -9,6 +9,9 @@ export interface MatchSettings {
 class SocketClient {
   private socket: WebSocket | null = null
 
+  // Опциональная callback для всех входящих сообщений
+  public onMessage?: (data: any) => void
+
   connect() {
     this.socket = new WebSocket("ws://localhost:8080")
 
@@ -27,12 +30,20 @@ class SocketClient {
       try {
         const message = JSON.parse(event.data)
 
+        // 🔹 Общий callback
+        if (this.onMessage) {
+          this.onMessage(message)
+        }
+
         if (message.type !== "match_state") {
           return
         }
 
         const match = message.payload?.match
         if (!match) return
+
+        console.log("PHASE", match.phase)
+        console.log("WINNER", match.winnerId)
 
         const players = (match.players ?? []).map((player: any) => ({
           id: player.id,
@@ -53,6 +64,7 @@ class SocketClient {
           boosterIcon: booster.boosterIcon ?? "",
         }))
 
+        // 🔹 Обновляем snapshot
         useGameStore.getState().applySnapshot({
           roomId: match.id ?? "",
           phase: match.phase ?? "LOBBY",
@@ -65,6 +77,17 @@ class SocketClient {
           recentEvents,
           boosterSet,
         })
+
+        // 🔹 Обновляем store для финального экрана
+        if (match.phase === "MATCH_END" && match.winnerId) {
+          useGameStore.setState({
+            matchFinished: true,
+            matchWinnerId: match.winnerId,
+            matchPlayers: players,
+            matchWinReason: "points",
+          })
+        }
+
       } catch (error) {
         console.error(error)
       }
