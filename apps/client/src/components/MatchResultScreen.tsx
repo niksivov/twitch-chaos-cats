@@ -1,4 +1,5 @@
 import React from "react"
+import backgroundImage from "../assets/backgrounds/MatchResultScreen.png"
 
 type MatchPlayer = {
   id: string
@@ -22,7 +23,9 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
   onPlayAgain,
 }) => {
   const winner =
-    players.find((p) => p.id === winnerId)
+    players.find(
+      (p) => p.id === winnerId
+    )
 
   const sortedPlayers =
     [...players].sort(
@@ -36,121 +39,247 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
         flexDirection: "column",
         alignItems: "center",
         color: "white",
-        fontFamily: "Arial, sans-serif",
+        fontFamily:
+          "Arial, sans-serif",
         padding: 20,
-        backgroundColor: "#1a1f26",
         minHeight: "100vh",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      <img
+        src={backgroundImage}
+        alt=""
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: -2,
+          pointerEvents: "none",
+        }}
+      />
+
       <div
         style={{
-          fontSize: 32,
-          fontWeight: 800,
-          marginBottom: 24,
+          position: "absolute",
+          inset: 0,
+          background:
+            "rgba(0, 0, 0, 0.65)",
+          zIndex: -1,
+          pointerEvents: "none",
+        }}
+      />
+
+      <div
+        style={{
+          fontSize: 36,
+          fontWeight: 900,
+          marginBottom: 32,
+          textShadow:
+            "0 0 12px rgba(255,215,0,0.6)",
         }}
       >
         🏆 Победитель!
       </div>
 
-      {winner && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginBottom: 32,
-          }}
-        >
-          <img
-            src={`/avatars/${winner.avatarId}.png`}
-            alt={winner.nickname}
-            style={{
-              width: 120,
-              height: 120,
-              objectFit: "contain",
-              marginBottom: 12,
-            }}
-          />
-
-          <div
-            style={{
-              fontSize: 28,
-              fontWeight: 700,
-              marginBottom: 6,
-            }}
-          >
-            {winner.nickname}
-          </div>
-
-          <div
-            style={{
-              fontSize: 22,
-              marginBottom: 6,
-            }}
-          >
-            {winner.points} очков
-          </div>
-
-          {reason && (
-            <div
-              style={{
-                fontSize: 16,
-                opacity: 0.8,
-              }}
-            >
-              ({reason === "points"
-                ? "по очкам"
-                : reason})
-            </div>
-          )}
-        </div>
-      )}
-
       <div
         style={{
           width: "100%",
-          maxWidth: 500,
-          marginBottom: 32,
+          maxWidth: 1200,
+          display: "flex",
+          justifyContent:
+            "space-between",
+          alignItems: "stretch",
+          gap: 40,
+          marginBottom: 40,
+          flexWrap: "wrap",
         }}
       >
-        <h3
+        {/* Левая часть */}
+        <div
           style={{
-            marginBottom: 16,
+            flex: 1,
+            minWidth: 320,
+            background:
+              "rgba(26,31,38,0.75)",
+            border:
+              "4px solid rgba(156,39,176,0.4)",
+            borderRadius: 20,
+            padding: 32,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent:
+              "center",
+            backdropFilter:
+              "blur(6px)",
           }}
         >
-          Финальный рейтинг
-        </h3>
+          {winner && (
+            <>
+              <img
+                src={`/avatars/${winner.avatarId}.png`}
+                alt={winner.nickname}
+                style={{
+                  width: 380,
+                  height: 380,
+                  objectFit: "contain",
+                  marginBottom: 20,
+                  imageRendering:
+                    "pixelated",
+                }}
+              />
 
-        <ol
+              <div
+                style={{
+                  fontSize: 34,
+                  fontWeight: 800,
+                  marginBottom: 10,
+                }}
+              >
+                {winner.nickname}
+              </div>
+
+              <div
+                style={{
+                  fontSize: 28,
+                  fontWeight: 700,
+                  color: "#ffd54f",
+                  marginBottom: 10,
+                }}
+              >
+                🪙 {winner.points}
+              </div>
+
+              {reason && (
+                <div
+                  style={{
+                    fontSize: 18,
+                    opacity: 0.85,
+                  }}
+                >
+                  {reason === "points"
+                    ? "Победа по очкам"
+                    : reason}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Правая часть */}
+        <div
           style={{
-            paddingLeft: 28,
-            fontSize: 22,
-            lineHeight: 1.8,
+            flex: 1,
+            minWidth: 320,
+            background:
+              "rgba(26,31,38,0.75)",
+            border:
+              "4px solid rgba(156,39,176,0.4)",
+            borderRadius: 20,
+            padding: 32,
+            backdropFilter:
+              "blur(6px)",
           }}
         >
-          {sortedPlayers.map((player) => (
-            <li key={player.id}>
-              {player.nickname} — {player.points} очков
-            </li>
-          ))}
-        </ol>
+          <div
+            style={{
+              fontSize: 28,
+              fontWeight: 800,
+              textAlign: "center",
+              marginBottom: 24,
+            }}
+          >
+            Финальный рейтинг
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+            }}
+          >
+            {sortedPlayers.map(
+              (player) => (
+                <div
+                  key={player.id}
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      "space-between",
+                    alignItems:
+                      "center",
+                    padding:
+                      "12px 16px",
+                    borderRadius: 12,
+                    background:
+                      "rgba(255,255,255,0.05)",
+                    border:
+                      player.id ===
+                      winnerId
+                        ? "1px solid #ffd54f"
+                        : "1px solid rgba(255,255,255,0.08)",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontWeight: 700,
+                    }}
+                  >
+                    {player.nickname}
+                  </span>
+
+                  <span
+                    style={{
+                      fontWeight: 800,
+                      color:
+                        "#ffd54f",
+                    }}
+                  >
+                    🪙 {player.points}
+                  </span>
+                </div>
+              )
+            )}
+          </div>
+        </div>
       </div>
 
       {onPlayAgain && (
         <button
           onClick={onPlayAgain}
           style={{
-            padding: "12px 24px",
-            fontSize: 18,
-            fontWeight: 700,
-            borderRadius: 10,
-            border: "none",
+            padding:
+              "16px 42px",
+            fontSize: 22,
+            fontWeight: 900,
+            borderRadius: 16,
+            border:
+              "1px solid #d28cff",
             cursor: "pointer",
-            backgroundColor: "#4caf50",
             color: "white",
+            background:
+              "linear-gradient(135deg, #c14cff 0%, #8b2cf5 50%, #5a1be0 100%)",
+            boxShadow:
+              "0 0 25px rgba(156,39,176,0.6)",
+            textShadow:
+              "0 0 8px rgba(255,255,255,0.4)",
+            transition:
+              "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform =
+              "scale(1.06)"
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform =
+              "scale(1)"
           }}
         >
-          Играть снова
+          🎮 Играть снова
         </button>
       )}
     </div>

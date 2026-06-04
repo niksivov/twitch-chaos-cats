@@ -75,6 +75,10 @@ import {
 } from "./Minus50RandomBooster"
 
 import {
+  Minus100RandomBooster,
+} from "./Minus100RandomBooster"
+
+import {
   Minus25PercentRandomBooster,
 } from "./Minus25PercentRandomBooster"
 
@@ -83,8 +87,32 @@ import {
 } from "./Minus50PercentRandomBooster"
 
 import {
-  Minus100RandomBooster,
-} from "./Minus100RandomBooster"
+  plus100or0self,
+} from "./plus100or0self"
+
+import {
+  plus100selforrandomopponent,
+} from "./plus100selforrandomopponent"
+
+import {
+  swapscore,
+} from "./swapscore"
+
+import {
+  tripleRandomScore,
+} from "./tripleRandomScore"
+
+import {
+  squareRoundPoints,
+} from "./squareRoundPoints"
+
+import {
+  randompoints,
+} from "./randompoints"
+
+import {
+  instantwin3percent,
+} from "./instantwin3percent"
 
 import {
   RandomRemoveBooster,
@@ -133,6 +161,20 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     Minus25PercentRandomBooster,
 
     Minus50PercentRandomBooster,
+
+    plus100or0self,
+
+    plus100selforrandomopponent,
+
+    swapscore,
+
+    tripleRandomScore,
+
+    squareRoundPoints,
+
+    randompoints,
+
+    instantwin3percent,
 
     RandomRemoveBooster,
   ]

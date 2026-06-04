@@ -6,7 +6,12 @@ import { EventLog } from "./components/EventLog"
 import { BoosterSet } from "./components/BoosterSet"
 import { TurnTimer } from "./components/TurnTimer"
 import { MatchResultScreen } from "./components/MatchResultScreen"
-import backgroundImage from "./assets/backgrounds/1.png"
+
+// Фон для стартового экрана (настройки)
+import settingsBackground from "./assets/backgrounds/MatchSettings.png"
+
+// Фон для игрового экрана
+import gameBackground from "./assets/backgrounds/1.png"
 
 function App() {
   const [started, setStarted] = useState(false)
@@ -24,7 +29,6 @@ function App() {
   const boosterSet = useGameStore((s) => s.boosterSet)
   const matchPhase = useGameStore((s) => s.phase)
 
-  // Финальный экран
   const matchFinished = useGameStore((s) => s.matchFinished)
   const winnerId = useGameStore((s) => s.matchWinnerId)
   const winReason = useGameStore((s) => s.matchWinReason)
@@ -32,11 +36,8 @@ function App() {
 
   const currentPlayer = players.find((player) => player.id === currentTurnPlayerId)
 
-  // Подключение к серверу и подписка на события
   useEffect(() => {
     socketClient.connect()
-
-    // Подписка на событие "matchFinished" от сервера
     socketClient.onMessage = (data: any) => {
       if (data.type === "matchFinished") {
         useGameStore.setState({
@@ -47,54 +48,111 @@ function App() {
         })
       }
     }
+
+    // Скрыть стрелки у input[type=number]
+    const style = document.createElement("style")
+    style.innerHTML = `
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+    `
+    document.head.appendChild(style)
+    return () => document.head.removeChild(style)
   }, [])
 
-  // Стартовый экран
   if (!started) {
     return (
       <>
         <img
-          src={backgroundImage}
+          src={settingsBackground}
           alt=""
           style={{ position: "fixed", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: -2, pointerEvents: "none" }}
         />
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0, 0, 0, 0.75)", zIndex: -1, pointerEvents: "none" }} />
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ width: 420, background: "#1a1f26", border: "1px solid #2d3742", borderRadius: 16, padding: 24, color: "white", fontFamily: "Arial, sans-serif" }}>
-            <div style={{ fontSize: 30, fontWeight: 800, marginBottom: 24, textAlign: "center" }}>
+          <div
+            style={{
+              width: 440,
+              background: "rgba(26,31,38,0.95)",
+              border: "2px solid #6a1b9a",
+              borderRadius: 20,
+              padding: 32,
+              color: "white",
+              fontFamily: "Arial, sans-serif",
+              boxShadow: "0 0 24px rgba(156,39,176,0.6)",
+            }}
+          >
+            <div style={{ fontSize: 34, fontWeight: 900, marginBottom: 24, textAlign: "center", color: "#e1bee7" }}>
               Твич, Хаос и Котики
             </div>
-            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Параметры матча</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <label>
-                <div style={{ marginBottom: 6 }}>Таймер хода (сек)</div>
+            <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, textAlign: "center", color: "#d1c4e9" }}>
+              Параметры матча
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
+                Таймер хода (сек)
                 <input
                   type="number"
                   min={5}
                   value={turnTimerSeconds}
                   onChange={(e) => useGameStore.setState({ turnTimerSeconds: Number(e.target.value) })}
-                  style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #39424f", background: "#11161d", color: "white" }}
+                  style={{
+                    marginTop: 6,
+                    padding: "12px 14px",
+                    borderRadius: 10,
+                    border: "1px solid #9575cd",
+                    background: "#11161d",
+                    color: "white",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    outline: "none",
+                  }}
                 />
               </label>
-              <label>
-                <div style={{ marginBottom: 6 }}>Очки для победы</div>
+              <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
+                Очки для победы
                 <input
                   type="number"
                   min={1}
                   value={targetPoints}
                   onChange={(e) => useGameStore.setState({ targetPoints: Number(e.target.value) })}
-                  style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #39424f", background: "#11161d", color: "white" }}
+                  style={{
+                    marginTop: 6,
+                    padding: "12px 14px",
+                    borderRadius: 10,
+                    border: "1px solid #9575cd",
+                    background: "#11161d",
+                    color: "white",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    outline: "none",
+                  }}
                 />
               </label>
-              <label>
-                <div style={{ marginBottom: 6 }}>Количество бустеров в сете</div>
+              <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
+                Количество бустеров в наборе
                 <input
                   type="number"
                   min={1}
                   max={10}
                   value={boosterSetSize}
                   onChange={(e) => useGameStore.setState({ boosterSetSize: Number(e.target.value) })}
-                  style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #39424f", background: "#11161d", color: "white" }}
+                  style={{
+                    marginTop: 6,
+                    padding: "12px 14px",
+                    borderRadius: 10,
+                    border: "1px solid #9575cd",
+                    background: "#11161d",
+                    color: "white",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    outline: "none",
+                  }}
                 />
               </label>
               <button
@@ -106,7 +164,22 @@ function App() {
                   })
                   setStarted(true)
                 }}
-                style={{ marginTop: 8, padding: "12px 16px", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 18, fontWeight: 700 }}
+                style={{
+                  marginTop: 12,
+                  padding: "14px 0",
+                  borderRadius: 12,
+                  border: "none",
+                  fontSize: 18,
+                  fontWeight: 800,
+                  color: "white",
+                  cursor: "pointer",
+                  background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
+                  boxShadow: "0 0 16px rgba(156,39,176,0.6)",
+                  textShadow: "0 0 4px rgba(0,0,0,0.5)",
+                  transition: "transform 0.2s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               >
                 Играть
               </button>
@@ -117,7 +190,6 @@ function App() {
     )
   }
 
-  // 🔹 Финальный экран
   if (matchFinished && winnerId) {
     return (
       <MatchResultScreen
@@ -137,11 +209,10 @@ function App() {
     )
   }
 
-  // Игровой UI
   return (
     <>
       <img
-        src={backgroundImage}
+        src={gameBackground}
         alt=""
         style={{ position: "fixed", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: -2, pointerEvents: "none" }}
       />
@@ -150,6 +221,7 @@ function App() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div style={{ fontSize: 28, fontWeight: 800 }}>Твич, Хаос и Котики</div>
           <div style={{ display: "flex", alignItems: "center", gap: 16, padding: 12, borderRadius: 12, background: "#1a1f26", border: "1px solid #2d3742" }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#ffd54a" }}>🏆 {targetPoints}</div>
             <div style={{ fontSize: 20, fontWeight: 700, opacity: 0.9 }}>Раунд {round}</div>
             <div style={{ width: 180 }}>
               <TurnTimer startedAt={currentTurnStartedAt} durationSeconds={turnTimerSeconds} playerName={currentPlayer?.nickname} />
@@ -158,12 +230,7 @@ function App() {
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20, alignItems: "flex-start" }}>
           {players.map((player) => (
-            <PlayerCard
-              key={player.id}
-              player={player}
-              isCurrentTurn={player.id === currentTurnPlayerId}
-              isLeader={player.id === leaderPlayerId}
-            />
+            <PlayerCard key={player.id} player={player} isCurrentTurn={player.id === currentTurnPlayerId} isLeader={player.id === leaderPlayerId} />
           ))}
         </div>
         <div style={{ marginBottom: 20 }}>
