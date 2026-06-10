@@ -9,6 +9,8 @@ import { CommandQueue } from "./core/CommandQueue"
 import { RegistrationLobby } from "./core/RegistrationLobby"
 import { TurnManager } from "./core/TurnManager"
 
+const PORT = process.env.PORT ? Number(process.env.PORT) : 8080
+
 // ======== Создаём менеджеры ========
 const sessionManager = new SessionManager()
 const matchManager = new MatchManager()
@@ -41,7 +43,7 @@ const registrationLobby = new RegistrationLobby(
 )
 
 const websocketServer = new WebSocketServer(
-  8080,
+  PORT,
   matchManager,
   commandProcessor,
   registrationLobby
@@ -160,4 +162,4 @@ setInterval(() => {
 gameLoop.start()
 
 console.log("server started")
-console.log("websocket running on :8080")
+console.log(`websocket running on :${PORT}`)
