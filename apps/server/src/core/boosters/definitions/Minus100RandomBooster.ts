@@ -27,7 +27,7 @@ export const Minus100RandomBooster: BoosterDefinition =
             (
               player: any
             ) =>
-              player.id !==
+              player.playerId !==
               sourcePlayerId
           )
 

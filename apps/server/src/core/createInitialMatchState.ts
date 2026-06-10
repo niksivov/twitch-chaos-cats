@@ -14,7 +14,7 @@ export function createInitialMatchState(
 
     paused: false,
 
-    playersById: {},
+    registeredPlayers: {},
 
     playerOrder: [],
 
@@ -23,7 +23,7 @@ export function createInitialMatchState(
     boosterSet: [],
 
     settings: {
-      turnTimeSeconds: 15,
+      turnTimeSeconds: 30,
 
       boosterSetSize: 4,
 

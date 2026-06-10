@@ -1,7 +1,5 @@
-import { Effect } from "../core/effects/Effect"
-
 export interface MatchPlayer {
-  id: string
+  twitchUserId: string
 
   nickname: string
 
@@ -12,8 +10,6 @@ export interface MatchPlayer {
   eliminated: boolean
 
   connected: boolean
-
-  activeEffects: Effect[]
 
   lastCommandAt: number
 }
@@ -58,12 +54,10 @@ export interface MatchState {
 
   paused: boolean
 
-  playersById: Record<
+  registeredPlayers: Record<
     string,
     MatchPlayer
   >
-
-  playerOrder: string[]
 
   currentTurnPlayerId?: string
 

@@ -1,18 +1,20 @@
 import { WebSocketServer as WSServer, WebSocket } from "ws"
 import { MatchManager } from "../core/MatchManager"
 import { CommandProcessor } from "../core/CommandProcessor"
-import { BoosterSetManager } from "../core/boosters/BoosterSetManager"
-import { MatchPhase } from "../core/matchPhase"
+import { RegistrationLobby } from "../core/RegistrationLobby"
 
-export class GameWebSocketServer {
+// ✅ Импортируем функцию из index.ts для создания матча с игроками из Lobby
+import { startTwitchBot, createMatchFromLobby } from "../index"
+
+export class WebSocketServer {
   private wss: WSServer
   private clients = new Set<WebSocket>()
-  private boosterSetManager = new BoosterSetManager()
 
   constructor(
     port: number,
     private readonly matchManager: MatchManager,
-    private readonly commandProcessor: CommandProcessor
+    private readonly commandProcessor: CommandProcessor,
+    private readonly registrationLobby: RegistrationLobby
   ) {
     this.wss = new WSServer({ port })
     this.initialize()
@@ -21,19 +23,12 @@ export class GameWebSocketServer {
   private initialize() {
     this.wss.on("connection", (socket: WebSocket) => {
       console.log("websocket client connected")
+
       this.clients.add(socket)
+      this.sendLobbyState(socket)
 
       socket.on("close", () => {
         this.clients.delete(socket)
-
-        const matchId = (socket as any).matchId
-        const playerId = (socket as any).playerId
-
-        if (matchId && playerId) {
-          this.matchManager.disconnectPlayer(matchId, playerId)
-          this.broadcastMatchState(matchId)
-        }
-
         console.log("websocket client disconnected")
       })
 
@@ -53,50 +48,30 @@ export class GameWebSocketServer {
       case "CREATE_MATCH":
         this.handleCreateMatch(socket, message)
         break
-      case "JOIN_MATCH":
-        this.handleJoinMatch(socket, message)
-        break
+
       case "SELECT_BOOSTER":
         this.handleSelectBooster(socket, message)
+        break
+
+      case "GET_LOBBY":
+        this.sendLobbyState(socket)
+        break
+
+      case "START_TWITCH_BOT":
+        this.handleStartTwitchBot(message)
         break
     }
   }
 
   private handleCreateMatch(socket: WebSocket, message: any) {
     const payload = message.payload ?? {}
-    const match = this.matchManager.createMatch(payload)
 
-    match.state.turnTimeSeconds = payload.turnTimerSeconds ?? 15
-    match.state.targetPoints = payload.targetPoints ?? 10
-    match.state.boosterSetSize = payload.boosterSetSize ?? 3
-    match.state.exhaustiblePool = payload.exhaustiblePool ?? true
+    // 🔥 ВАЖНО: теперь мы НЕ теряем настройки матча
+    // и передаём их дальше в index.ts
+    const match = createMatchFromLobby(payload)
 
-    // Сохраняем ID матча для сокета
     ;(socket as any).matchId = match.id
 
-    // 🔥 Добавляем тестовых игроков автоматически
-    const testPlayerNames = [
-      "catViewer",
-      "secondCat",
-      "thirdCat",
-      "fourthCat",
-      "fifthCat",
-      "sosixCat",
-      "sseventhCat",
-      "eighthCat",
-      "ninthCat",
-      "tenthCat",
-    ]
-    for (let i = 0; i < testPlayerNames.length; i++) {
-      const playerId = `player_${i + 1}`
-      this.matchManager.addPlayerToMatch(match.id, playerId, testPlayerNames[i])
-    }
-
-    // Инициализация бустеров и старт матча
-    this.boosterSetManager.initialize(match)
-    match.start()
-
-    // Отправляем клиенту подтверждение создания матча
     socket.send(
       JSON.stringify({
         type: "MATCH_CREATED",
@@ -104,36 +79,15 @@ export class GameWebSocketServer {
       })
     )
 
-    // Отправляем всем клиентам текущее состояние матча
-    this.broadcastMatchState(match.id)
-  }
-
-  private handleJoinMatch(socket: WebSocket, message: any) {
-    const { matchId, playerId, username } = message.data
-
-    const { match } = this.matchManager.addPlayerToMatch(
-      matchId,
-      playerId,
-      username
-    )
-
-    ;(socket as any).matchId = match.id
-    ;(socket as any).playerId = playerId
-
-    socket.send(
-      JSON.stringify({
-        type: "JOINED_MATCH",
-        data: { matchId: match.id, playerId },
-      })
-    )
-
-    this.broadcastMatchState(match.id)
+    // snapshot теперь НЕ отправляем — GameLoop управляет состоянием
   }
 
   private handleSelectBooster(socket: WebSocket, message: any) {
     const matchId = (socket as any).matchId
-    const playerId = (socket as any).playerId
-    if (!matchId || !playerId) return
+    if (!matchId) return
+
+    const playerId = message.data?.playerId
+    if (!playerId) return
 
     this.commandProcessor.enqueue({
       type: "SELECT_BOOSTER",
@@ -142,29 +96,44 @@ export class GameWebSocketServer {
       payload: message.data,
       createdAt: Date.now(),
     })
-
-    this.broadcastMatchState(matchId)
   }
 
-  broadcastMatchState(matchId: string) {
-    const match = this.matchManager.getMatch(matchId)
-    if (!match) return
+  private handleStartTwitchBot(message: any) {
+    const channel = message.payload?.channel
+    if (!channel) return
 
+    console.log(`[WebSocket] START_TWITCH_BOT for channel: ${channel}`)
+
+    startTwitchBot(channel)
+    this.broadcastLobbyState()
+  }
+
+  public sendLobbyState(socket?: WebSocket) {
     const payload = {
-      type: "match_state",
-      payload: { match },
+      type: "lobby_state",
+      payload: { players: this.registrationLobby.getPlayers() },
     }
+    const serialized = JSON.stringify(payload)
 
-    for (const client of this.clients) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(payload))
+    if (socket) {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(serialized)
+      }
+    } else {
+      for (const client of this.clients) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(serialized)
+        }
       }
     }
   }
 
+  public broadcastLobbyState() {
+    this.sendLobbyState()
+  }
+
   broadcast(data: any) {
     const serialized = JSON.stringify(data)
-
     for (const client of this.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(serialized)

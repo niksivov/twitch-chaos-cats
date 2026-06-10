@@ -39,7 +39,7 @@ export interface StreamerSessionPayload {
 }
 
 export interface CreateMatchPayload {
-  turnTimerSeconds: number
+  turnTimeSeconds: number
 
   targetPoints: number
 

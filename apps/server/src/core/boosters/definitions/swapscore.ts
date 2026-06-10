@@ -19,7 +19,7 @@ export const swapscore: BoosterDefinition =
       sourcePlayerId,
     }) => {
       const sourcePlayer =
-        match.state.playersById[
+        match.state.registeredPlayers[
           sourcePlayerId
         ]
 
@@ -31,7 +31,7 @@ export const swapscore: BoosterDefinition =
 
       for (const player of match.getAlivePlayers()) {
         if (
-          player.id !==
+          player.playerId !==
           sourcePlayerId
         ) {
           opponents.push(player)

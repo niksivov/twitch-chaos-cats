@@ -19,7 +19,7 @@ export const randompoints: BoosterDefinition =
       sourcePlayerId,
     }) => {
       const player =
-        match.state.playersById[
+        match.state.registeredPlayers[
           sourcePlayerId
         ]
 

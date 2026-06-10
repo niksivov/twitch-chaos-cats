@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { socketClient } from "./network/socket"
 import { useGameStore } from "./store/gameStore"
 import { PlayerCard } from "./components/PlayerCard"
@@ -7,18 +7,20 @@ import { BoosterSet } from "./components/BoosterSet"
 import { TurnTimer } from "./components/TurnTimer"
 import { MatchResultScreen } from "./components/MatchResultScreen"
 
-// Фон для стартового экрана (настройки)
+// Фоны
 import settingsBackground from "./assets/backgrounds/MatchSettings.png"
-
-// Фон для игрового экрана
-import gameBackground from "./assets/backgrounds/1.png"
+import gameBackground from "./assets/backgrounds/Game1.png"
+import channelSelectBackground from "./assets/backgrounds/ChannelSelectPage.png"
 
 function App() {
-  const [started, setStarted] = useState(false)
+  const screen = useGameStore((s) => s.screen)
+  const setScreen = useGameStore((s) => s.setScreen)
 
-  const turnTimerSeconds = useGameStore((s) => s.turnTimerSeconds)
+  const turnTimeSeconds = useGameStore((s) => s.turnTimeSeconds)
   const targetPoints = useGameStore((s) => s.targetPoints)
   const boosterSetSize = useGameStore((s) => s.boosterSetSize)
+  const twitchChannel = useGameStore((s) => s.twitchChannel)
+  const maxPlayers = useGameStore((s) => s.maxPlayers)
 
   const round = useGameStore((s) => s.round)
   const currentTurnPlayerId = useGameStore((s) => s.currentTurnPlayerId)
@@ -27,29 +29,62 @@ function App() {
   const players = useGameStore((s) => s.players)
   const recentEvents = useGameStore((s) => s.recentEvents)
   const boosterSet = useGameStore((s) => s.boosterSet)
-  const matchPhase = useGameStore((s) => s.phase)
-
+  const turnOrder = useGameStore((s) => s.turnOrder)
   const matchFinished = useGameStore((s) => s.matchFinished)
   const winnerId = useGameStore((s) => s.matchWinnerId)
   const winReason = useGameStore((s) => s.matchWinReason)
   const matchPlayers = useGameStore((s) => s.matchPlayers)
+  const roomId = useGameStore((s) => s.roomId)
+  const result = useGameStore((s) => s.matchResultSnapshot)
 
-  const currentPlayer = players.find((player) => player.id === currentTurnPlayerId)
+  const currentPlayer = players.find(
+    (player) => player.id === currentTurnPlayerId
+  )
+ 
+  const lobbyPlayers = useGameStore((s) => s.lobbyPlayers)
 
-  useEffect(() => {
-    socketClient.connect()
-    socketClient.onMessage = (data: any) => {
-      if (data.type === "matchFinished") {
-        useGameStore.setState({
-          matchFinished: true,
-          matchWinnerId: data.winnerId,
-          matchPlayers: data.players,
-          matchWinReason: data.reason,
-        })
-      }
+
+
+// 🔥 ДОБАВЛЕНО: формируем порядок игроков из очереди
+  const orderedPlayers = turnOrder.length
+    ? turnOrder
+        .map(id => players.find(p => p.id === id))
+       .filter(Boolean)
+    : players
+
+
+
+useEffect(() => {
+  socketClient.connect()
+
+  // App больше НЕ пишет matchFinished напрямую в store.
+  // Это теперь делает socket → applySnapshot (единый источник истины).
+
+  socketClient.onMessage = (data: any) => {
+    // здесь оставляем только вспомогательные/будущие события
+    // (ничего игрового больше не дублируем)
+    console.log("[WS EVENT]", data)
+
+    // 🔹 Лог для отладки currentTurnPlayerId и игроков
+    if (
+      data?.type === "match_state" &&
+      data?.payload
+    ) {
+      console.log("[DEBUG MATCH_STATE]")
+      console.log(
+        "currentTurnPlayerId:",
+        data.payload.currentTurnPlayerId
+      )
+      console.log(
+        "players:",
+        data.payload.players?.map((p: any) => ({
+          id: p.id,
+          nickname: p.nickname,
+        }))
+      )
     }
-
-    // Скрыть стрелки у input[type=number]
+  }
+  
     const style = document.createElement("style")
     style.innerHTML = `
       input[type="number"]::-webkit-inner-spin-button,
@@ -66,14 +101,24 @@ function App() {
     return () => document.head.removeChild(style)
   }, [])
 
-  if (!started) {
+  // ===== ChannelSelectPage =====
+  if (screen === "CHANNEL_SELECT") {
     return (
       <>
         <img
-          src={settingsBackground}
+          src={channelSelectBackground}
           alt=""
-          style={{ position: "fixed", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: -2, pointerEvents: "none" }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: -2,
+            pointerEvents: "none",
+          }}
         />
+
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div
             style={{
@@ -90,17 +135,18 @@ function App() {
             <div style={{ fontSize: 34, fontWeight: 900, marginBottom: 24, textAlign: "center", color: "#e1bee7" }}>
               Твич, Хаос и Котики
             </div>
+
             <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, textAlign: "center", color: "#d1c4e9" }}>
-              Параметры матча
+              Выберите канал и максимальное количество игроков
             </div>
+
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Таймер хода (сек)
+                Канал Twitch
                 <input
-                  type="number"
-                  min={5}
-                  value={turnTimerSeconds}
-                  onChange={(e) => useGameStore.setState({ turnTimerSeconds: Number(e.target.value) })}
+                  type="text"
+                  value={twitchChannel}
+                  onChange={(e) => useGameStore.setState({ twitchChannel: e.target.value })}
                   style={{
                     marginTop: 6,
                     padding: "12px 14px",
@@ -114,13 +160,17 @@ function App() {
                   }}
                 />
               </label>
+
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Очки для победы
+                Максимальное количество игроков (до 20)
                 <input
                   type="number"
-                  min={1}
-                  value={targetPoints}
-                  onChange={(e) => useGameStore.setState({ targetPoints: Number(e.target.value) })}
+                  min={2}
+                  max={20}
+                  value={maxPlayers}
+                  onChange={(e) =>
+                    useGameStore.setState({ maxPlayers: Number(e.target.value) })
+                  }
                   style={{
                     marginTop: 6,
                     padding: "12px 14px",
@@ -134,35 +184,16 @@ function App() {
                   }}
                 />
               </label>
-              <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Количество бустеров в наборе
-                <input
-                  type="number"
-                  min={1}
-                  max={10}
-                  value={boosterSetSize}
-                  onChange={(e) => useGameStore.setState({ boosterSetSize: Number(e.target.value) })}
-                  style={{
-                    marginTop: 6,
-                    padding: "12px 14px",
-                    borderRadius: 10,
-                    border: "1px solid #9575cd",
-                    background: "#11161d",
-                    color: "white",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    outline: "none",
-                  }}
-                />
-              </label>
+
               <button
                 onClick={() => {
-                  socketClient.createMatch({
-                    turnTimerSeconds,
-                    targetPoints,
-                    boosterSetSize,
-                  })
-                  setStarted(true)
+                  if (twitchChannel.trim()) {
+                    socketClient.sendMessage({
+                      type: "START_TWITCH_BOT",
+                      payload: { channel: twitchChannel },
+                    })
+                    setScreen("MATCH_SETTINGS")
+                  }
                 }}
                 style={{
                   marginTop: 12,
@@ -181,7 +212,7 @@ function App() {
                 onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
                 onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               >
-                Играть
+                Далее
               </button>
             </div>
           </div>
@@ -190,58 +221,289 @@ function App() {
     )
   }
 
-  if (matchFinished && winnerId) {
+  // ===== MatchSettingsPage =====
+  if (screen === "MATCH_SETTINGS") {
     return (
-      <MatchResultScreen
-        winnerId={winnerId}
-        players={matchPlayers.length ? matchPlayers : players}
-        reason={winReason || "points"}
-        onPlayAgain={() => {
-          useGameStore.setState({
-            matchFinished: false,
-            matchWinnerId: undefined,
-            matchPlayers: [],
-            matchWinReason: undefined,
-          })
-          setStarted(false)
-        }}
-      />
+      <>
+        <img
+          src={settingsBackground}
+          alt=""
+          style={{
+            position: "fixed",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: -2,
+            pointerEvents: "none",
+          }}
+        />
+
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div
+            style={{
+              width: 500,
+              background: "rgba(26,31,38,0.95)",
+              border: "2px solid #6a1b9a",
+              borderRadius: 20,
+              padding: 32,
+              color: "white",
+              fontFamily: "Arial, sans-serif",
+              boxShadow: "0 0 24px rgba(156,39,176,0.6)",
+            }}
+          >
+            <div style={{ fontSize: 34, fontWeight: 900, marginBottom: 24, textAlign: "center", color: "#e1bee7" }}>
+              Настройки матча
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
+                Таймер хода (в секундах)
+                <input
+                  type="number"
+                  min={5}
+                  value={turnTimeSeconds}
+                  onChange={(e) =>
+                    useGameStore.setState({ turnTimeSeconds: Number(e.target.value) })
+                  }
+                  style={{
+                    marginTop: 6,
+                    padding: "12px 14px",
+                    borderRadius: 10,
+                    border: "1px solid #9575cd",
+                    background: "#11161d",
+                    color: "white",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    outline: "none",
+                  }}
+                />
+              </label>
+
+              <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
+                Очки для победы
+                <input
+                  type="number"
+                  min={1}
+                  value={targetPoints}
+                  onChange={(e) =>
+                    useGameStore.setState({ targetPoints: Number(e.target.value) })
+                  }
+                  style={{
+                    marginTop: 6,
+                    padding: "12px 14px",
+                    borderRadius: 10,
+                    border: "1px solid #9575cd",
+                    background: "#11161d",
+                    color: "white",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    outline: "none",
+                  }}
+                />
+              </label>
+
+              <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
+                Количество бустеров в наборе
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={boosterSetSize}
+                  onChange={(e) =>
+                    useGameStore.setState({ boosterSetSize: Number(e.target.value) })
+                  }
+                  style={{
+                    marginTop: 6,
+                    padding: "12px 14px",
+                    borderRadius: 10,
+                    border: "1px solid #9575cd",
+                    background: "#11161d",
+                    color: "white",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    outline: "none",
+                  }}
+                />
+              </label>
+            </div>
+
+            <div style={{ marginTop: 20 }}>
+              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
+                Напиши в чат !join и присоединяйся. Зарегистрированные игроки:
+              </div>
+
+              {lobbyPlayers.length === 0 && (
+                <div style={{ color: "#ccc" }}>Ожидание игроков в чате...</div>
+              )}
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {lobbyPlayers.map((p) => (
+                  <div
+                    key={`${p.twitchUserId}-${p.avatarId}-${p.username}`}
+                    style={{
+                      padding: "6px 12px",
+                      borderRadius: 8,
+                      background: "#2d2d2d",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {p.username} ({p.avatarId})
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                socketClient.createMatch({
+                  turnTimeSeconds,
+                  targetPoints,
+                  boosterSetSize,
+                  twitchChannel,
+                  maxPlayers,
+                })
+                setScreen("GAME")
+              }}
+              style={{
+                marginTop: 20,
+                padding: "14px 0",
+                width: "100%",
+                display: "block",
+                borderRadius: 12,
+                border: "none",
+                fontSize: 18,
+                fontWeight: 800,
+                color: "white",
+                cursor: "pointer",
+                background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
+                boxShadow: "0 0 16px rgba(156,39,176,0.6)",
+                textShadow: "0 0 4px rgba(0,0,0,0.5)",
+                transition: "transform 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            >
+              Играть
+            </button>
+          </div>
+        </div>
+      </>
     )
   }
 
+  // ===== MatchResultScreen =====
+if (screen === "RESULT") {
   return (
-    <>
-      <img
-        src={gameBackground}
-        alt=""
-        style={{ position: "fixed", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: -2, pointerEvents: "none" }}
-      />
-      <div style={{ position: "fixed", inset: 0, background: "rgba(0, 0, 0, 0.65)", zIndex: -1, pointerEvents: "none" }} />
-      <div style={{ minHeight: "100vh", color: "white", padding: 20, fontFamily: "Arial, sans-serif" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <div style={{ fontSize: 28, fontWeight: 800 }}>Твич, Хаос и Котики</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, padding: 12, borderRadius: 12, background: "#1a1f26", border: "1px solid #2d3742" }}>
-            <div style={{ fontSize: 20, fontWeight: 700, color: "#ffd54a" }}>🏆 {targetPoints}</div>
-            <div style={{ fontSize: 20, fontWeight: 700, opacity: 0.9 }}>Раунд {round}</div>
-            <div style={{ width: 180 }}>
-              <TurnTimer startedAt={currentTurnStartedAt} durationSeconds={turnTimerSeconds} playerName={currentPlayer?.nickname} />
+    <MatchResultScreen
+      winnerId={winnerId ?? ""}
+      players={matchPlayers?.length ? matchPlayers : players}
+      reason={winReason || "points"}
+      onPlayAgain={() =>
+        useGameStore.setState({
+          matchFinished: false,
+          matchWinnerId: undefined,
+          matchPlayers: [],
+          matchWinReason: undefined,
+          screen: "CHANNEL_SELECT",
+        })
+      }
+    />
+  )
+}
+
+  // ===== GamePage =====
+  if (screen === "GAME") {
+    if (!players.length || !roomId) {
+      return (
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+            fontSize: 24,
+          }}
+        >
+          Waiting for match...
+        </div>
+      )
+    }
+
+    return (
+      <>
+        <img
+          src={gameBackground}
+          alt=""
+          style={{
+            position: "fixed",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: -2,
+            pointerEvents: "none",
+          }}
+        />
+
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0, 0, 0, 0.65)", zIndex: -1 }} />
+
+        <div style={{ minHeight: "100vh", color: "white", padding: 20, fontFamily: "Arial, sans-serif" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+            <div style={{ fontSize: 28, fontWeight: 800 }}>Твич, Хаос и Котики</div>
+
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              padding: 12,
+              borderRadius: 12,
+              background: "#1a1f26",
+              border: "1px solid #2d3742",
+            }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: "#ffd54a" }}>
+                🏆 {targetPoints}
+              </div>
+
+              <div style={{ fontSize: 20, fontWeight: 700, opacity: 0.9 }}>
+                Раунд {round}
+              </div>
+
+              <div style={{ width: 180 }}>
+                <TurnTimer
+                  startedAt={currentTurnStartedAt}
+                  durationSeconds={turnTimeSeconds}
+                  playerName={currentPlayer?.nickname}
+                />
+              </div>
             </div>
           </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
+            {orderedPlayers.map((player) => (
+              <PlayerCard
+                key={player.id ?? player.nickname ?? `${player.nickname}-${player.avatarId}`}
+                player={player}
+                isCurrentTurn={player.id === currentTurnPlayerId}
+                isLeader={player.id === leaderPlayerId}
+              />
+            ))}
+          </div>
+
+          <div style={{ marginBottom: 20 }}>
+            <BoosterSet boosters={boosterSet} />
+          </div>
+
+          <div style={{ marginBottom: 20 }}>
+            <EventLog events={recentEvents} />
+          </div>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20, alignItems: "flex-start" }}>
-          {players.map((player) => (
-            <PlayerCard key={player.id} player={player} isCurrentTurn={player.id === currentTurnPlayerId} isLeader={player.id === leaderPlayerId} />
-          ))}
-        </div>
-        <div style={{ marginBottom: 20 }}>
-          <BoosterSet boosters={boosterSet} />
-        </div>
-        <div style={{ marginBottom: 20 }}>
-          <EventLog events={recentEvents} />
-        </div>
-      </div>
-    </>
-  )
+      </>
+    )
+  }
+
+  return null
 }
 
 export default App

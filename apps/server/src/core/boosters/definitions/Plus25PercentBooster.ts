@@ -21,7 +21,7 @@ export const Plus25PercentBooster: BoosterDefinition =
       sourcePlayerId,
     }) => {
       const player =
-        match.state.playersById[
+        match.state.registeredPlayers[
           sourcePlayerId
         ]
 

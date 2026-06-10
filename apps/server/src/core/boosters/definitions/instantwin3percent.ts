@@ -15,7 +15,7 @@ export const instantwin3percent: BoosterDefinition = {
     const roll = Math.random()
     if (roll < 0.03) {
       for (const player of match.getAlivePlayers()) {
-        if (player.id !== sourcePlayerId) {
+        if (player.playerId !== sourcePlayerId) {
           player.isAlive = false
         }
       }

@@ -27,7 +27,7 @@ export const RandomRemoveBooster: BoosterDefinition =
             (
               player: any
             ) =>
-              player.id !==
+              player.playerId !==
               sourcePlayerId
           )
 

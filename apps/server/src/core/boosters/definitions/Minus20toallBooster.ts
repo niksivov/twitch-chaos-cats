@@ -22,7 +22,7 @@ export const Minus20toallBooster: BoosterDefinition =
     }) => {
       for (const player of match.players) {
         if (
-          player.id ===
+          player.playerId ===
           sourcePlayerId
         ) {
           continue

@@ -1,17 +1,42 @@
 import { randomUUID } from "crypto"
-import { Match } from "./Match"
-import { SessionManager } from "./SessionManager"
-import { MatchSettings } from "./MatchSettings"
+import { Match, MatchPlayer } from "./Match"
+import { MatchSettings } from "../models/MatchSettings"
 
 export class MatchManager {
   private matches = new Map<string, Match>()
 
-  constructor(private sessionManager: SessionManager) {}
+  // 🔹 NEW: ссылка на TwitchBotService (опционально)
+  private twitchBotService: any = null
 
-  createMatch(settings?: Partial<MatchSettings>): Match {
+  constructor() {}
+
+  // 🔹 NEW: подключение TwitchBotService (минимальный безопасный хук)
+  public setTwitchBotService(service: any) {
+    this.twitchBotService = service
+  }
+
+  // Создать новый матч с настройками Twitch
+  createMatch(settings: Partial<MatchSettings> & { twitchChannel: string; maxPlayers: number }): Match {
+    console.log("CREATE MATCH SETTINGS:", settings)
     const matchId = randomUUID()
     const match = new Match(matchId, settings)
+    console.log('[1] AFTER NEW MATCH:', match.state)
+    console.log('[1] STATE AFTER NEW MATCH:', match.state)
+    match.state.twitchChannel = settings.twitchChannel
+    match.state.maxPlayers = settings.maxPlayers
+    match.state.turnTimeSeconds = settings.turnTimeSeconds ?? 30
+    match.state.targetPoints = settings.targetPoints ?? 10
+    match.state.boosterSetSize = settings.boosterSetSize ?? 3
+    match.state.registrationOpen = true
     this.matches.set(matchId, match)
+    console.log('[2] BEFORE RETURNING MATCH:', match.state)
+
+    // 🔹 NEW: уведомление TwitchBotService сразу после создания матча
+    if (this.twitchBotService?.setCurrentMatch) {
+      console.log("[MATCH MANAGER] notifying TwitchBotService:", matchId)
+      this.twitchBotService.setCurrentMatch(matchId)
+    }
+
     return match
   }
 
@@ -24,65 +49,36 @@ export class MatchManager {
   }
 
   removeMatch(matchId: string): void {
-    this.sessionManager.removeMatchSessions(matchId)
     this.matches.delete(matchId)
   }
 
-  addPlayerToMatch(matchId: string, playerId: string, username: string) {
+  // Регистрация Twitch-игрока через !join
+  registerTwitchPlayer(matchId: string, twitchUserId: string, username: string, avatarId: string): MatchPlayer | null {
     const match = this.matches.get(matchId)
-    if (!match) throw new Error("Match not found")
-
-    const player = match.addPlayer(playerId, username)
-
-    this.sessionManager.createSession(
-      player.id,
-      player.username,
-      match.id,
-      match.state.runtimeId,
-      player.runtimeId
-    )
-
-    return { match, player }
+    if (!match) return null
+    return match.addTwitchPlayer(twitchUserId, username, avatarId)
   }
 
-  disconnectPlayer(matchId: string, playerId: string): void {
+  // Удаление игрока (например при выбывании)
+  removePlayer(matchId: string, twitchUserId: string): void {
     const match = this.matches.get(matchId)
     if (!match) return
-
-    match.disconnectPlayer(playerId)
-    this.sessionManager.disconnect(playerId)
+    match.eliminatePlayer(twitchUserId)
   }
 
-  reconnectPlayer(playerId: string): boolean {
-    const session = this.sessionManager.getSession(playerId)
-    if (!session) return false
-
-    const match = this.matches.get(session.matchId)
-    if (!match) return false
-
-    const success = match.reconnectPlayer(
-      playerId,
-      session.matchRuntimeId,
-      session.playerRuntimeId
-    )
-
-    if (!success) return false
-
-    this.sessionManager.reconnect(playerId)
-    return true
-  }
-
+  // Проверка, нужно ли удалить пустые матчи
   cleanupEmptyMatches(): void {
     for (const [matchId, match] of this.matches) {
-      if (match.players.length === 0 && match.phase === "WAITING_FOR_PLAYERS") {
+      if (Object.keys(match.state.registeredPlayers).length === 0 && match.phase === "WAITING_FOR_PLAYERS") {
         this.removeMatch(matchId)
       }
     }
   }
 
-  syncMatchRuntime(matchId: string): void {
+  // Синхронизация состояния матча после сброса
+  resetMatch(matchId: string): void {
     const match = this.matches.get(matchId)
     if (!match) return
-    this.sessionManager.updateMatchRuntime(matchId, match.state.runtimeId)
+    match.reset()
   }
 }

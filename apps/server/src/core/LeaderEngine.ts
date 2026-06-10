@@ -21,7 +21,12 @@ export class LeaderEngine {
       }
     }
 
+    const leaderInternalId =
+      match.getPlayerIdByTwitchId(leader.twitchUserId)
+
+    if (!leaderInternalId) return
+
     match.state.leaderId =
-      leader.id
+      leaderInternalId
   }
 }

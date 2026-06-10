@@ -12,7 +12,7 @@ export const plus100or0self: BoosterDefinition = {
   icon: "plus100or0self",
 
   execute: ({ match, sourcePlayerId }) => {
-    const player = match.state.playersById[sourcePlayerId]
+    const player = match.state.registeredPlayers[sourcePlayerId]
     if (!player) return
 
     // 50% шанс получить 100 очков

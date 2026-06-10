@@ -6,7 +6,7 @@ export type MatchPhase =
   | "FINISHED"
 
 export interface PlayerSnapshot {
-  id: string
+  twitchUserId: string
 
   nickname: string
 

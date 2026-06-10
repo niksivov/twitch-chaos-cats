@@ -3,22 +3,17 @@ import { MatchPhase } from "./matchPhase"
 import { MatchStateMachine } from "./MatchStateMachine"
 import { BoosterSetItem } from "./boosters/BoosterSetManager"
 import { ActiveEffect } from "./effects/EffectEngine"
-import { EventLogEntry, EventLog } from "./events/EventLog"
+import { EventLogEntry } from "./events/EventLog"
 
-export const DISCONNECT_GRACE_MS = 30000
 const EMPTY_MATCH_TIMEOUT_MS = 60000
 const MATCH_RESET_DELAY_MS = 5000
 
-const eventLog = new EventLog()
-
 export interface MatchPlayer {
-  id: string
+  twitchUserId: string
   username: string
-  runtimeId: string
+  avatarId: string
   score: number
   isAlive: boolean
-  connected: boolean
-  disconnectedAt: number | null
 }
 
 export interface MatchInternalState {
@@ -38,7 +33,12 @@ export interface MatchInternalState {
   effects: ActiveEffect[]
   eventLog: EventLogEntry[]
   roundPlayedPlayerIds: string[]
-  playersById: Record<string, MatchPlayer>
+
+  twitchChannel: string | null
+  maxPlayers: number
+  registrationOpen: boolean
+  registeredPlayers: Record<string, MatchPlayer>
+  usedAvatarIds: string[]
 
   turnTimeSeconds: number
   targetPoints: number
@@ -53,18 +53,22 @@ export class Match {
   public turn: number
   public currentPlayerId: string | null
   public winnerId: string | null
-  public readonly players: MatchPlayer[]
+  public turnOrder: string[] = []
   public readonly state: MatchInternalState
   private readonly stateMachine: MatchStateMachine
 
+  // 🔹 Twitch → internal playerId mapping
+  private twitchToPlayerId: Record<string, string> = {}
+
   constructor(matchId: string, settings?: any) {
+    console.log('[MATCH ctor 0] settings IN:', settings)
+
     this.id = matchId
     this.phase = MatchPhase.WAITING_FOR_PLAYERS
     this.round = 0
     this.turn = 0
     this.currentPlayerId = null
     this.winnerId = null
-    this.players = []
 
     this.state = {
       runtimeId: randomUUID(),
@@ -82,129 +86,127 @@ export class Match {
       effects: [],
       eventLog: [],
       roundPlayedPlayerIds: [],
-      playersById: {},
-      turnTimeSeconds: settings?.turnTimeSeconds ?? 15,
+      registeredPlayers: {},
+      usedAvatarIds: [],
+      twitchChannel: null,
+      maxPlayers: 0,
+      registrationOpen: false,
+      turnTimeSeconds: settings?.turnTimeSeconds ?? 30,
       targetPoints: settings?.targetPoints ?? 10,
       boosterSetSize: settings?.boosterSetSize ?? 3,
       exhaustiblePool: settings?.exhaustiblePool ?? true,
     }
+    
+    console.log('[MATCH ctor 1] state AFTER init:', {
+      twitchChannel: this.state.twitchChannel,
+      maxPlayers: this.state.maxPlayers,
+      turnTimeSeconds: this.state.turnTimeSeconds,
+      targetPoints: this.state.targetPoints,
+      boosterSetSize: this.state.boosterSetSize,
+    })
 
     this.stateMachine = new MatchStateMachine(this.phase)
+
+    console.log('[MATCH ctor 2] FINAL STATE SNAPSHOT:', this.state)
   }
 
+  // 🔹 получение игрока по Twitch ID
+  public getPlayerByTwitchId(twitchUserId: string): MatchPlayer | null {
+    const playerId = this.twitchToPlayerId[twitchUserId]
+    if (!playerId) return null
+    return this.state.registeredPlayers[playerId] ?? null
+  }
+
+  // 🔹 NEW: получение internal playerId по Twitch ID
+  public getPlayerIdByTwitchId(twitchUserId: string): string | null {
+    return this.twitchToPlayerId[twitchUserId] ?? null
+  }
+
+  public get players(): MatchPlayer[] {
+    return Object.values(this.state.registeredPlayers)
+  }
+
+public toJSON() {
+  return {
+    id: this.id,
+    phase: this.phase,
+    round: this.round,
+    turn: this.turn,
+    turnOrder: this.turnOrder,
+    // 👇 currentTurnPlayerId теперь internalId
+    currentTurnPlayerId: this.currentPlayerId,
+    currentTurnStartedAt: this.state.turnStartedAt,
+
+    leaderId: this.state.leaderId,
+
+    // 👇 добавлен id для фронта
+    players: Object.entries(this.state.registeredPlayers).map(([internalId, p]) => ({
+      id: internalId,
+      twitchUserId: p.twitchUserId,
+      username: p.username,
+      avatarId: p.avatarId,
+      score: p.score,
+      isAlive: p.isAlive,
+    })),
+
+    boosterSet: this.state.boosterSet,
+    recentEvents: this.state.eventLog,
+
+    // ↓ новые поля для фронта
+    matchFinished: this.winnerId !== null,
+    matchWinnerId: this.winnerId,
+    matchPlayers: Object.entries(this.state.registeredPlayers).map(([internalId, p]) => ({
+      id: internalId,
+      twitchUserId: p.twitchUserId,
+      username: p.username,
+      avatarId: p.avatarId,
+      score: p.score,
+      isAlive: p.isAlive,
+    })),
+    matchWinReason: this.state.matchEndedAt ? "points" : undefined,
+  }
+}
+
+  
   public transition(next: MatchPhase): void {
     this.stateMachine.transition(next)
     this.phase = next
   }
 
-  public addPlayer(id: string, username: string): MatchPlayer {
-    const existing = this.state.playersById[id]
-    if (existing) {
-      existing.connected = true
-      existing.disconnectedAt = null
-      existing.runtimeId = randomUUID()
-      this.state.emptySince = null
-      return existing
-    }
-
-    if (this.phase !== MatchPhase.WAITING_FOR_PLAYERS) {
-      throw new Error("Cannot join active match")
-    }
+  public addTwitchPlayer(twitchUserId: string, username: string, avatarId: string): MatchPlayer | null {
+    if (!this.state.registrationOpen) return null
+    if (Object.keys(this.state.registeredPlayers).length >= this.state.maxPlayers) return null
+    if (this.state.registeredPlayers[twitchUserId]) return null
 
     const player: MatchPlayer = {
-      id,
+      twitchUserId,
       username,
-      runtimeId: randomUUID(),
+      avatarId,
       score: 0,
       isAlive: true,
-      connected: true,
-      disconnectedAt: null,
     }
 
-    this.players.push(player)
-    this.state.playersById[id] = player
-    this.state.emptySince = null
+    const internalId = randomUUID()
+
+    this.twitchToPlayerId[twitchUserId] = internalId
+    this.state.registeredPlayers[internalId] = player
+
+    this.state.usedAvatarIds.push(avatarId)
     return player
   }
 
-  public isPlayerActive(player: MatchPlayer): boolean {
-    if (player.connected) return true
-    if (!player.disconnectedAt) return false
-    return Date.now() - player.disconnectedAt < DISCONNECT_GRACE_MS
-  }
-
   public getActivePlayers(): MatchPlayer[] {
-    return this.players.filter(p => p.isAlive && this.isPlayerActive(p))
+    return Object.values(this.state.registeredPlayers).filter(p => p.isAlive)
   }
 
   public getAlivePlayers(): MatchPlayer[] {
-    return this.players.filter(p => p.isAlive)
+    return this.getActivePlayers()
   }
 
-  public removePlayer(id: string): void {
-    const index = this.players.findIndex(p => p.id === id)
-    if (index === -1) return
-    this.players.splice(index, 1)
-    delete this.state.playersById[id]
-    if (this.getActivePlayers().length === 0) this.state.emptySince = Date.now()
-  }
-
-  public eliminatePlayer(playerId: string): void {
-    const player = this.players.find(p => p.id === playerId)
+  public eliminatePlayer(twitchUserId: string): void {
+    const player = this.getPlayerByTwitchId(twitchUserId)
     if (!player) return
     player.isAlive = false
-  }
-
-  public cleanupExpiredDisconnectedPlayers(): string[] {
-    const removed: string[] = []
-    const now = Date.now()
-    for (const player of [...this.players]) {
-      if (!player.connected && player.disconnectedAt) {
-        if (now - player.disconnectedAt > DISCONNECT_GRACE_MS) {
-          removed.push(player.id)
-          this.removePlayer(player.id)
-        }
-      }
-    }
-    return removed
-  }
-
-  public isAbandoned(): boolean {
-    if (this.state.emptySince === null) return false
-    return Date.now() - this.state.emptySince > EMPTY_MATCH_TIMEOUT_MS
-  }
-
-  public shouldReset(): boolean {
-    if (this.phase !== MatchPhase.MATCH_END) return false
-    if (this.state.matchEndedAt === null) return false
-    return Date.now() - this.state.matchEndedAt > MATCH_RESET_DELAY_MS
-  }
-
-  public validateRuntime(runtimeId: string): boolean {
-    return runtimeId === this.state.runtimeId
-  }
-
-  public validatePlayerRuntime(player: MatchPlayer, runtimeId: string): boolean {
-    return player.runtimeId === runtimeId
-  }
-
-  public disconnectPlayer(playerId: string): void {
-    const player = this.state.playersById[playerId]
-    if (!player) return
-    player.connected = false
-    player.disconnectedAt = Date.now()
-    if (this.getActivePlayers().length === 0) this.state.emptySince = Date.now()
-  }
-
-  public reconnectPlayer(playerId: string, matchRuntimeId: string, playerRuntimeId: string): boolean {
-    if (!this.validateRuntime(matchRuntimeId)) return false
-    const player = this.state.playersById[playerId]
-    if (!player) return false
-    if (!this.validatePlayerRuntime(player, playerRuntimeId)) return false
-    player.connected = true
-    player.disconnectedAt = null
-    this.state.emptySince = null
-    return true
   }
 
   public markCurrentPlayerAsPlayed(): void {
@@ -215,58 +217,27 @@ export class Match {
 
   public hasRoundFinished(): boolean {
     const active = this.getActivePlayers()
-    return active.every(p => this.state.roundPlayedPlayerIds.includes(p.id))
+    return active.every(p => this.state.roundPlayedPlayerIds.includes(p.twitchUserId))
   }
 
   public resetRoundProgress(): void {
     this.state.roundPlayedPlayerIds = []
   }
 
-  public start(): void {
-    this.transition(MatchPhase.STARTING)
-    this.round = 1
-    this.turn = 1
-    this.currentPlayerId = null
-    this.winnerId = null
-    this.state.turnStartedAt = null
-    this.state.turnEndsAt = null
-    this.state.turnResolvedAt = null
-    this.state.matchEndedAt = null
-    this.state.selectedBooster = null
-    this.state.emptySince = null
-    this.state.roundPlayedPlayerIds = []
-    this.transition(MatchPhase.ROUND_START)
-  }
-
-  public setCurrentPlayer(playerId: string): void {
-    this.currentPlayerId = playerId
-  }
-
-  public finish(winnerId: string): void {
-    if (this.phase === MatchPhase.MATCH_END) return
-
-    this.winnerId = winnerId
-    this.currentPlayerId = null
-    this.state.matchEndedAt = Date.now()
-    this.state.selectedBooster = null
-
-    const winner = this.state.playersById[winnerId]
-    if (winner) {
-      eventLog.add(this, `🏆 Победитель: ${winner.username}`)
-    }
-
-    this.transition(MatchPhase.MATCH_END)
+  // 🔴 FIX: теперь currentPlayerId всегда internalId
+  public setCurrentPlayer(twitchUserId: string): void {
+    const internalId = this.twitchToPlayerId[twitchUserId]
+    this.currentPlayerId = internalId ?? null
   }
 
   public reset(): void {
-    // ✅ переход через RESETTING для корректной проверки MatchStateMachine
     this.transition(MatchPhase.RESETTING)
 
     this.round = 0
     this.turn = 0
     this.currentPlayerId = null
     this.winnerId = null
-    this.players.length = 0
+
     this.state.tick = 0
     this.state.paused = false
     this.state.leaderId = null
@@ -281,8 +252,22 @@ export class Match {
     this.state.effects = []
     this.state.eventLog = []
     this.state.roundPlayedPlayerIds = []
-    this.state.playersById = {}
+    this.state.registeredPlayers = {}
+    this.state.usedAvatarIds = []
+    this.state.twitchChannel = null
+    this.state.maxPlayers = 0
+    this.state.registrationOpen = false
 
     this.transition(MatchPhase.WAITING_FOR_PLAYERS)
+  }
+
+  public isAbandoned(): boolean {
+    if (this.state.emptySince === null) return false
+    return Date.now() - this.state.emptySince > EMPTY_MATCH_TIMEOUT_MS
+  }
+
+  public shouldReset(): boolean {
+    if (!this.state.matchEndedAt) return false
+    return Date.now() - this.state.matchEndedAt > MATCH_RESET_DELAY_MS
   }
 }

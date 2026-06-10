@@ -23,7 +23,7 @@ export const plus100selforrandomopponent: BoosterDefinition =
 
       if (giveToSelf) {
         const player =
-          match.state.playersById[
+          match.state.registeredPlayers[
             sourcePlayerId
           ]
 
@@ -40,7 +40,7 @@ export const plus100selforrandomopponent: BoosterDefinition =
 
       for (const player of match.getAlivePlayers()) {
         if (
-          player.id !==
+          player.playerId !==
           sourcePlayerId
         ) {
           opponents.push(player)

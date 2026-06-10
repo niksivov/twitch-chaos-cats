@@ -24,7 +24,7 @@ export const Minus50PercentRandomBooster: BoosterDefinition =
 
       for (const player of match.getAlivePlayers()) {
         if (
-          player.id !==
+          player.playerId !==
           sourcePlayerId
         ) {
           targets.push(player)

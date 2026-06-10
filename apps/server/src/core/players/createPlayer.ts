@@ -1,12 +1,12 @@
 import { MatchPlayer } from "../../models/MatchState"
 
 export function createPlayer(
-  id: string,
+  twitchUserId: string,
   nickname: string,
   avatarId: string
 ): MatchPlayer {
   return {
-    id,
+    twitchUserId,
 
     nickname,
 
@@ -17,8 +17,6 @@ export function createPlayer(
     eliminated: false,
 
     connected: true,
-
-    activeEffects: [],
 
     lastCommandAt: 0,
   }

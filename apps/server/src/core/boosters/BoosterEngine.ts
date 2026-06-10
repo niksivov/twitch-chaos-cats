@@ -15,26 +15,26 @@ export class BoosterEngine {
     this.boosterSetManager.initialize(match)
   }
 
-  activateBooster(match: Match, sourcePlayerId: string, slot: number) {
+  activateBooster(match: Match, playerId: string, slot: number) {
     const setItem = match.state.boosterSet.find(item => item.slot === slot)
     if (!setItem) return
 
     const booster = this.boosterRegistry.getById(setItem.boosterId)
     if (!booster) return
 
-    const player = match.state.playersById[sourcePlayerId]
+    const player = match.state.registeredPlayers[playerId]
     if (!player) return
 
     // Выполнение эффекта бустера
     booster.execute({
       match,
-      sourcePlayerId,
+      sourcePlayerId: playerId,
     })
 
-    this.applyEffects(match, sourcePlayerId)
+    this.applyEffects(match, playerId)
 
-    // Добавление события в лог
-    this.eventLog.add(match, `${player.username} активирует ${booster.name}`)
+    // 🔹 ДОБАВЛЕН ЛОГ АКТИВАЦИИ БУСТЕРА
+    this.eventLog.add(match, `⚡ ${player.username} активировал ${booster.name}`)
 
     // Удаляем слот из набора
     this.boosterSetManager.removeSlot(match, slot)
@@ -42,7 +42,7 @@ export class BoosterEngine {
     // Обновляем текущий выбранный бустер
     match.state.selectedBooster = {
       boosterId: booster.id,
-      sourcePlayerId,
+      sourcePlayerId: playerId,
       slot,
       activatedAt: Date.now(),
     }
@@ -61,7 +61,7 @@ export class BoosterEngine {
   }
 
   private applyDoublePoints(match: Match, playerId: string) {
-    const player = match.state.playersById[playerId]
+    const player = match.state.registeredPlayers[playerId]
     if (!player) return
     player.score *= 2
   }

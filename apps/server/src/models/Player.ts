@@ -1,13 +1,9 @@
-import { ActiveEffect } from './ActiveEffect'
-
 export interface Player {
-  id: string
+  twitchUserId: string
 
   nickname: string
 
   points: number
-
-  activeEffects: ActiveEffect[]
 
   joinedAt: number
 

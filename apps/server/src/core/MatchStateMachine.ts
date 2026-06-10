@@ -5,10 +5,6 @@ const transitions: Record<
   MatchPhase[]
 > = {
   [MatchPhase.WAITING_FOR_PLAYERS]: [
-    MatchPhase.STARTING,
-  ],
-
-  [MatchPhase.STARTING]: [
     MatchPhase.ROUND_START,
   ],
 
