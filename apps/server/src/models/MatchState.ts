@@ -40,7 +40,7 @@ export interface MatchSettings {
 
 export interface MatchState {
   roomId: string
-
+  playerOrder?: string[]
   phase:
     | "LOBBY"
     | "PREPARATION"

@@ -8,6 +8,8 @@
     "outDir": "./dist",
 
     "strict": true,
+    "noImplicitAny": false,
+    
     "esModuleInterop": true,
     "skipLibCheck": true
   },

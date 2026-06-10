@@ -27,7 +27,7 @@ export interface MatchInternalState {
   turnResolvedAt: number | null
   matchEndedAt: number | null
   emptySince: number | null
-
+  recentEvents: any[]
   boosterPool: string[]
   boosterSet: BoosterSetItem[]
   effects: ActiveEffect[]
