@@ -12,11 +12,22 @@ class SocketClient {
   private socket: WebSocket | null = null
   public onMessage?: (data: any) => void
 
-  connect() {
-    // 🔥 FIX: используем env переменную
-    const WS_URL =
-      import.meta.env.VITE_WS_URL ||
-      "ws://localhost:8080"
+   connect() {
+    // ======================
+    // 🔥 FIX: environment-safe WS url
+    // ======================
+    const isDev = import.meta.env.DEV
+
+    const WS_URL = isDev
+      ? "ws://localhost:8080"
+      : import.meta.env.VITE_WS_URL
+
+    if (!WS_URL) {
+      console.error("[WS] Missing VITE_WS_URL in production")
+      return
+    }
+
+    console.log("[WS] connecting to:", WS_URL)
 
     const socket = new WebSocket(WS_URL)
     this.socket = socket
