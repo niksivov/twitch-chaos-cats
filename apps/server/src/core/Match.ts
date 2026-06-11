@@ -85,6 +85,7 @@ export class Match {
       boosterSet: [],
       effects: [],
       eventLog: [],
+      recentEvents: [],
       roundPlayedPlayerIds: [],
       registeredPlayers: {},
       usedAvatarIds: [],

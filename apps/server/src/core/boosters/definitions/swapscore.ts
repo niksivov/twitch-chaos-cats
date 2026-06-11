@@ -27,16 +27,14 @@ export const swapscore: BoosterDefinition =
         return
       }
 
-      const opponents = []
-
-      for (const player of match.getAlivePlayers()) {
-        if (
-          player.playerId !==
-          sourcePlayerId
-        ) {
-          opponents.push(player)
-        }
-      }
+      const opponents =
+        match
+          .getAlivePlayers()
+          .filter(
+            (player: any) =>
+              player.playerId !==
+              sourcePlayerId
+          )
 
       if (
         opponents.length === 0

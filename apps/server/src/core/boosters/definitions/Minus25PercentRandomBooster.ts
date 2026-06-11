@@ -20,16 +20,14 @@ export const Minus25PercentRandomBooster: BoosterDefinition =
       match,
       sourcePlayerId,
     }) => {
-      const targets = []
-
-      for (const player of match.getAlivePlayers()) {
-        if (
-          player.playerId !==
-          sourcePlayerId
-        ) {
-          targets.push(player)
-        }
-      }
+      const targets =
+        match
+          .getAlivePlayers()
+          .filter(
+            (player: any) =>
+              player.playerId !==
+              sourcePlayerId
+          )
 
       if (
         targets.length === 0

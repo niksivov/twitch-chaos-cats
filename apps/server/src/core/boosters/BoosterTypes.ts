@@ -1,6 +1,18 @@
-export interface BoosterContext {
-  match: any
+export interface Player {
+  playerId: string
+  score: number
+}
 
+export interface BoosterMatch {
+  state: {
+    registeredPlayers: Record<string, Player>
+  }
+
+  getAlivePlayers(): Player[]
+}
+
+export interface BoosterContext {
+  match: BoosterMatch
   sourcePlayerId: string
 }
 
@@ -15,7 +27,5 @@ export interface BoosterDefinition {
 
   icon: string
 
-  execute(
-    context: BoosterContext
-  ): void
+  execute(context: BoosterContext): void
 }
