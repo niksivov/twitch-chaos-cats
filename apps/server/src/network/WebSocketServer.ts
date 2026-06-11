@@ -104,26 +104,39 @@ export class WebSocketServer {
     this.broadcastLobbyState()
   }
 
-  public sendLobbyState(socket?: WebSocket) {
-    const payload = {
-      type: "lobby_state",
-      payload: { players: [...this.registrationLobby.getPlayers()] },
-    }
+public sendLobbyState(socket?: WebSocket) {
+  console.log("[WS] sendLobbyState called")
+  console.log("[WS] clients count:", this.clients.size)
 
-    const serialized = JSON.stringify(payload)
+  const payload = {
+    type: "lobby_state",
+    payload: { players: [...this.registrationLobby.getPlayers()] },
+  }
 
-    if (socket) {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(serialized)
-      }
+  const serialized = JSON.stringify(payload)
+
+  console.log("[WS] serialized lobby_state:", serialized)
+
+  if (socket) {
+    console.log("[WS] sending to SINGLE socket")
+
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(serialized)
     } else {
-      for (const client of this.clients) {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(serialized)
-        }
+      console.log("[WS] socket not OPEN:", socket.readyState)
+    }
+  } else {
+    console.log("[WS] broadcasting to ALL clients")
+
+    for (const client of this.clients) {
+      console.log("[WS] client state:", client.readyState)
+
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(serialized)
       }
     }
   }
+}
 
   public broadcastLobbyState() {
     this.sendLobbyState()
