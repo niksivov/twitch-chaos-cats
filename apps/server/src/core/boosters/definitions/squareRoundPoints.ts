@@ -28,6 +28,6 @@ export const squareRoundPoints: BoosterDefinition =
       }
 
       player.score +=
-        (match.round ?? 0) * (match.round ?? 0)
+        (match.state.tick ?? 0) * (match.state.tick ?? 0)
     },
   }

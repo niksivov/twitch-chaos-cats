@@ -9,6 +9,7 @@ const EMPTY_MATCH_TIMEOUT_MS = 60000
 const MATCH_RESET_DELAY_MS = 5000
 
 export interface MatchPlayer {
+  playerId: string
   twitchUserId: string
   username: string
   avatarId: string
@@ -179,7 +180,10 @@ public toJSON() {
     if (Object.keys(this.state.registeredPlayers).length >= this.state.maxPlayers) return null
     if (this.state.registeredPlayers[twitchUserId]) return null
 
+const internalId = randomUUID()
+
     const player: MatchPlayer = {
+      playerId: internalId,
       twitchUserId,
       username,
       avatarId,
@@ -187,7 +191,6 @@ public toJSON() {
       isAlive: true,
     }
 
-    const internalId = randomUUID()
 
     this.twitchToPlayerId[twitchUserId] = internalId
     this.state.registeredPlayers[internalId] = player

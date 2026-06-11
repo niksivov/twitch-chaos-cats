@@ -1,30 +1,15 @@
-export interface Player {
-  playerId: string
-  score: number
-}
-
-export interface BoosterMatch {
-  state: {
-    registeredPlayers: Record<string, Player>
-  }
-
-  getAlivePlayers(): Player[]
-}
+import type { Match } from "../Match"
 
 export interface BoosterContext {
-  match: BoosterMatch
+  match: Match
   sourcePlayerId: string
 }
 
 export interface BoosterDefinition {
   id: string
-
   name: string
-
   description: string
-
   poolCount: number
-
   icon: string
 
   execute(context: BoosterContext): void
