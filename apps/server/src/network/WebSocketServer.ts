@@ -107,7 +107,7 @@ export class WebSocketServer {
   public sendLobbyState(socket?: WebSocket) {
     const payload = {
       type: "lobby_state",
-      payload: { players: this.registrationLobby.getPlayers() },
+      payload: { players: [...this.registrationLobby.getPlayers()] },
     }
 
     const serialized = JSON.stringify(payload)

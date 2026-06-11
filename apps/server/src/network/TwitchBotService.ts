@@ -135,7 +135,9 @@ export class TwitchBotService {
       })
 
       console.log(`[LOBBY] Player joined: ${username} (${avatarId})`)
-      this.websocketServer.broadcastLobbyState()
+      setImmediate(() => {
+  this.websocketServer.broadcastLobbyState()
+})
       return
     }
 
