@@ -11,12 +11,12 @@ export class WebSocketServer {
   private clients = new Set<WebSocket>()
 
   constructor(
-    port: number,
+    server: any,
     private readonly matchManager: MatchManager,
     private readonly commandProcessor: CommandProcessor,
     private readonly registrationLobby: RegistrationLobby
   ) {
-    this.wss = new WSServer({ port })
+    this.wss = new WSServer({ server })
     this.initialize()
   }
 
@@ -66,8 +66,6 @@ export class WebSocketServer {
   private handleCreateMatch(socket: WebSocket, message: any) {
     const payload = message.payload ?? {}
 
-    // 🔥 ВАЖНО: теперь мы НЕ теряем настройки матча
-    // и передаём их дальше в index.ts
     const match = createMatchFromLobby(payload)
 
     ;(socket as any).matchId = match.id
@@ -78,8 +76,6 @@ export class WebSocketServer {
         data: { matchId: match.id },
       })
     )
-
-    // snapshot теперь НЕ отправляем — GameLoop управляет состоянием
   }
 
   private handleSelectBooster(socket: WebSocket, message: any) {
@@ -113,6 +109,7 @@ export class WebSocketServer {
       type: "lobby_state",
       payload: { players: this.registrationLobby.getPlayers() },
     }
+
     const serialized = JSON.stringify(payload)
 
     if (socket) {
@@ -134,6 +131,7 @@ export class WebSocketServer {
 
   broadcast(data: any) {
     const serialized = JSON.stringify(data)
+
     for (const client of this.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(serialized)

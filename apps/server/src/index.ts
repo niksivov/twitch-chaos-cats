@@ -1,3 +1,5 @@
+import express from "express"
+
 import { CommandProcessor } from "./core/CommandProcessor"
 import { GameLoop } from "./core/GameLoop"
 import { MatchManager } from "./core/MatchManager"
@@ -10,6 +12,21 @@ import { RegistrationLobby } from "./core/RegistrationLobby"
 import { TurnManager } from "./core/TurnManager"
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080
+
+// ======== HTTP SERVER (FIX FOR RENDER) ========
+const app = express()
+
+app.get("/", (_, res) => {
+  res.send("Twitch Chaos Cats server running")
+})
+
+app.get("/health", (_, res) => {
+  res.json({ ok: true })
+})
+
+const httpServer = app.listen(PORT, () => {
+  console.log("HTTP server started on", PORT)
+})
 
 // ======== Создаём менеджеры ========
 const sessionManager = new SessionManager()
@@ -42,26 +59,22 @@ const registrationLobby = new RegistrationLobby(
   availableAvatars.length
 )
 
+// ======== WEBSOCKET (now attached to HTTP server) ========
 const websocketServer = new WebSocketServer(
-  PORT,
+  httpServer,
   matchManager,
   commandProcessor,
   registrationLobby
 )
 
-const broadcaster = new GameBroadcaster(
-  websocketServer
-)
+const broadcaster = new GameBroadcaster(websocketServer)
 
 // 🔹 ВАЖНО: один общий TurnManager для всей системы
 const turnManager = new TurnManager()
 
-const gameLoop = new GameLoop(
-  matchManager,
-  broadcaster
-)
+const gameLoop = new GameLoop(matchManager, broadcaster)
 
-// 🔹 привязываем тот же TurnManager к GameLoop (чтобы не было рассинхрона)
+// 🔹 привязываем тот же TurnManager к GameLoop
 ;(gameLoop as any).turnManager = turnManager
 
 // ======== Создаём очередь команд ========
@@ -82,14 +95,13 @@ const twitchBot = new TwitchBotService(
 
 matchManager.setTwitchBotService(twitchBot)
 
-// ======== Функция для старта Twitch-бота ========
+// ======== Twitch start ========
 export function startTwitchBot(channel: string) {
   twitchChannel = channel
   twitchBot.start(channel)
 }
 
-// ======== ОБНОВЛЁННАЯ функция создания матча ========
-// теперь принимает либо число (старый формат), либо объект (новый формат)
+// ======== Создание матча ========
 export function createMatchFromLobby(
   input: number | {
     maxPlayers?: number
@@ -105,43 +117,32 @@ export function createMatchFromLobby(
   }
 
   const maxPlayers =
-    typeof input === "number"
-      ? input
-      : input.maxPlayers ?? 10
+    typeof input === "number" ? input : input.maxPlayers ?? 10
 
   const match = matchManager.createMatch({
     twitchChannel,
     maxPlayers,
-    turnTimeSeconds: typeof input === "object" ? input.turnTimeSeconds : undefined,
-    targetPoints: typeof input === "object" ? input.targetPoints : undefined,
-    boosterSetSize: typeof input === "object" ? input.boosterSetSize : undefined,
-
+    turnTimeSeconds:
+      typeof input === "object" ? input.turnTimeSeconds : undefined,
+    targetPoints:
+      typeof input === "object" ? input.targetPoints : undefined,
+    boosterSetSize:
+      typeof input === "object" ? input.boosterSetSize : undefined,
   })
 
-  // 🔹 временно открываем регистрацию, чтобы добавить игроков из лобби
   match.state.registrationOpen = true
 
   registrationLobby.getPlayers().forEach((p) => {
-    match.addTwitchPlayer(
-      p.twitchUserId,
-      p.username,
-      p.avatarId
-    )
+    match.addTwitchPlayer(p.twitchUserId, p.username, p.avatarId)
   })
 
-  // 🔹 закрываем регистрацию после переноса
   match.state.registrationOpen = false
-
-  // 🔹 Матч больше НЕ запускается отсюда.
-  // Запуском FSM занимается исключительно GameLoop.
-
-  // Очищаем лобби после старта
   registrationLobby.clear()
 
   return match
 }
 
-// ======== Игровой цикл ========
+// ======== Game loop ========
 setInterval(() => {
   const commands = commandQueue.drain()
 
@@ -158,7 +159,7 @@ setInterval(() => {
   commandProcessor.process()
 }, 100)
 
-// ======== Запуск игрового цикла ========
+// ======== START ========
 gameLoop.start()
 
 console.log("server started")
