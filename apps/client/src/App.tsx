@@ -30,12 +30,10 @@ function App() {
   const recentEvents = useGameStore((s) => s.recentEvents)
   const boosterSet = useGameStore((s) => s.boosterSet)
   const turnOrder = useGameStore((s) => s.turnOrder)
-  const matchFinished = useGameStore((s) => s.matchFinished)
   const winnerId = useGameStore((s) => s.matchWinnerId)
   const winReason = useGameStore((s) => s.matchWinReason)
   const matchPlayers = useGameStore((s) => s.matchPlayers)
   const roomId = useGameStore((s) => s.roomId)
-  const result = useGameStore((s) => s.matchResultSnapshot)
 
   const currentPlayer = players.find(
     (player) => player.id === currentTurnPlayerId
@@ -49,7 +47,7 @@ function App() {
   const orderedPlayers = turnOrder.length
     ? turnOrder
         .map(id => players.find(p => p.id === id))
-       .filter(Boolean)
+       .filter((p): p is NonNullable<typeof p> => p != null)
     : players
 
 
@@ -98,7 +96,9 @@ useEffect(() => {
       }
     `
     document.head.appendChild(style)
-    return () => document.head.removeChild(style)
+    return (): void => {
+  document.head.removeChild(style)
+}
   }, [])
 
   // ===== ChannelSelectPage =====
@@ -397,7 +397,16 @@ if (screen === "RESULT") {
   return (
     <MatchResultScreen
       winnerId={winnerId ?? ""}
-      players={matchPlayers?.length ? matchPlayers : players}
+      players={
+  (matchPlayers?.length ? matchPlayers : players).map((p: any) => ({
+    id: p.id,
+    username: p.username ?? p.nickname ?? "unknown",
+    score: p.score ?? 0,
+    twitchUserId: p.twitchUserId ?? "",
+    avatarId: p.avatarId ?? "cat1",
+    eliminated: p.eliminated ?? false,
+  }))
+}
       reason={winReason || "points"}
       onPlayAgain={() =>
         useGameStore.setState({

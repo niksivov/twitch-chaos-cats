@@ -18,6 +18,9 @@ importers:
 
   apps/client:
     dependencies:
+      '@twitch-chaos-cats/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -67,6 +70,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@twitch-chaos-cats/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
       cors:
         specifier: ^2.8.5
         version: 2.8.6

@@ -1,4 +1,5 @@
 import express from "express"
+import path from "path"
 
 import { CommandProcessor } from "./core/CommandProcessor"
 import { GameLoop } from "./core/GameLoop"
@@ -16,8 +17,15 @@ const PORT = process.env.PORT ? Number(process.env.PORT) : 8080
 // ======== HTTP SERVER (FIX FOR RENDER) ========
 const app = express()
 
-app.get("/", (_, res) => {
-  res.send("Twitch Chaos Cats server running")
+// ======== FIX: SERVE FRONTEND (VITE BUILD) ========
+// ВАЖНО: Vite билд у тебя идёт в server/dist/client
+const clientPath = path.join(__dirname, "client")
+
+app.use(express.static(clientPath))
+
+// SPA fallback (React Router / прямые урлы)
+app.get("*", (_, res) => {
+  res.sendFile(path.join(clientPath, "index.html"))
 })
 
 app.get("/health", (_, res) => {
@@ -35,23 +43,8 @@ const commandProcessor = new CommandProcessor(matchManager)
 
 // ======== Список доступных аватаров ========
 const availableAvatars = [
-  "cat1",
-  "cat2",
-  "cat3",
-  "cat4",
-  "cat5",
-  "cat6",
-  "cat7",
-  "cat8",
-  "cat9",
-  "cat10",
-  "cat11",
-  "cat12",
-  "cat13",
-  "cat14",
-  "cat15",
-  "cat16",
-  "cat17",
+  "cat1","cat2","cat3","cat4","cat5","cat6","cat7","cat8","cat9",
+  "cat10","cat11","cat12","cat13","cat14","cat15","cat16","cat17",
 ]
 
 // ======== Создаём лобби для регистрации игроков ========
