@@ -12,25 +12,14 @@ class SocketClient {
   private socket: WebSocket | null = null
   public onMessage?: (data: any) => void
 
-   connect() {
-    // ======================
-    // 🔥 FIX: environment-safe WS url
-    // ======================
-    const isDev = import.meta.env.DEV
-
-    const WS_URL = isDev
+connect() {
+  const WS_URL =
+    window.location.hostname === "localhost"
       ? "ws://localhost:8080"
-      : import.meta.env.VITE_WS_URL
+      : `wss://${window.location.host}`
 
-    if (!WS_URL) {
-      console.error("[WS] Missing VITE_WS_URL in production")
-      return
-    }
-
-    console.log("[WS] connecting to:", WS_URL)
-
-    const socket = new WebSocket(WS_URL)
-    this.socket = socket
+  const socket = new WebSocket(WS_URL)
+  this.socket = socket
 
     socket.onopen = () => {
       useGameStore.getState().setConnected(true)
