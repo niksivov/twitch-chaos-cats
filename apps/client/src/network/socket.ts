@@ -13,7 +13,12 @@ class SocketClient {
   public onMessage?: (data: any) => void
 
   connect() {
-    const socket = new WebSocket("ws://localhost:8080")
+    // 🔥 FIX: используем env переменную
+    const WS_URL =
+      import.meta.env.VITE_WS_URL ||
+      "ws://localhost:8080"
+
+    const socket = new WebSocket(WS_URL)
     this.socket = socket
 
     socket.onopen = () => {
