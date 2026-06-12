@@ -36,7 +36,6 @@ connect() {
     socket.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data)
-        console.log("[WS MESSAGE RECEIVED]", message)
 
         if (this.onMessage) this.onMessage(message)
 
