@@ -32,6 +32,12 @@ export class BoosterSetManager {
         i
       )
     }
+
+    console.log(
+      "[BOOSTERSET INIT]",
+      match.round,
+      match.state.boosterSet
+    )
   }
 
   private fillBoosterPool(
