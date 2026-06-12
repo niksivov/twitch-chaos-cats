@@ -16,6 +16,15 @@ export class BoosterEngine {
   }
 
   activateBooster(match: Match, playerId: string, slot: number) {
+    console.log("[ACTIVATE]", {
+      playerId,
+      slot,
+      boosterSet: match.state.boosterSet.map(b => ({
+        slot: b.slot,
+        boosterId: b.boosterId,
+      }))
+    })
+
     const setItem = match.state.boosterSet.find(item => item.slot === slot)
     if (!setItem) return
 
