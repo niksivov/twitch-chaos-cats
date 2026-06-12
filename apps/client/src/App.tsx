@@ -61,6 +61,26 @@ useEffect(() => {
   socketClient.onMessage = (data: any) => {
     // здесь оставляем только вспомогательные/будущие события
     // (ничего игрового больше не дублируем)
+    console.log("[WS EVENT]", data)
+
+    // 🔹 Лог для отладки currentTurnPlayerId и игроков
+    if (
+      data?.type === "match_state" &&
+      data?.payload
+    ) {
+      console.log("[DEBUG MATCH_STATE]")
+      console.log(
+        "currentTurnPlayerId:",
+        data.payload.currentTurnPlayerId
+      )
+      console.log(
+        "players:",
+        data.payload.players?.map((p: any) => ({
+          id: p.id,
+          nickname: p.nickname,
+        }))
+      )
+    }
   }
   
     const style = document.createElement("style")
