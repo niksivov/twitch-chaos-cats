@@ -127,14 +127,19 @@ export class CommandProcessor {
     console.log("[BoostCommandHandler] Booster activated and phase transitioned to BOOSTER_RESOLUTION")
   }
 
-  private buildCommandKey(command: GameCommand): string {
-    return [
-      command.type,
-      command.matchId ?? "",
-      command.playerId ?? "",
-      JSON.stringify(command.payload),
-    ].join(":")
-  }
+private buildCommandKey(command: GameCommand): string {
+  const match = command.matchId
+    ? this.matchManager.getMatch(command.matchId)
+    : null
+
+  return [
+    command.type,
+    command.matchId ?? "",
+    command.playerId ?? "",
+    match?.round ?? 0, // 👈 ВОТ СЮДА
+    JSON.stringify(command.payload),
+  ].join(":")
+}
 
   private cleanup() {
     if (this.processedKeys.size > 10000) {
