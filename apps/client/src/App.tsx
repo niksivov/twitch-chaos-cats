@@ -41,48 +41,18 @@ function App() {
  
   const lobbyPlayers = useGameStore((s) => s.lobbyPlayers)
 
-
-
-// 🔥 ДОБАВЛЕНО: формируем порядок игроков из очереди
   const orderedPlayers = turnOrder.length
     ? turnOrder
         .map(id => players.find(p => p.id === id))
        .filter((p): p is NonNullable<typeof p> => p != null)
     : players
 
-
-
 useEffect(() => {
   socketClient.connect()
 
-  // App больше НЕ пишет matchFinished напрямую в store.
-  // Это теперь делает socket → applySnapshot (единый источник истины).
-
-  socketClient.onMessage = (data: any) => {
-    // здесь оставляем только вспомогательные/будущие события
-    // (ничего игрового больше не дублируем)
-    console.log("[WS EVENT]", data)
-
-    // 🔹 Лог для отладки currentTurnPlayerId и игроков
-    if (
-      data?.type === "match_state" &&
-      data?.payload
-    ) {
-      console.log("[DEBUG MATCH_STATE]")
-      console.log(
-        "currentTurnPlayerId:",
-        data.payload.currentTurnPlayerId
-      )
-      console.log(
-        "players:",
-        data.payload.players?.map((p: any) => ({
-          id: p.id,
-          nickname: p.nickname,
-        }))
-      )
-    }
+  socketClient.onMessage = (_data: any) => {
   }
-  
+ 
     const style = document.createElement("style")
     style.innerHTML = `
       input[type="number"]::-webkit-inner-spin-button,
