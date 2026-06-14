@@ -123,7 +123,7 @@ export function BoosterSet({
 
                     fontWeight: 700,
 
-                    fontSize: 14,
+                    fontSize: 17,
 
                     opacity: 0.9,
                   }}
