@@ -103,7 +103,7 @@ export function BoosterSet({
 
                     minWidth: 26,
 
-                    height: 26,
+                    height: 28,
 
                     padding:
                       "0 8px",
@@ -123,7 +123,7 @@ export function BoosterSet({
 
                     fontWeight: 700,
 
-                    fontSize: 17,
+                    fontSize: 18,
 
                     opacity: 0.9,
                   }}

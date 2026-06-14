@@ -8,7 +8,7 @@ export const halfTopScore: BoosterDefinition = {
   description:
     "Ваш счет становится равен 50% от наибольшего счета в матче",
 
-  poolCount: 20,
+  poolCount: 1,
 
   icon: "halfTopScore",
 
