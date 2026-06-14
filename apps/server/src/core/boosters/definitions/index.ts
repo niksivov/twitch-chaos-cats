@@ -118,6 +118,18 @@ import {
   RandomRemoveBooster,
 } from "./RandomRemoveBooster"
 
+import {
+  halfTopScore,
+} from "./halfTopScore"
+
+import {
+  comebackLeader,
+} from "./comebackLeader"
+
+import {
+  TimeBonusBooster,
+} from "./TimeBonusBooster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -175,6 +187,12 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     randompoints,
 
     instantwin3percent,
+
+    TimeBonusBooster,
+
+    halfTopScore,
+
+    comebackLeader,
 
     RandomRemoveBooster,
   ]
