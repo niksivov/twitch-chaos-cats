@@ -1,12 +1,12 @@
 const COLORS = [
-  "#dd0dcc",
-  "#0ff0e1",
-  "#4e43e7",
-  "#0d9b20",
-  "#e5e914",
-  "#f37f13",
-  "#74c0fc",
-  "#fa1263",
+  "#e78de0",
+  "#93f7f0",
+  "#a19cf1",
+  "#9ef5a9",
+  "#ebec9e",
+  "#eebe90",
+  "#a6d3f5",
+  "#f0a8c1",
 ]
 
 export function getPlayerColor(id: string) {
