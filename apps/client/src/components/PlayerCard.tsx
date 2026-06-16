@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { getPlayerColor } from "../utils/getPlayerColor"
 
 interface PlayerSnapshot {
   id: string
@@ -117,6 +118,7 @@ export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
           marginBottom: 6,
+          color: getPlayerColor(player.id)
         }}
       >
         {player.nickname}

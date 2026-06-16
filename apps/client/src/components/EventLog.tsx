@@ -1,3 +1,6 @@
+import { getPlayerColor } from "../utils/getPlayerColor"
+import { useGameStore } from "../store/gameStore"
+
 interface MatchEventSnapshot {
   id: string
 
@@ -11,6 +14,8 @@ interface Props {
 export function EventLog({
   events,
 }: Props) {
+  const players = useGameStore((s) => s.players)
+
   return (
     <div
       style={{
@@ -57,6 +62,10 @@ export function EventLog({
               index ===
               events.length - 1
 
+            const player = players.find((p) =>
+              event.message.includes(p.nickname)
+            )
+
             return (
               <div
                 key={event.id}
@@ -72,6 +81,10 @@ export function EventLog({
                     isLast
                       ? "none"
                       : "1px solid #2d3742",
+
+                  color: player
+                    ? getPlayerColor(player.id)
+                    : "white",
                 }}
               >
                 ⚡ {event.message}
