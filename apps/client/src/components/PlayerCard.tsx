@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react"
+
 interface PlayerSnapshot {
   id: string
   nickname: string
@@ -13,6 +15,23 @@ interface Props {
 }
 
 export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
+  const prevPointsRef = useRef(player.points)
+  const [delta, setDelta] = useState<number | null>(null)
+
+  useEffect(() => {
+    const diff = player.points - prevPointsRef.current
+
+    if (diff !== 0) {
+      setDelta(diff)
+
+      setTimeout(() => {
+        setDelta(null)
+      }, 1000)
+    }
+
+    prevPointsRef.current = player.points
+  }, [player.points])
+
   return (
     <div
       style={{
@@ -69,6 +88,24 @@ export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
             👑
           </div>
         )}
+
+        {delta !== null && (
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: 10,
+              transform: "translateX(-50%)",
+              fontSize: 28,
+              fontWeight: 900,
+              color: delta > 0 ? "#4cff4c" : "#ff5b5b",
+              pointerEvents: "none",
+              animation: "floatScore 1s ease-out forwards",
+            }}
+          >
+            {delta > 0 ? `+${delta}` : delta}
+          </div>
+        )}
       </div>
 
       <div
@@ -100,6 +137,21 @@ export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
       >
         🪙 {player.points}
       </div>
+
+      <style>
+        {`
+          @keyframes floatScore {
+            from {
+              opacity: 1;
+              transform: translate(-50%, 0px);
+            }
+            to {
+              opacity: 0;
+              transform: translate(-50%, -40px);
+            }
+          }
+        `}
+      </style>
     </div>
   )
 }
