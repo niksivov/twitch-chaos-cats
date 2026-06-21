@@ -8,7 +8,7 @@ export const TimeBonusBooster: BoosterDefinition = {
   description:
     "Добавляет себе +1 за каждые 10 секунд матча",
 
-  poolCount: 2,
+  poolCount: 0,
 
   icon: "timebonus",
 

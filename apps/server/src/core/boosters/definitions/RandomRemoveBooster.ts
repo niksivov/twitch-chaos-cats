@@ -23,13 +23,6 @@ export const RandomRemoveBooster: BoosterDefinition =
       const targets =
         match
           .getAlivePlayers()
-          .filter(
-            (
-              player: any
-            ) =>
-              player.playerId !==
-              sourcePlayerId
-          )
 
       if (
         targets.length === 0
