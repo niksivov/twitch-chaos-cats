@@ -10,7 +10,7 @@ export const squareRoundPoints: BoosterDefinition =
     description:
       "Добавляет себе количество очков равное квадрату текущего раунда",
 
-    poolCount: 2,
+    poolCount: 1,
 
     icon: "squareRoundPoints",
 
