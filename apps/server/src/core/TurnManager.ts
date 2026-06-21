@@ -24,6 +24,7 @@ export class TurnManager {
         .sort((a, b) => a[1].score - b[1].score)
         .map(([internalId]) => internalId)
     )
+
     match.turnOrder = this.matchTurnManagers.get(match.id) ?? []
     match.state.roundPlayedPlayerIds = []
 
@@ -89,12 +90,23 @@ export class TurnManager {
     const roundPlayed = match.state.roundPlayedPlayerIds
     const queue = this.matchTurnManagers.get(match.id) ?? []
 
-    let nextPlayerId = queue.find(id => !roundPlayed.includes(id))
-    if (!nextPlayerId) {
-      nextPlayerId = queue[0] ?? null
+    // 1. ищем следующего живого, который ещё не ходил
+    const nextFromUnplayed = queue.find(id => {
+      const player = match.state.registeredPlayers[id]
+      return player?.isAlive && !roundPlayed.includes(id)
+    })
+
+    if (nextFromUnplayed) {
+      return nextFromUnplayed
     }
 
-    return nextPlayerId
+    // 2. fallback — первый живой игрок
+    const nextAlive = queue.find(id => {
+      const player = match.state.registeredPlayers[id]
+      return player?.isAlive
+    })
+
+    return nextAlive ?? null
   }
 
   getRemainingSeconds(match: Match): number {

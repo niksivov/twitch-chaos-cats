@@ -3,7 +3,7 @@ import { BoosterDefinition } from "../BoosterTypes"
 export const halfTopScore: BoosterDefinition = {
   id: "HALF_TOP_SCORE",
 
-  name: "50% от лидера",
+  name: "Твой счет = 50% от лидера",
 
   description:
     "Ваш счет становится равен 50% от наибольшего счета в матче",

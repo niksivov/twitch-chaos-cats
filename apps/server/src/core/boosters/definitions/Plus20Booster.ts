@@ -11,7 +11,7 @@ export const Plus20Booster: BoosterDefinition =
     description:
       "Add 20 points to yourself",
 
-    poolCount: 8,
+    poolCount: 5,
 
     icon: "plus20",
 

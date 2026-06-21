@@ -12,7 +12,7 @@ export const Minus50RandomBooster: BoosterDefinition =
     description:
       "Remove 50 points from random enemy",
 
-    poolCount: 1,
+    poolCount: 20,
 
     icon: "minus50random",
 
