@@ -125,7 +125,7 @@ export function BoosterSet({ boosters }: Props) {
                 justifyContent: "center",
                 gap: 4,
 
-                transition: "all 0.4s ease",
+                transition: "all 1.4s ease",
 
                 opacity: isRemoving ? 0 : 1,
                 transform: isRemoving
