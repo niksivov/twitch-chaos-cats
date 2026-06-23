@@ -3,12 +3,12 @@ import { BoosterDefinition } from "../BoosterTypes"
 export const generousChaos: BoosterDefinition = {
   id: "GENEROUS_CHAOS",
 
-  name: "+75 тебе и +75 между соперниками",
+  name: "+75 тебе и +100 между соперниками",
 
   description:
     "Вы получаете 75 очков, а между соперниками случайно распределяется 100",
 
-  poolCount: 20,
+  poolCount: 2,
 
   icon: "generousChaos",
 
