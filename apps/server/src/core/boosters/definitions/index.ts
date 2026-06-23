@@ -127,6 +127,14 @@ import {
 } from "./comebackLeader"
 
 import {
+  generousChaos,
+} from "./generousChaos"
+
+import {
+  addLowestScore,
+} from "./addLowestScore"
+
+import {
   TimeBonusBooster,
 } from "./TimeBonusBooster"
 
@@ -193,6 +201,10 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     halfTopScore,
 
     comebackLeader,
+
+    generousChaos,
+
+    addLowestScore,
 
     RandomRemoveBooster,
   ]
