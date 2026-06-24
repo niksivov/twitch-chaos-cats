@@ -3,12 +3,12 @@ import { BoosterDefinition } from "../BoosterTypes"
 export const scoreUnderdog: BoosterDefinition = {
   id: "SCORE_UNDERDOG",
 
-  name: "+15 за каждого, у кого больше очков",
+  name: "+15 за каждого, у кого > очков",
 
   description:
     "+15 за каждого игрока, у которого больше очков, чем у вас",
 
-  poolCount: 20,
+  poolCount: 2,
 
   icon: "scoreUnderdog",
 
