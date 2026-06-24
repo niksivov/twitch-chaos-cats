@@ -139,6 +139,10 @@ import {
 } from "./scoreUnderdog"
 
 import {
+  doubleOrNothing,
+} from "./doubleOrNothing"
+
+import {
   TimeBonusBooster,
 } from "./TimeBonusBooster"
 
@@ -211,6 +215,8 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     addLowestScore,
 
     scoreUnderdog,
+
+    doubleOrNothing,
 
     RandomRemoveBooster,
   ]
