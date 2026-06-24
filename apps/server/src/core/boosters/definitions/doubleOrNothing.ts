@@ -8,7 +8,7 @@ export const doubleOrNothing: BoosterDefinition = {
   description:
     "50%: +200 очков. 50%: смерть",
 
-  poolCount: 20,
+  poolCount: 1,
 
   icon: "doubleOrNothing",
 

@@ -1,5 +1,5 @@
 const COLORS = [
-  "#e78de0",
+  "#fa10e6",
   "#93f7f0",
   "#a19cf1",
   "#9ef5a9",
