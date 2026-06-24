@@ -54,6 +54,8 @@ export function BoosterSet({ boosters }: Props) {
         }
       })
 
+      result.sort((a, b) => a.slot - b.slot)
+
       return result
     })
   }, [boosters])

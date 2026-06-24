@@ -135,6 +135,10 @@ import {
 } from "./addLowestScore"
 
 import {
+  scoreUnderdog,
+} from "./scoreUnderdog"
+
+import {
   TimeBonusBooster,
 } from "./TimeBonusBooster"
 
@@ -205,6 +209,8 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     generousChaos,
 
     addLowestScore,
+
+    scoreUnderdog,
 
     RandomRemoveBooster,
   ]
