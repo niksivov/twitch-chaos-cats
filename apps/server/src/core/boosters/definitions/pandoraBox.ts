@@ -7,7 +7,7 @@ export const pandoraBox: BoosterDefinition = {
 
   description: "Выпадает случайный эффект из 10 катастрофических событий",
 
-  poolCount: 1,
+  poolCount: 20,
 
   icon: "pandoraBox",
 
