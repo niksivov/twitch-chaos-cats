@@ -143,6 +143,10 @@ import {
 } from "./doubleOrNothing"
 
 import {
+  pandoraBox,
+} from "./pandoraBox"
+
+import {
   TimeBonusBooster,
 } from "./TimeBonusBooster"
 
@@ -217,6 +221,8 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     scoreUnderdog,
 
     doubleOrNothing,
+
+    pandoraBox,
 
     RandomRemoveBooster,
   ]
