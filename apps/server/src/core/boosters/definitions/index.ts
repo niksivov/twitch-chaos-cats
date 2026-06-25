@@ -147,6 +147,10 @@ import {
 } from "./pandoraBox"
 
 import {
+  averageWithAllLeaders,
+} from "./averageWithAllLeaders"
+
+import {
   TimeBonusBooster,
 } from "./TimeBonusBooster"
 
@@ -223,6 +227,8 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     doubleOrNothing,
 
     pandoraBox,
+
+    averageWithAllLeaders,
 
     RandomRemoveBooster,
   ]
