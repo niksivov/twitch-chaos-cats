@@ -8,7 +8,7 @@ export const averageWithAllLeaders: BoosterDefinition = {
   description:
     "Ваш счет и счет всех лидеров становятся равны их среднему значению (округление вверх)",
 
-  poolCount: 20,
+  poolCount: 2,
 
   icon: "averageWithLeader",
 
