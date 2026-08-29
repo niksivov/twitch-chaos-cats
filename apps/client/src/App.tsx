@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { socketClient } from "./network/socket"
 import { useGameStore } from "./store/gameStore"
 import { PlayerCard } from "./components/PlayerCard"
@@ -6,6 +6,7 @@ import { EventLog } from "./components/EventLog"
 import { BoosterSet } from "./components/BoosterSet"
 import { TurnTimer } from "./components/TurnTimer"
 import { MatchResultScreen } from "./components/MatchResultScreen"
+import { HowToPlayModal } from "./components/HowToPlayModal"
 
 // Фоны
 import settingsBackground from "./assets/backgrounds/MatchSettings.png"
@@ -15,6 +16,8 @@ import channelSelectBackground from "./assets/backgrounds/ChannelSelectPage.png"
 function App() {
   const screen = useGameStore((s) => s.screen)
   const setScreen = useGameStore((s) => s.setScreen)
+
+  const [showHowToPlay, setShowHowToPlay] = useState(false)
 
   const turnTimeSeconds = useGameStore((s) => s.turnTimeSeconds)
   const targetPoints = useGameStore((s) => s.targetPoints)
@@ -184,6 +187,20 @@ useEffect(() => {
               >
                 Далее
               </button>
+
+              <div
+                onClick={() => setShowHowToPlay(true)}
+                style={{
+                  marginTop: 14,
+                  textAlign: "center",
+                  color: "#e1bee7",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  fontSize: 14,
+                }}
+              >
+                Как играть
+              </div>
             </div>
           </div>
         </div>
@@ -351,11 +368,25 @@ useEffect(() => {
                 textShadow: "0 0 4px rgba(0,0,0,0.5)",
                 transition: "transform 0.2s ease",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-            >
-              Играть
-            </button>
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+              >
+                Играть
+              </button>
+
+              <div
+                onClick={() => setShowHowToPlay(true)}
+                style={{
+                  marginTop: 14,
+                  textAlign: "center",
+                  color: "#e1bee7",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  fontSize: 14,
+                }}
+              >
+                Как играть
+              </div>
           </div>
         </div>
       </>
@@ -482,7 +513,14 @@ if (screen === "RESULT") {
     )
   }
 
-  return null
+  return (
+    <>
+      <HowToPlayModal
+        open={showHowToPlay}
+        onClose={() => setShowHowToPlay(false)}
+      />
+    </>
+  )
 }
 
 export default App
