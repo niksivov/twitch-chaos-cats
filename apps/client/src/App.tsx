@@ -135,7 +135,7 @@ useEffect(() => {
               </label>
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Максимальное количество игроков (до 20)
+                Максимальное количество игроков (от 2 до 20)
                 <input
                   type="number"
                   min={2}
