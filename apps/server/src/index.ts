@@ -94,6 +94,11 @@ export function startTwitchBot(channel: string) {
   twitchBot.start(channel)
 }
 
+export function stopTwitchBot() {
+  twitchBot.stop()
+  twitchChannel = null
+}
+
 // ======== Создание матча ========
 export function createMatchFromLobby(
   input: number | {

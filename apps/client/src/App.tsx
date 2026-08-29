@@ -510,6 +510,25 @@ if (screen === "RESULT") {
                   playerName={currentPlayer?.nickname}
                 />
               </div>
+
+              <button
+                onClick={() => {
+                  useGameStore.getState().resetToStart()
+                  socketClient.sendMessage({ type: "RESET_MATCH" })
+                }}
+                style={{
+                  padding: "10px 18px",
+                  borderRadius: 10,
+                  border: "1px solid #9575cd",
+                  background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                🔄 Сброс
+              </button>
             </div>
           </div>
 

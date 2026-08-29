@@ -4,7 +4,7 @@ import { CommandProcessor } from "../core/CommandProcessor"
 import { RegistrationLobby } from "../core/RegistrationLobby"
 
 // ✅ Импортируем функцию из index.ts для создания матча с игроками из Lobby
-import { startTwitchBot, createMatchFromLobby } from "../index"
+import { startTwitchBot, stopTwitchBot, createMatchFromLobby } from "../index"
 
 export class WebSocketServer {
   private wss: WSServer
@@ -60,6 +60,10 @@ export class WebSocketServer {
       case "START_TWITCH_BOT":
         this.handleStartTwitchBot(message)
         break
+
+      case "RESET_MATCH":
+        this.handleResetMatch(socket)
+        break
     }
   }
 
@@ -101,6 +105,17 @@ export class WebSocketServer {
     console.log(`[WebSocket] START_TWITCH_BOT for channel: ${channel}`)
 
     startTwitchBot(channel)
+    this.broadcastLobbyState()
+  }
+
+  private handleResetMatch(socket: WebSocket) {
+    const matchId = (socket as any).matchId
+
+    if (matchId) {
+      this.matchManager.removeMatch(matchId)
+    }
+
+    stopTwitchBot()
     this.broadcastLobbyState()
   }
 

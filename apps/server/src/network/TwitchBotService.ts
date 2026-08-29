@@ -88,6 +88,14 @@ export class TwitchBotService {
     return match
   }
 
+  stop() {
+    if (this.client) {
+      this.client.disconnect()
+      this.client = undefined as any
+    }
+    this.currentMatchId = null
+  }
+
   private handleMessage(twitchUserId: string, username: string, message: string) {
     const msg = message.trim().toLowerCase()
 

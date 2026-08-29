@@ -99,6 +99,7 @@ interface GameState {
   setBoosterSetSize: (value: number) => void
   setLobbyPlayers: (players: LobbyPlayer[]) => void
   applySnapshot: (snapshot: StateUpdatePayload) => void
+  resetToStart: () => void
 }
 
 export const useGameStore = create<GameState>((set) => ({
@@ -169,4 +170,36 @@ export const useGameStore = create<GameState>((set) => ({
       // экран теперь НЕ выводится из фаз
       // (UI должен решать это сам в App)
     }),
+
+    resetToStart: () =>
+      set({
+        screen: "CHANNEL_SELECT",
+
+        twitchChannel: "",
+        maxPlayers: 20,
+
+        roomId: "",
+        phase: "LOBBY",
+        tick: 0,
+        round: 0,
+        currentTurnPlayerId: undefined,
+        currentTurnStartedAt: undefined,
+        leaderPlayerId: undefined,
+        players: [],
+        recentEvents: [],
+        boosterSet: [],
+        turnOrder: [],
+        lobbyPlayers: [],
+
+        turnTimeSeconds: 30,
+        targetPoints: 100,
+        boosterSetSize: 3,
+
+        matchFinished: false,
+        matchWinnerId: undefined,
+        matchPlayers: [],
+        matchWinReason: undefined,
+
+        matchResultSnapshot: undefined,
+      }),
 }))
