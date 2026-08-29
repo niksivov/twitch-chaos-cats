@@ -109,8 +109,13 @@ export function createMatchFromLobby(
     )
   }
 
-  const maxPlayers =
-    typeof input === "number" ? input : input.maxPlayers ?? 10
+  const maxPlayersRaw =
+    typeof input === "number" ? input : input.maxPlayers
+  const maxPlayersNum = Math.floor(Number(maxPlayersRaw))
+  const maxPlayers = Math.min(
+    20,
+    Math.max(2, Number.isFinite(maxPlayersNum) ? maxPlayersNum : 10)
+  )
 
   const match = matchManager.createMatch({
     twitchChannel,

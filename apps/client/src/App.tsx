@@ -18,6 +18,10 @@ function App() {
   const setScreen = useGameStore((s) => s.setScreen)
 
   const [showHowToPlay, setShowHowToPlay] = useState(false)
+  const [maxPlayersRaw, setMaxPlayersRaw] = useState(() =>
+    String(useGameStore.getState().maxPlayers)
+  )
+  const [maxPlayersError, setMaxPlayersError] = useState<string | null>(null)
 
   const turnTimeSeconds = useGameStore((s) => s.turnTimeSeconds)
   const targetPoints = useGameStore((s) => s.targetPoints)
@@ -140,10 +144,18 @@ useEffect(() => {
                   type="number"
                   min={2}
                   max={20}
-                  value={maxPlayers}
-                  onChange={(e) =>
-                    useGameStore.setState({ maxPlayers: Number(e.target.value) })
-                  }
+                  value={maxPlayersRaw}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    setMaxPlayersRaw(v)
+                    const n = Number(v)
+                    if (v.trim() === "" || !Number.isInteger(n) || n < 2 || n > 20) {
+                      setMaxPlayersError("Введите целое число от 2 до 20")
+                    } else {
+                      setMaxPlayersError(null)
+                      useGameStore.setState({ maxPlayers: n })
+                    }
+                  }}
                   style={{
                     marginTop: 6,
                     padding: "12px 14px",
@@ -158,8 +170,16 @@ useEffect(() => {
                 />
               </label>
 
+              {maxPlayersError && (
+                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>
+                  {maxPlayersError}
+                </div>
+              )}
+
               <button
+                disabled={!!maxPlayersError}
                 onClick={() => {
+                  if (maxPlayersError) return
                   if (twitchChannel.trim()) {
                     socketClient.sendMessage({
                       type: "START_TWITCH_BOT",
@@ -176,7 +196,8 @@ useEffect(() => {
                   fontSize: 18,
                   fontWeight: 800,
                   color: "white",
-                  cursor: "pointer",
+                  cursor: maxPlayersError ? "not-allowed" : "pointer",
+                  opacity: maxPlayersError ? 0.5 : 1,
                   background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
                   boxShadow: "0 0 16px rgba(156,39,176,0.6)",
                   textShadow: "0 0 4px rgba(0,0,0,0.5)",
