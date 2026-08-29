@@ -204,6 +204,7 @@ useEffect(() => {
             </div>
           </div>
         </div>
+      <HowToPlayModal open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
       </>
     )
   }
@@ -389,6 +390,7 @@ useEffect(() => {
               </div>
           </div>
         </div>
+      <HowToPlayModal open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
       </>
     )
   }
@@ -513,14 +515,7 @@ if (screen === "RESULT") {
     )
   }
 
-  return (
-    <>
-      <HowToPlayModal
-        open={showHowToPlay}
-        onClose={() => setShowHowToPlay(false)}
-      />
-    </>
-  )
+  return null
 }
 
 export default App
