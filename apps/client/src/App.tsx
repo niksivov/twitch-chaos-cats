@@ -549,10 +549,11 @@ if (screen === "RESULT") {
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
-            {orderedPlayers.map((player) => (
+            {orderedPlayers.map((player, index) => (
               <PlayerCard
                 key={player.id ?? player.nickname ?? `${player.nickname}-${player.avatarId}`}
                 player={player}
+                index={index}
                 isCurrentTurn={player.id === currentTurnPlayerId}
                 isLeader={player.id === leaderPlayerId}
               />

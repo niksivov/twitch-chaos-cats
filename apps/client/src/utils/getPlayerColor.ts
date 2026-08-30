@@ -21,12 +21,6 @@ const COLORS = [
   "#550751",
 ]
 
-export function getPlayerColor(id: string) {
-  let hash = 0
-
-  for (let i = 0; i < id.length; i++) {
-    hash += id.charCodeAt(i)
-  }
-
-  return COLORS[hash % COLORS.length]
+export function getPlayerColor(_id: string, index: number) {
+  return COLORS[index % COLORS.length]
 }

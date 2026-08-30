@@ -11,11 +11,12 @@ interface PlayerSnapshot {
 
 interface Props {
   player: PlayerSnapshot
+  index: number
   isCurrentTurn: boolean
   isLeader: boolean
 }
 
-export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
+export function PlayerCard({ player, index, isCurrentTurn, isLeader }: Props) {
   const prevPointsRef = useRef(player.points)
   const [delta, setDelta] = useState<number | null>(null)
 
@@ -118,7 +119,7 @@ export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
           marginBottom: 6,
-          color: getPlayerColor(player.id)
+          color: getPlayerColor(player.id, index)
         }}
       >
         {player.nickname}

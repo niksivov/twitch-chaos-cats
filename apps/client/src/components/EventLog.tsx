@@ -83,7 +83,7 @@ export function EventLog({
                       : "1px solid #2d3742",
 
                   color: player
-                    ? getPlayerColor(player.id)
+                    ? getPlayerColor(player.id, players.findIndex(p => p.id === player.id))
                     : "white",
                 }}
               >
