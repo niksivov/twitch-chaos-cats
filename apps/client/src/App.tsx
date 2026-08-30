@@ -529,6 +529,22 @@ if (screen === "RESULT") {
               >
                 🔄 Сброс
               </button>
+
+              <button
+                onClick={() => setShowHowToPlay(true)}
+                style={{
+                  padding: "10px 18px",
+                  borderRadius: 10,
+                  border: "1px solid #9575cd",
+                  background: "transparent",
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                Как играть
+              </button>
             </div>
           </div>
 
@@ -551,6 +567,8 @@ if (screen === "RESULT") {
             <EventLog events={recentEvents} />
           </div>
         </div>
+
+        <HowToPlayModal open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
       </>
     )
   }
