@@ -17,7 +17,7 @@ export interface WheelResult {
 export const WheelBooster: BoosterDefinition = {
   id: "WHEEL",
 
-  name: "Колесо",
+  name: "Если у тебя >80% от цели — крути КОЛЕСО!",
 
   description:
     "Если у тебя >80% от цели — раскрути колесо! Победитель определяется по весу очков",
