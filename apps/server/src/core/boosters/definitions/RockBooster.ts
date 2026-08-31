@@ -19,12 +19,12 @@ function checkRpsWin(match: Match, playerId: string) {
 export const RockBooster: BoosterDefinition = {
   id: "ROCK",
 
-  name: "Камень",
+  name: "Камень + Ножницы + Бумага = Победа",
 
   description:
     "Камень бьёт ножницы. Собери все три для победы!",
 
-  poolCount: 50,
+  poolCount: 1,
 
   icon: "rock",
 

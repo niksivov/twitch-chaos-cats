@@ -17,12 +17,12 @@ function checkRpsWin(match: Match, playerId: string) {
 export const ScissorsBooster: BoosterDefinition = {
   id: "SCISSORS",
 
-  name: "Ножницы",
+  name: "Камень + Ножницы + Бумага = Победа",
 
   description:
     "Ножницы режут бумагу. Собери все три для победы!",
 
-  poolCount: 50,
+  poolCount: 1,
 
   icon: "scissors",
 
