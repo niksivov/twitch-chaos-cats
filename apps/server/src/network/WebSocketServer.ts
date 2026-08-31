@@ -3,7 +3,6 @@ import { MatchManager } from "../core/MatchManager"
 import { CommandProcessor } from "../core/CommandProcessor"
 import { RegistrationLobby } from "../core/RegistrationLobby"
 
-// ✅ Импортируем функцию из index.ts для создания матча с игроками из Lobby
 import { startTwitchBot, stopTwitchBot, createMatchFromLobby } from "../index"
 
 export class WebSocketServer {
@@ -22,14 +21,11 @@ export class WebSocketServer {
 
   private initialize() {
     this.wss.on("connection", (socket: WebSocket) => {
-      console.log("websocket client connected")
-
       this.clients.add(socket)
       this.sendLobbyState(socket)
 
       socket.on("close", () => {
         this.clients.delete(socket)
-        console.log("websocket client disconnected")
       })
 
       socket.on("message", (raw) => {
@@ -102,8 +98,6 @@ export class WebSocketServer {
     const channel = message.payload?.channel
     if (!channel) return
 
-    console.log(`[WebSocket] START_TWITCH_BOT for channel: ${channel}`)
-
     startTwitchBot(channel)
     this.broadcastLobbyState()
   }
@@ -119,39 +113,26 @@ export class WebSocketServer {
     this.broadcastLobbyState()
   }
 
-public sendLobbyState(socket?: WebSocket) {
-  console.log("[WS] sendLobbyState called")
-  console.log("[WS] clients count:", this.clients.size)
-
-  const payload = {
-    type: "lobby_state",
-    payload: { players: [...this.registrationLobby.getPlayers()] },
-  }
-
-  const serialized = JSON.stringify(payload)
-
-  console.log("[WS] serialized lobby_state:", serialized)
-
-  if (socket) {
-    console.log("[WS] sending to SINGLE socket")
-
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.send(serialized)
-    } else {
-      console.log("[WS] socket not OPEN:", socket.readyState)
+  public sendLobbyState(socket?: WebSocket) {
+    const payload = {
+      type: "lobby_state",
+      payload: { players: [...this.registrationLobby.getPlayers()] },
     }
-  } else {
-    console.log("[WS] broadcasting to ALL clients")
 
-    for (const client of this.clients) {
-      console.log("[WS] client state:", client.readyState)
+    const serialized = JSON.stringify(payload)
 
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(serialized)
+    if (socket) {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(serialized)
+      }
+    } else {
+      for (const client of this.clients) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(serialized)
+        }
       }
     }
   }
-}
 
   public broadcastLobbyState() {
     this.sendLobbyState()

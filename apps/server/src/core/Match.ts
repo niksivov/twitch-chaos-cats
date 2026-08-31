@@ -62,8 +62,6 @@ export class Match {
   private twitchToPlayerId: Record<string, string> = {}
 
   constructor(matchId: string, settings?: any) {
-    console.log('[MATCH ctor 0] settings IN:', settings)
-
     this.id = matchId
     this.phase = MatchPhase.WAITING_FOR_PLAYERS
     this.round = 0
@@ -98,18 +96,8 @@ export class Match {
       boosterSetSize: settings?.boosterSetSize ?? 3,
       exhaustiblePool: settings?.exhaustiblePool ?? true,
     }
-    
-    console.log('[MATCH ctor 1] state AFTER init:', {
-      twitchChannel: this.state.twitchChannel,
-      maxPlayers: this.state.maxPlayers,
-      turnTimeSeconds: this.state.turnTimeSeconds,
-      targetPoints: this.state.targetPoints,
-      boosterSetSize: this.state.boosterSetSize,
-    })
 
     this.stateMachine = new MatchStateMachine(this.phase)
-
-    console.log('[MATCH ctor 2] FINAL STATE SNAPSHOT:', this.state)
   }
 
   // 🔹 получение игрока по Twitch ID

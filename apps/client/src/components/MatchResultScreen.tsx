@@ -23,11 +23,6 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
   reason,
   onPlayAgain,
 }) => {
-  console.log("RESULT SCREEN PROPS", {
-    winnerId,
-    players,
-  })
-
   // ✅ FIX: унифицировали сравнение ID (только id)
   const winner =
   players.find(
@@ -35,12 +30,6 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
       p.id === winnerId ||
       p.twitchUserId === winnerId
   )
-
-
-console.log("RAW PLAYERS", players)
-console.log("WINNER ID", winnerId)
-console.log("FOUND WINNER", winner)
-
 
   // ✅ FIX: защита от undefined points
   const sortedPlayers =
