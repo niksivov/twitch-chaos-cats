@@ -45,6 +45,7 @@ export interface MatchInternalState {
   targetPoints: number
   boosterSetSize: number
   exhaustiblePool: boolean
+  boosterUsageCounts: Record<string, number>
 }
 
 export class Match {
@@ -95,6 +96,7 @@ export class Match {
       targetPoints: settings?.targetPoints ?? 10,
       boosterSetSize: settings?.boosterSetSize ?? 3,
       exhaustiblePool: settings?.exhaustiblePool ?? true,
+      boosterUsageCounts: {},
     }
 
     this.stateMachine = new MatchStateMachine(this.phase)
@@ -249,6 +251,7 @@ const internalId = randomUUID()
     this.state.twitchChannel = null
     this.state.maxPlayers = 0
     this.state.registrationOpen = false
+    this.state.boosterUsageCounts = {}
 
     this.transition(MatchPhase.WAITING_FOR_PLAYERS)
   }

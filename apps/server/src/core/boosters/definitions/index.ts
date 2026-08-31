@@ -162,6 +162,10 @@ import {
   Death300Booster,
 } from "./Death300Booster"
 
+import {
+  EscalatingPlus10Booster,
+} from "./EscalatingPlus10Booster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -243,4 +247,6 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     RandomRemoveBooster,
 
     Death300Booster,
+
+    EscalatingPlus10Booster,
   ]
