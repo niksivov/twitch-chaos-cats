@@ -7,6 +7,7 @@ import { BoosterSet } from "./components/BoosterSet"
 import { TurnTimer } from "./components/TurnTimer"
 import { MatchResultScreen } from "./components/MatchResultScreen"
 import { HowToPlayModal } from "./components/HowToPlayModal"
+import { WheelSpinner } from "./components/WheelSpinner"
 
 // Фоны
 import settingsBackground from "./assets/backgrounds/MatchSettings.png"
@@ -41,6 +42,7 @@ function App() {
   const winReason = useGameStore((s) => s.matchWinReason)
   const matchPlayers = useGameStore((s) => s.matchPlayers)
   const roomId = useGameStore((s) => s.roomId)
+  const wheelResult = useGameStore((s) => s.wheelResult)
 
   const currentPlayer = players.find(
     (player) => player.id === currentTurnPlayerId
@@ -570,6 +572,14 @@ if (screen === "RESULT") {
         </div>
 
         <HowToPlayModal open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
+
+        {wheelResult && (
+          <WheelSpinner
+            players={wheelResult.players}
+            winnerId={wheelResult.winnerId}
+            onClose={() => useGameStore.setState({ wheelResult: null })}
+          />
+        )}
       </>
     )
   }

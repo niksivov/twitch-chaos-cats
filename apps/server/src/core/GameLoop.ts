@@ -91,6 +91,14 @@ export class GameLoop {
     this.effectEngine.process(match)
     this.leaderEngine.process(match)
 
+    if (match.state.wheelResult) {
+      this.broadcaster.broadcast({
+        type: "wheel_result",
+        payload: match.state.wheelResult,
+      })
+      match.state.wheelResult = null
+    }
+
     this.broadcaster.broadcastMatchState(match)
   }
 

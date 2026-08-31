@@ -105,6 +105,16 @@ connect() {
         }
 
         // ======================
+        // WHEEL RESULT (колесо фортуны)
+        // ======================
+        if (message.type === "wheel_result") {
+          useGameStore.setState({
+            wheelResult: message.payload,
+          })
+          return
+        }
+
+        // ======================
         // MATCH RESULT (ФИНАЛ)
         // ======================
         if (message.type === "match_result") {

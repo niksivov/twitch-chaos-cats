@@ -178,6 +178,10 @@ import {
   PaperBooster,
 } from "./PaperBooster"
 
+import {
+  WheelBooster,
+} from "./WheelBooster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -267,4 +271,6 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     ScissorsBooster,
 
     PaperBooster,
+
+    WheelBooster,
   ]

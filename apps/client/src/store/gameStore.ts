@@ -60,6 +60,19 @@ interface MatchResultSnapshot {
   reason: string
 }
 
+interface WheelPlayer {
+  id: string
+  username: string
+  avatarId: string
+  score: number
+  probability: number
+}
+
+interface WheelResult {
+  players: WheelPlayer[]
+  winnerId: string
+}
+
 interface GameState {
   connected: boolean
   screen: AppScreen
@@ -89,6 +102,8 @@ interface GameState {
   matchWinReason?: string
 
   matchResultSnapshot?: MatchResultSnapshot
+
+  wheelResult?: WheelResult | null
 
   setConnected: (connected: boolean) => void
   setScreen: (screen: AppScreen) => void
@@ -131,6 +146,8 @@ export const useGameStore = create<GameState>((set) => ({
   matchWinReason: undefined,
 
   matchResultSnapshot: undefined,
+
+  wheelResult: null,
 
   setConnected: (connected) => set({ connected }),
   setScreen: (screen) => set({ screen }),
@@ -200,6 +217,8 @@ export const useGameStore = create<GameState>((set) => ({
         matchPlayers: [],
         matchWinReason: undefined,
 
-        matchResultSnapshot: undefined,
+  matchResultSnapshot: undefined,
+
+  wheelResult: null,
       }),
 }))
