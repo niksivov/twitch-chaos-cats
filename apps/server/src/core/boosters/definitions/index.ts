@@ -158,6 +158,10 @@ import {
   TimeBonusBooster,
 } from "./TimeBonusBooster"
 
+import {
+  Death300Booster,
+} from "./Death300Booster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -237,4 +241,6 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     deadPlayersBonus,
 
     RandomRemoveBooster,
+
+    Death300Booster,
   ]
