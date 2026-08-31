@@ -96,6 +96,20 @@ export class CommandProcessor {
       return
     }
 
+    if (slot === 0) {
+      match.state.turnResolvedAt = now
+      match.transition(MatchPhase.BOOSTER_RESOLUTION)
+      return
+    }
+
+    const setItem = match.state.boosterSet.find(
+      (item: any) => item.slot === slot
+    )
+
+    if (!setItem) {
+      return
+    }
+
     match.state.turnResolvedAt = now
     this.boosterEngine.activateBooster(match, command.playerId, slot)
 
