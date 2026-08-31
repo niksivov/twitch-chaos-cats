@@ -46,6 +46,7 @@ export interface MatchInternalState {
   boosterSetSize: number
   exhaustiblePool: boolean
   boosterUsageCounts: Record<string, number>
+  playerRpsCollection: Record<string, string[]>
 }
 
 export class Match {
@@ -97,6 +98,7 @@ export class Match {
       boosterSetSize: settings?.boosterSetSize ?? 3,
       exhaustiblePool: settings?.exhaustiblePool ?? true,
       boosterUsageCounts: {},
+      playerRpsCollection: {},
     }
 
     this.stateMachine = new MatchStateMachine(this.phase)
@@ -252,6 +254,7 @@ const internalId = randomUUID()
     this.state.maxPlayers = 0
     this.state.registrationOpen = false
     this.state.boosterUsageCounts = {}
+    this.state.playerRpsCollection = {}
 
     this.transition(MatchPhase.WAITING_FOR_PLAYERS)
   }

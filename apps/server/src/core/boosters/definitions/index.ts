@@ -166,6 +166,18 @@ import {
   EscalatingPlus10Booster,
 } from "./EscalatingPlus10Booster"
 
+import {
+  RockBooster,
+} from "./RockBooster"
+
+import {
+  ScissorsBooster,
+} from "./ScissorsBooster"
+
+import {
+  PaperBooster,
+} from "./PaperBooster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -249,4 +261,10 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     Death300Booster,
 
     EscalatingPlus10Booster,
+
+    RockBooster,
+
+    ScissorsBooster,
+
+    PaperBooster,
   ]
