@@ -73,7 +73,7 @@ export function EventLog({
                   padding:
                     "10px 0",
 
-                  fontSize: 14,
+                  fontSize: 15,
 
                   lineHeight: 1.5,
 
@@ -99,7 +99,7 @@ export function EventLog({
             style={{
               opacity: 0.5,
 
-              fontSize: 13,
+              fontSize: 15,
             }}
           >
             Событий пока нет
