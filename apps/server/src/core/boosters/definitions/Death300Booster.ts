@@ -3,11 +3,11 @@ import { BoosterDefinition } from "../BoosterTypes"
 export const Death300Booster: BoosterDefinition = {
   id: "DEATH_300",
 
-  name: "-300 и смерть",
+  name: "-300 и смерть противника",
 
   description: "Теряешь 300 очков, случайный противник выбывает",
 
-  poolCount: 50,
+  poolCount: 1,
 
   icon: "300death",
 

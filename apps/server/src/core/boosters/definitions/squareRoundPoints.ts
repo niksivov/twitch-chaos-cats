@@ -5,7 +5,7 @@ export const squareRoundPoints: BoosterDefinition =
     id: "SQUARE_ROUND_POINTS",
 
     name:
-      "+Очки = квадрат раунда",
+      "+ очки = квадрат раунда",
 
     description:
       "Добавляет себе количество очков равное квадрату текущего раунда",
