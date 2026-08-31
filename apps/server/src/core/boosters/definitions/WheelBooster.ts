@@ -72,7 +72,10 @@ export const WheelBooster: BoosterDefinition = {
       winnerId,
     }
 
-    match.winnerId = winnerId
-    match.state.matchEndedAt = Date.now()
+    for (const p of alivePlayers) {
+      if (p.playerId !== winnerId) {
+        p.isAlive = false
+      }
+    }
   },
 }

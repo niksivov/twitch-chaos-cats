@@ -120,12 +120,14 @@ connect() {
         if (message.type === "match_result") {
           const payload = message.payload
 
+          const hasWheel = useGameStore.getState().wheelResult !== null
+
           useGameStore.setState({
             matchFinished: true,
             matchWinnerId: payload.winnerId,
             matchPlayers: payload.players ?? [],
             matchWinReason: payload.reason ?? "points",
-            screen: "RESULT",
+            ...(hasWheel ? {} : { screen: "RESULT" }),
           })
 
           return

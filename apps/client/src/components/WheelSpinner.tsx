@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react"
+import { useGameStore } from "../store/gameStore"
 
 interface WheelPlayer {
   id: string
@@ -111,7 +112,10 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
 
   useEffect(() => {
     if (phase === "done") {
-      const timer = setTimeout(onClose, 2500)
+      const timer = setTimeout(() => {
+        useGameStore.setState({ screen: "RESULT", wheelResult: null })
+        onClose()
+      }, 2500)
       return () => clearTimeout(timer)
     }
   }, [phase, onClose])

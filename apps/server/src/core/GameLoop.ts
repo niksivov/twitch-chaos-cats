@@ -173,6 +173,11 @@ export class GameLoop {
   }
 
   private handleTurnEnd(match: Match) {
+    if (match.winnerId) {
+      this.finishMatch(match, match.winnerId)
+      return
+    }
+
     const targetPoints = match.state.targetPoints ?? 10
 
     const winnerByPoints = Object.values(match.state.registeredPlayers).find(
