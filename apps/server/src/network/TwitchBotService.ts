@@ -100,6 +100,10 @@ export class TwitchBotService {
     const msg = message.trim().toLowerCase()
 
     if (msg === "!join") {
+      if (this.currentMatchId) {
+        return
+      }
+
       if (this.registrationLobby.hasPlayer(twitchUserId)) {
         return
       }
