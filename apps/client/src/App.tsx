@@ -29,6 +29,11 @@ function App() {
   )
   const [turnTimeSecondsError, setTurnTimeSecondsError] = useState<string | null>(null)
 
+  const [targetPointsRaw, setTargetPointsRaw] = useState(() =>
+    String(useGameStore.getState().targetPoints)
+  )
+  const [targetPointsError, setTargetPointsError] = useState<string | null>(null)
+
   const turnTimeSeconds = useGameStore((s) => s.turnTimeSeconds)
   const targetPoints = useGameStore((s) => s.targetPoints)
   const boosterSetSize = useGameStore((s) => s.boosterSetSize)
@@ -312,14 +317,22 @@ useEffect(() => {
               )}
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Очки для победы
+                Очки для победы (от 50)
                 <input
                   type="number"
-                  min={1}
-                  value={targetPoints}
-                  onChange={(e) =>
-                    useGameStore.setState({ targetPoints: Number(e.target.value) })
-                  }
+                  min={50}
+                  value={targetPointsRaw}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    setTargetPointsRaw(v)
+                    const n = Number(v)
+                    if (v.trim() === "" || !Number.isInteger(n) || n < 50) {
+                      setTargetPointsError("Введите целое число от 50")
+                    } else {
+                      setTargetPointsError(null)
+                      useGameStore.setState({ targetPoints: n })
+                    }
+                  }}
                   style={{
                     marginTop: 6,
                     padding: "12px 14px",
@@ -333,6 +346,12 @@ useEffect(() => {
                   }}
                 />
               </label>
+
+              {targetPointsError && (
+                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>
+                  {targetPointsError}
+                </div>
+              )}
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
                 Количество бустеров в наборе
@@ -386,7 +405,9 @@ useEffect(() => {
             </div>
 
             <button
+              disabled={!!turnTimeSecondsError || !!targetPointsError}
               onClick={() => {
+                if (turnTimeSecondsError || targetPointsError) return
                 socketClient.createMatch({
                   turnTimeSeconds,
                   targetPoints,
@@ -406,7 +427,8 @@ useEffect(() => {
                 fontSize: 18,
                 fontWeight: 800,
                 color: "white",
-                cursor: "pointer",
+                cursor: (turnTimeSecondsError || targetPointsError) ? "not-allowed" : "pointer",
+                opacity: (turnTimeSecondsError || targetPointsError) ? 0.5 : 1,
                 background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
                 boxShadow: "0 0 16px rgba(156,39,176,0.6)",
                 textShadow: "0 0 4px rgba(0,0,0,0.5)",
