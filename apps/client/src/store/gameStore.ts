@@ -193,7 +193,6 @@ export const useGameStore = create<GameState>((set) => ({
       set({
         screen: "CHANNEL_SELECT",
 
-        twitchChannel: "",
         maxPlayers: 20,
 
         roomId: "",
@@ -208,10 +207,6 @@ export const useGameStore = create<GameState>((set) => ({
         boosterSet: [],
         turnOrder: [],
         lobbyPlayers: [],
-
-        turnTimeSeconds: 30,
-        targetPoints: 100,
-        boosterSetSize: 3,
 
         matchFinished: false,
         matchWinnerId: undefined,
