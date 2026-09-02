@@ -492,7 +492,7 @@ useEffect(() => {
                       {boosterCatalog.map((b) => (
                         <tr key={b.id} style={{ borderBottom: "1px solid #1a1f26" }}>
                           <td style={{ padding: "6px", textAlign: "center" }}>
-                            <img src={`/boosters/${b.icon}.png`} alt={b.name} style={{ width: 70, height: 70, objectFit: "contain" }} />
+                            <img src={`/boosters/${b.icon}.png`} alt={b.name} style={{ width: 100, height: 100, objectFit: "contain" }} />
                           </td>
                           <td style={{ padding: "6px", fontWeight: 600, whiteSpace: "nowrap" }}>{b.name}</td>
                           <td style={{ padding: "6px", color: "#aaa", lineHeight: "18px" }}>{b.description}</td>
