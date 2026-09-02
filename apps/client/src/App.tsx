@@ -19,6 +19,8 @@ function App() {
   const setScreen = useGameStore((s) => s.setScreen)
 
   const [showHowToPlay, setShowHowToPlay] = useState(false)
+  const [showBoosterTable, setShowBoosterTable] = useState(false)
+  const boosterCatalog = useGameStore((s) => s.boosterCatalog)
   const [maxPlayersRaw, setMaxPlayersRaw] = useState(() =>
     String(useGameStore.getState().maxPlayers)
   )
@@ -453,6 +455,54 @@ useEffect(() => {
               >
                 Как играть
               </div>
+
+              <div
+                onClick={() => setShowBoosterTable(!showBoosterTable)}
+                style={{
+                  marginTop: 14,
+                  textAlign: "center",
+                  color: "#ffd54a",
+                  cursor: "pointer",
+                  fontSize: 14,
+                  fontWeight: 600,
+                }}
+              >
+                {showBoosterTable ? "▲" : "▼"} Все бустеры ({boosterCatalog.length} видов, {boosterCatalog.reduce((s, b) => s + b.poolCount, 0)} в пуле)
+              </div>
+
+              {showBoosterTable && (
+                <div style={{
+                  marginTop: 12,
+                  maxHeight: 400,
+                  overflowY: "auto",
+                  border: "1px solid #f8d407",
+                  borderRadius: 10,
+                  background: "#101418",
+                }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ background: "#1a1f26", position: "sticky", top: 0 }}>
+                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 40 }}></th>
+                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 140 }}>Название</th>
+                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742" }}>Описание</th>
+                        <th style={{ padding: "8px 6px", textAlign: "center", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 50 }}>Пул</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {boosterCatalog.map((b) => (
+                        <tr key={b.id} style={{ borderBottom: "1px solid #1a1f26" }}>
+                          <td style={{ padding: "6px", textAlign: "center" }}>
+                            <img src={`/boosters/${b.icon}.png`} alt={b.name} style={{ width: 28, height: 28, objectFit: "contain" }} />
+                          </td>
+                          <td style={{ padding: "6px", fontWeight: 600, whiteSpace: "nowrap" }}>{b.name}</td>
+                          <td style={{ padding: "6px", color: "#aaa", lineHeight: "18px" }}>{b.description}</td>
+                          <td style={{ padding: "6px", textAlign: "center", fontWeight: 700, color: b.poolCount === 0 ? "#ff6b6b" : "#00ff66" }}>{b.poolCount}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
           </div>
         </div>
       <HowToPlayModal open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />

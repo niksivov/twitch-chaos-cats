@@ -2,6 +2,7 @@ import { WebSocketServer as WSServer, WebSocket } from "ws"
 import { MatchManager } from "../core/MatchManager"
 import { CommandProcessor } from "../core/CommandProcessor"
 import { RegistrationLobby } from "../core/RegistrationLobby"
+import { ALL_BOOSTERS } from "../core/boosters/definitions"
 
 import { startTwitchBot, stopTwitchBot, createMatchFromLobby } from "../index"
 
@@ -59,6 +60,10 @@ export class WebSocketServer {
 
       case "RESET_MATCH":
         this.handleResetMatch(socket)
+        break
+
+      case "GET_BOOSTER_LIST":
+        this.sendBoosterList(socket)
         break
     }
   }
@@ -136,6 +141,23 @@ export class WebSocketServer {
 
   public broadcastLobbyState() {
     this.sendLobbyState()
+  }
+
+  private sendBoosterList(socket: WebSocket) {
+    const payload = {
+      type: "booster_list",
+      payload: ALL_BOOSTERS.map((b) => ({
+        id: b.id,
+        name: b.name,
+        description: b.description,
+        icon: b.icon,
+        poolCount: b.poolCount,
+      })),
+    }
+
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(payload))
+    }
   }
 
   broadcast(data: any) {

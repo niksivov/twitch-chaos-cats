@@ -24,6 +24,7 @@ connect() {
     socket.onopen = () => {
       useGameStore.getState().setConnected(true)
       socket.send(JSON.stringify({ type: "GET_LOBBY" }))
+      socket.send(JSON.stringify({ type: "GET_BOOSTER_LIST" }))
       console.log("websocket connected")
     }
 
@@ -46,6 +47,16 @@ connect() {
           useGameStore.getState().setLobbyPlayers(
             message.payload?.players ?? []
           )
+          return
+        }
+
+        // ======================
+        // BOOSTER CATALOG
+        // ======================
+        if (message.type === "booster_list") {
+          useGameStore.setState({
+            boosterCatalog: message.payload ?? [],
+          })
           return
         }
 

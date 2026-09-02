@@ -30,6 +30,14 @@ interface BoosterSnapshot {
   description: string
 }
 
+export interface BoosterCatalogItem {
+  id: string
+  name: string
+  description: string
+  icon: string
+  poolCount: number
+}
+
 interface LobbyPlayer {
   twitchUserId: string
   username: string
@@ -106,6 +114,8 @@ interface GameState {
 
   wheelResult?: WheelResult | null
 
+  boosterCatalog: BoosterCatalogItem[]
+
   setConnected: (connected: boolean) => void
   setScreen: (screen: AppScreen) => void
   setTwitchChannel: (channel: string) => void
@@ -149,6 +159,8 @@ export const useGameStore = create<GameState>((set) => ({
   matchResultSnapshot: undefined,
 
   wheelResult: null,
+
+  boosterCatalog: [],
 
   setConnected: (connected) => set({ connected }),
   setScreen: (screen) => set({ screen }),
