@@ -17,10 +17,10 @@ function checkRpsWin(match: Match, playerId: string) {
 export const PaperBooster: BoosterDefinition = {
   id: "PAPER",
 
-  name: "Камень + Ножницы + Бумага = Победа",
+  name: "Бумага",
 
   description:
-    "Бумага оборачивает камень. Собери все три для победы!",
+    "Соберите Камень, Ножницы и Бумагу для мгновенной победы!",
 
   poolCount: 1,
 

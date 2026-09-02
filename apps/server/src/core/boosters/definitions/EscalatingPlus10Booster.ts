@@ -5,10 +5,10 @@ const BOOSTER_ID = "ESCALATING_PLUS10"
 export const EscalatingPlus10Booster: BoosterDefinition = {
   id: BOOSTER_ID,
 
-  name: "+10, удвоение после каждого использования",
+  name: "Снежный ком",
 
   description:
-    "+10 очков, но каждое следующее использование удваивает бонус",
+    "+10 очков при первом использовании, но каждое следующее использование любым игроком удваивает этот бустер",
 
   poolCount: 1,
 

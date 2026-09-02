@@ -8,7 +8,7 @@ export const tripleRandomScore: BoosterDefinition =
       "×3 случайному игроку",
 
     description:
-      "Очки случайного игрока умножаются на 3",
+      "Счет случайного игрока умножается на 3",
 
     poolCount: 1,
 

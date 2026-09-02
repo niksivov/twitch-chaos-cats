@@ -10,7 +10,7 @@ export const Minus50RandomBooster: BoosterDefinition =
       "-50 случайному противнику",
 
     description:
-      "Remove 50 points from random enemy",
+      "Случайный противник теряет 50 очков",
 
     poolCount: 1,
 

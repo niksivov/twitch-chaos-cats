@@ -6,9 +6,9 @@ export const generousChaos: BoosterDefinition = {
   name: "+75 тебе, +100 между другими",
 
   description:
-    "Вы получаете 75 очков, а между соперниками случайно распределяется 100",
+    "Вы получаете 75 очков, а между противниками случайно распределяется 100",
 
-  poolCount: 2,
+  poolCount: 1,
 
   icon: "generousChaos",
 

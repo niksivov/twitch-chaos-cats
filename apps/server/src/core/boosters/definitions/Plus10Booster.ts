@@ -9,7 +9,7 @@ export const Plus10Booster: BoosterDefinition =
     name: "+10",
 
     description:
-      "Add 10 points to yourself",
+      "Вы получаете 10 очков",
 
     poolCount: 5,
 

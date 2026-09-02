@@ -5,10 +5,10 @@ export const plus100selforrandomopponent: BoosterDefinition =
     id: "PLUS_100_SELF_OR_RANDOM_OPPONENT",
 
     name:
-      "+100 тебе или противнику",
+      "+100 Вам или противнику",
 
     description:
-      "+100 тебе или противнику",
+      "Вы получите +100 очков или случайный противник получит +100 очков - вероятность 50%/50%",
 
     poolCount: 1,
 

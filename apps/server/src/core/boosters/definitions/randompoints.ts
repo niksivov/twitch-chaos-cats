@@ -8,7 +8,7 @@ export const randompoints: BoosterDefinition =
       "0-100 очков",
 
     description:
-      "Получить случайное количество очков от 0 до 100",
+      "Вы получите случайное количество очков от 0 до 100",
 
     poolCount: 1,
 

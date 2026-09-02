@@ -10,7 +10,7 @@ export const RandomRemoveBooster: BoosterDefinition =
       "Случайная смерть",
 
     description:
-      "Remove random enemy from game",
+      "Случайный игрок умирает. Вероятность умереть у всех (включая Вас) равная",
 
     poolCount: 1,
 

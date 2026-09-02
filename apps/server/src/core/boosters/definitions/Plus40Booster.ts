@@ -9,7 +9,7 @@ export const Plus40Booster: BoosterDefinition =
     name: "+40",
 
     description:
-      "Add 40 points to yourself",
+      "Вы получаете 40 очков",
 
     poolCount: 3,
 

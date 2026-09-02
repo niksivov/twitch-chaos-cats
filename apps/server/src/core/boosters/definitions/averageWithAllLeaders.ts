@@ -6,9 +6,9 @@ export const averageWithAllLeaders: BoosterDefinition = {
   name: "Усреднение с лидером",
 
   description:
-    "Ваш счет и счет всех лидеров становятся равны их среднему значению (округление вверх)",
+    "Ваш счет и счет всех лидеров становятся равны их среднему значению",
 
-  poolCount: 2,
+  poolCount: 1,
 
   icon: "averageWithLeader",
 

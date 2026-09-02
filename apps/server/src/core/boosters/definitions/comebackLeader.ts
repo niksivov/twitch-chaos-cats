@@ -3,10 +3,10 @@ import { BoosterDefinition } from "../BoosterTypes"
 export const comebackLeader: BoosterDefinition = {
   id: "COMEBACK_LEADER",
 
-  name: "Если у тебя <0, стань лидером!",
+  name: "Если у Вас <0, станьте лидером!",
 
   description:
-    "Если у тебя меньше 0 очков, твой счет становится равен максимальному счету в матче + 1",
+    "Если у Вас меньше 0 очков, то Ваш счет становится равен максимальному счету в матче + 1",
 
   poolCount: 1,
 

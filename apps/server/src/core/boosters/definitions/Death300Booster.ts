@@ -5,7 +5,7 @@ export const Death300Booster: BoosterDefinition = {
 
   name: "-300 и смерть противника",
 
-  description: "Теряешь 300 очков, случайный противник выбывает",
+  description: "Вы теряете 300 очков и случайный противник умирает",
 
   poolCount: 1,
 

@@ -6,7 +6,7 @@ export const doubleOrNothing: BoosterDefinition = {
   name: "+200 или смерть",
 
   description:
-    "50%: +200 очков. 50%: смерть",
+    "Вы получите +200 очков или Вы умрете - вероятность 50%/50%",
 
   poolCount: 1,
 

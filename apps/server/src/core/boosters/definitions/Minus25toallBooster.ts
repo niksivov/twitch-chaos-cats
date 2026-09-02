@@ -10,7 +10,7 @@ export const Minus25toallBooster: BoosterDefinition =
       "-25 всем противникам",
 
     description:
-      "All other players lose 25 points",
+      "Все противники теряют 25 очков",
 
     poolCount: 0,
 

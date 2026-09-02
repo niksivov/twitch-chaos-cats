@@ -5,7 +5,7 @@ export const instantwin3percent: BoosterDefinition = {
 
   name: "Мгновенная победа (3%)",
 
-  description: "С вероятностью 3% вы выбиваете всех остальных игроков",
+  description: "С вероятностью 3% Вы сразу побеждаете в этой игре",
 
   poolCount: 2,
 

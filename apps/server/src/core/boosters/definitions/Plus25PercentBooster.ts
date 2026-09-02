@@ -10,7 +10,7 @@ export const Plus25PercentBooster: BoosterDefinition =
       "+25%",
 
     description:
-      "Increase your score by 25%",
+      "Вы получаете +25% к счету",
 
     poolCount: 3,
 

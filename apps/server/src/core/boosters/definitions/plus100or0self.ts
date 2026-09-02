@@ -5,7 +5,7 @@ export const plus100or0self: BoosterDefinition = {
 
   name: "+100 или 0 себе",
 
-  description: "+100 очков себе или ничего",
+  description: "Вы получите +100 очков или не получите ничего - вероятность 50%/50%",
 
   poolCount: 1,
 
