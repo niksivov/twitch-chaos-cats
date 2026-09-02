@@ -24,6 +24,11 @@ function App() {
   )
   const [maxPlayersError, setMaxPlayersError] = useState<string | null>(null)
 
+  const [turnTimeSecondsRaw, setTurnTimeSecondsRaw] = useState(() =>
+    String(useGameStore.getState().turnTimeSeconds)
+  )
+  const [turnTimeSecondsError, setTurnTimeSecondsError] = useState<string | null>(null)
+
   const turnTimeSeconds = useGameStore((s) => s.turnTimeSeconds)
   const targetPoints = useGameStore((s) => s.targetPoints)
   const boosterSetSize = useGameStore((s) => s.boosterSetSize)
@@ -179,9 +184,9 @@ useEffect(() => {
               )}
 
               <button
-                disabled={!!maxPlayersError}
+                disabled={!!maxPlayersError || !!turnTimeSecondsError}
                 onClick={() => {
-                  if (maxPlayersError) return
+                  if (maxPlayersError || turnTimeSecondsError) return
                   if (twitchChannel.trim()) {
                     socketClient.sendMessage({
                       type: "START_TWITCH_BOT",
@@ -269,14 +274,23 @@ useEffect(() => {
 
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Таймер хода (в секундах)
+                Таймер хода (в секундах, от 5 до 600)
                 <input
                   type="number"
                   min={5}
-                  value={turnTimeSeconds}
-                  onChange={(e) =>
-                    useGameStore.setState({ turnTimeSeconds: Number(e.target.value) })
-                  }
+                  max={600}
+                  value={turnTimeSecondsRaw}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    setTurnTimeSecondsRaw(v)
+                    const n = Number(v)
+                    if (v.trim() === "" || !Number.isInteger(n) || n < 5 || n > 600) {
+                      setTurnTimeSecondsError("Введите целое число от 5 до 600")
+                    } else {
+                      setTurnTimeSecondsError(null)
+                      useGameStore.setState({ turnTimeSeconds: n })
+                    }
+                  }}
                   style={{
                     marginTop: 6,
                     padding: "12px 14px",
@@ -290,6 +304,12 @@ useEffect(() => {
                   }}
                 />
               </label>
+
+              {turnTimeSecondsError && (
+                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>
+                  {turnTimeSecondsError}
+                </div>
+              )}
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
                 Очки для победы
