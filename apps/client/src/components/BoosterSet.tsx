@@ -160,6 +160,7 @@ export function BoosterSet({ boosters }: Props) {
                   position: "absolute",
                   top: 8,
                   left: 8,
+                  zIndex: 10,
                   minWidth: 26,
                   height: 28,
                   padding: "0 8px",
