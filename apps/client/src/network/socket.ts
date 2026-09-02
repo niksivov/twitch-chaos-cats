@@ -83,6 +83,7 @@ connect() {
             slot: booster.slot,
             boosterName: booster.boosterName ?? "Unknown Booster",
             boosterIcon: booster.boosterIcon ?? "",
+            description: booster.description ?? "",
           }))
 
           useGameStore.getState().applySnapshot({

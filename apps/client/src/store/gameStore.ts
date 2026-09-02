@@ -27,6 +27,7 @@ interface BoosterSnapshot {
   slot: number
   boosterName: string
   boosterIcon: string
+  description: string
 }
 
 interface LobbyPlayer {

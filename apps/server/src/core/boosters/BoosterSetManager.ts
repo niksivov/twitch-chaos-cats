@@ -6,6 +6,7 @@ export interface BoosterSetItem {
   boosterId: string
   boosterName: string
   boosterIcon: string
+  description: string
 }
 
 export class BoosterSetManager {
@@ -116,6 +117,8 @@ export class BoosterSetManager {
           booster.name,
         boosterIcon:
           booster.icon,
+        description:
+          booster.description,
       }
 
     if (

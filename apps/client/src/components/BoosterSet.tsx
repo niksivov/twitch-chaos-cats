@@ -4,6 +4,7 @@ interface BoosterSnapshot {
   slot: number
   boosterName: string
   boosterIcon: string
+  description: string
 }
 
 interface Props {
@@ -89,6 +90,19 @@ export function BoosterSet({ boosters }: Props) {
         padding: 16,
       }}
     >
+      <style>{`
+        .booster-icon-wrap { position: relative; }
+        .booster-icon-wrap .booster-tooltip {
+          position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+          background: #1a1f26; color: #e2e8f0; border: 1px solid #f8d407;
+          border-radius: 8px; padding: 8px 10px; font-size: 12px; font-weight: 500;
+          line-height: 16px; white-space: normal; word-break: break-word;
+          max-width: 200px; min-width: 120px; text-align: center;
+          opacity: 0; pointer-events: none; transition: opacity 0.15s ease;
+          z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .booster-icon-wrap:hover .booster-tooltip { opacity: 1; }
+      `}</style>
       <div
         style={{
           fontWeight: 700,
@@ -163,6 +177,7 @@ export function BoosterSet({ boosters }: Props) {
               </div>
 
               <div
+                className="booster-icon-wrap"
                 style={{
                   width: 86,
                   height: 86,
@@ -171,9 +186,10 @@ export function BoosterSet({ boosters }: Props) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  overflow: "hidden",
+                  overflow: "visible",
                 }}
               >
+                <span className="booster-tooltip">{booster.description}</span>
                 <img
                   src={`/boosters/${booster.boosterIcon}.png`}
                   alt={booster.boosterName}
