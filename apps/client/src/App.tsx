@@ -505,7 +505,7 @@ if (screen === "RESULT") {
                 Раунд {round}
               </div>
 
-              <div style={{ width: 180 }}>
+              <div style={{ minWidth: 240 }}>
                 <TurnTimer
                   startedAt={currentTurnStartedAt}
                   durationSeconds={turnTimeSeconds}

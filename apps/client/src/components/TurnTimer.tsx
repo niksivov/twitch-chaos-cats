@@ -107,6 +107,11 @@ export function TurnTimer({
             fontWeight: 700,
 
             marginTop: 2,
+
+            maxWidth: 200,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
           {playerName ??
