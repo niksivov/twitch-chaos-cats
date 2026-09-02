@@ -483,7 +483,7 @@ useEffect(() => {
                     <thead>
                       <tr style={{ background: "#1a1f26", position: "sticky", top: 0 }}>
                         <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 40 }}></th>
-                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 70 }}>Название</th>
+                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 110 }}>Название</th>
                         <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742" }}>Описание</th>
                         <th style={{ padding: "8px 6px", textAlign: "center", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 50 }}>Пул</th>
                       </tr>
