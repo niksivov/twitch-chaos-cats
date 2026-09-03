@@ -82,7 +82,21 @@ export class WebSocketServer {
       startTwitchBot(channel)
     }
 
-    this.sendLobbyState(socket, channel)
+    const room = rooms.get(channel)
+    const hasMatch = !!room?.matchId
+    const match = hasMatch ? this.matchManager.getMatch(room!.matchId!) : null
+    const phase = match?.phase ?? "WAITING_FOR_PLAYERS"
+    const lobbyPlayers = room ? room.lobby.getPlayers() : []
+
+    socket.send(JSON.stringify({
+      type: "room_joined",
+      payload: {
+        channel,
+        hasMatch,
+        phase,
+        lobbyPlayers,
+      },
+    }))
   }
 
   private handleCreateMatch(socket: WebSocket, message: any) {

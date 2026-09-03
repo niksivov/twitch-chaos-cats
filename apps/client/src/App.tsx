@@ -196,7 +196,6 @@ useEffect(() => {
                   if (maxPlayersError || turnTimeSecondsError) return
                   if (twitchChannel.trim()) {
                     socketClient.joinRoom(twitchChannel.trim())
-                    setScreen("MATCH_SETTINGS")
                   }
                 }}
                 style={{

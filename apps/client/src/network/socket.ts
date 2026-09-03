@@ -40,6 +40,23 @@ class SocketClient {
         if (this.onMessage) this.onMessage(message)
 
         // ======================
+        // ROOM JOINED
+        // ======================
+        if (message.type === "room_joined") {
+          const { channel, hasMatch, phase, lobbyPlayers } = message.payload
+
+          useGameStore.setState({ twitchChannel: channel })
+          useGameStore.getState().setLobbyPlayers(lobbyPlayers ?? [])
+
+          if (hasMatch && phase !== "WAITING_FOR_PLAYERS") {
+            useGameStore.setState({ screen: "GAME" })
+          } else {
+            useGameStore.setState({ screen: "MATCH_SETTINGS" })
+          }
+          return
+        }
+
+        // ======================
         // LOBBY
         // ======================
         if (message.type === "lobby_state") {
