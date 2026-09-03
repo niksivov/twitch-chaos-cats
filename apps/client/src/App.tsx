@@ -620,12 +620,18 @@ if (screen === "RESULT") {
           </div>
 
           <div style={{
-            textAlign: "center",
-            fontSize: 13,
-            color: "#8a9bae",
+            textAlign: "right",
+            fontSize: 16,
+            fontWeight: 700,
+            color: "#ffffff",
             marginBottom: 16,
           }}>
-            Команда стримера <code style={{ color: "#ffd54a" }}>!reset</code> сбросит текущую игру
+            Команда стримера <code style={{
+              color: "#ffd54a",
+              background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
+              padding: "2px 8px",
+              borderRadius: 6,
+            }}>!reset</code> сбросит текущую игру
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
