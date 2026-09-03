@@ -182,6 +182,32 @@ export class WebSocketServer {
     }
   }
 
+  public broadcastRoomJoined(channel: string) {
+    const room = rooms.get(channel)
+    if (!room) return
+
+    const hasMatch = !!room.matchId
+    const match = hasMatch ? this.matchManager.getMatch(room.matchId!) : null
+    const phase = match?.phase ?? "WAITING_FOR_PLAYERS"
+    const lobbyPlayers = room.lobby.getPlayers()
+
+    for (const [client, clientRoom] of this.clients) {
+      if (clientRoom === channel && client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({
+          type: "room_joined",
+          payload: {
+            channel,
+            hasMatch,
+            phase,
+            lobbyPlayers,
+            turnTimeSeconds: match?.state?.turnTimeSeconds,
+            targetPoints: match?.state?.targetPoints,
+          },
+        }))
+      }
+    }
+  }
+
   private sendBoosterList(socket: WebSocket) {
     const payload = {
       type: "booster_list",

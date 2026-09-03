@@ -114,7 +114,7 @@ export class TwitchBotService {
 
       this.room.lobby.clear()
 
-      this.websocketServer.broadcastLobbyState(this.channel)
+      this.websocketServer.broadcastRoomJoined(this.channel)
       return
     }
 
