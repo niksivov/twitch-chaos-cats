@@ -215,17 +215,6 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
                 >
                   {seg.player.username}
                 </text>
-
-                <text
-                  x={textPos.x}
-                  y={textPos.y + 14}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fill="rgba(255,255,255,0.7)"
-                  fontSize={10}
-                >
-                  {Math.round(seg.player.probability * 100)}%
-                </text>
               </g>
             )
           })}
