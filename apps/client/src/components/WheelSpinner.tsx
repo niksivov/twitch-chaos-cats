@@ -105,7 +105,7 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
 
     const timer = setTimeout(() => {
       setPhase("done")
-    }, 3500)
+    }, 10000)
 
     return () => clearTimeout(timer)
   }, [winnerSegment])
@@ -171,7 +171,7 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
             transform: `rotate(${rotation}deg)`,
             transition:
               phase === "spinning"
-                ? "transform 3.5s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
+                ? "transform 10s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
                 : "none",
           }}
         >
