@@ -38,6 +38,8 @@ function App() {
 
   const turnTimeSeconds = useGameStore((s) => s.turnTimeSeconds)
   const targetPoints = useGameStore((s) => s.targetPoints)
+  const maxPoolSize = boosterCatalog.reduce((sum, b) => sum + b.poolCount, 0) || 1
+
   const boosterSetSize = useGameStore((s) => s.boosterSetSize)
   const twitchChannel = useGameStore((s) => s.twitchChannel)
   const maxPlayers = useGameStore((s) => s.maxPlayers)
@@ -352,15 +354,18 @@ useEffect(() => {
               )}
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Количество бустеров в наборе
+                Количество бустеров в наборе (от 1 до {maxPoolSize})
                 <input
                   type="number"
                   min={1}
-                  max={10}
+                  max={maxPoolSize}
                   value={boosterSetSize}
-                  onChange={(e) =>
-                    useGameStore.setState({ boosterSetSize: Number(e.target.value) })
-                  }
+                  onChange={(e) => {
+                    const raw = Number(e.target.value)
+                    if (raw >= 1 && raw <= maxPoolSize) {
+                      useGameStore.setState({ boosterSetSize: raw })
+                    }
+                  }}
                   style={{
                     marginTop: 6,
                     padding: "12px 14px",
