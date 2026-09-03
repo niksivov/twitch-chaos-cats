@@ -114,6 +114,11 @@ class SocketClient {
             eliminated: !player.isAlive,
           }))
 
+          const maxScore = Math.max(...players.map((p: any) => p.points))
+          const leaderIds = players
+            .filter((p: any) => p.points === maxScore)
+            .map((p: any) => p.id)
+
           const recentEvents = (match.recentEvents ?? []).map((event: any) => ({
             id: event.id ?? crypto.randomUUID(),
             message: event.message ?? event.text ?? "",
@@ -134,8 +139,7 @@ class SocketClient {
             currentTurnPlayerId:
               match.currentTurnPlayerId ?? match.currentPlayerId,
             currentTurnStartedAt: match.currentTurnStartedAt,
-            leaderPlayerId:
-              match.leaderPlayerId ?? match.leaderId,
+            leaderIds,
             players,
             recentEvents,
             boosterSet,

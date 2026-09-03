@@ -51,7 +51,7 @@ interface StateUpdatePayload {
   round?: number
   currentTurnPlayerId?: string
   currentTurnStartedAt?: number
-  leaderPlayerId?: string
+  leaderIds: string[]
   players: PlayerSnapshot[]
   recentEvents: MatchEventSnapshot[]
   boosterSet: BoosterSnapshot[]
@@ -94,7 +94,7 @@ interface GameState {
   round: number
   currentTurnPlayerId?: string
   currentTurnStartedAt?: number
-  leaderPlayerId?: string
+  leaderIds: string[]
   players: PlayerSnapshot[]
   recentEvents: MatchEventSnapshot[]
   boosterSet: BoosterSnapshot[]
@@ -140,7 +140,7 @@ export const useGameStore = create<GameState>((set) => ({
   round: 0,
   currentTurnPlayerId: undefined,
   currentTurnStartedAt: undefined,
-  leaderPlayerId: undefined,
+  leaderIds: [],
   players: [],
   recentEvents: [],
   boosterSet: [],
@@ -185,7 +185,7 @@ export const useGameStore = create<GameState>((set) => ({
           ? snapshot.currentTurnStartedAt
           : undefined,
 
-      leaderPlayerId: snapshot.leaderPlayerId ?? undefined,
+      leaderIds: snapshot.leaderIds ?? [],
 
       players: snapshot.players ?? [],
       turnOrder: snapshot.turnOrder ?? [],
@@ -213,7 +213,7 @@ export const useGameStore = create<GameState>((set) => ({
         round: 0,
         currentTurnPlayerId: undefined,
         currentTurnStartedAt: undefined,
-        leaderPlayerId: undefined,
+        leaderIds: [],
         players: [],
         recentEvents: [],
         boosterSet: [],

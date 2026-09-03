@@ -45,7 +45,7 @@ function App() {
   const round = useGameStore((s) => s.round)
   const currentTurnPlayerId = useGameStore((s) => s.currentTurnPlayerId)
   const currentTurnStartedAt = useGameStore((s) => s.currentTurnStartedAt)
-  const leaderPlayerId = useGameStore((s) => s.leaderPlayerId)
+  const leaderIds = useGameStore((s) => s.leaderIds)
   const players = useGameStore((s) => s.players)
   const recentEvents = useGameStore((s) => s.recentEvents)
   const boosterSet = useGameStore((s) => s.boosterSet)
@@ -641,7 +641,7 @@ if (screen === "RESULT") {
                 player={player}
                 index={index}
                 isCurrentTurn={player.id === currentTurnPlayerId}
-                isLeader={player.id === leaderPlayerId}
+                isLeader={leaderIds.includes(player.id)}
               />
             ))}
           </div>
