@@ -94,6 +94,7 @@ export class GameLoop {
     if (match.state.wheelResult) {
       this.broadcaster.broadcast({
         type: "wheel_result",
+        roomId: match.state.twitchChannel,
         payload: match.state.wheelResult,
       })
       match.state.wheelResult = null
@@ -249,6 +250,7 @@ export class GameLoop {
 
     this.broadcaster.broadcast({
       type: "match_result",
+      roomId: match.state.twitchChannel,
       payload: {
         winnerId,
         reason: "points",
