@@ -487,15 +487,15 @@ useEffect(() => {
                 {showBoosterTable ? "▲" : "▼"} Все бустеры ({boosterCatalog.length} видов, {boosterCatalog.reduce((s, b) => s + b.poolCount, 0)} в пуле)
               </div>
 
-              {showBoosterTable && (
-                <div style={{
-                  marginTop: 12,
-                  maxHeight: 400,
-                  overflowY: "auto",
-                  border: "1px solid #f8d407",
-                  borderRadius: 10,
-                  background: "#101418",
-                }}>
+              <div style={{
+                marginTop: 12,
+                maxHeight: 400,
+                overflowY: "auto",
+                border: "1px solid #f8d407",
+                borderRadius: 10,
+                background: "#101418",
+                display: showBoosterTable ? "block" : "none",
+              }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr style={{ background: "#1a1f26", position: "sticky", top: 0 }}>
@@ -519,7 +519,6 @@ useEffect(() => {
                     </tbody>
                   </table>
                 </div>
-              )}
           </div>
         </div>
       <HowToPlayModal open={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
