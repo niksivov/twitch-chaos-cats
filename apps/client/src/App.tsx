@@ -36,6 +36,11 @@ function App() {
   )
   const [targetPointsError, setTargetPointsError] = useState<string | null>(null)
 
+  const [boosterSetSizeRaw, setBoosterSetSizeRaw] = useState(() =>
+    String(useGameStore.getState().boosterSetSize)
+  )
+  const [boosterSetSizeError, setBoosterSetSizeError] = useState<string | null>(null)
+
   const turnTimeSeconds = useGameStore((s) => s.turnTimeSeconds)
   const targetPoints = useGameStore((s) => s.targetPoints)
   const maxPoolSize = boosterCatalog.reduce((sum, b) => sum + b.poolCount, 0) || 1
@@ -359,11 +364,16 @@ useEffect(() => {
                   type="number"
                   min={1}
                   max={maxPoolSize}
-                  value={boosterSetSize}
+                  value={boosterSetSizeRaw}
                   onChange={(e) => {
-                    const raw = Number(e.target.value)
-                    if (raw >= 1 && raw <= maxPoolSize) {
-                      useGameStore.setState({ boosterSetSize: raw })
+                    const v = e.target.value
+                    setBoosterSetSizeRaw(v)
+                    const n = Number(v)
+                    if (v.trim() === "" || !Number.isInteger(n) || n < 1 || n > maxPoolSize) {
+                      setBoosterSetSizeError(`Введите целое число от 1 до ${maxPoolSize}`)
+                    } else {
+                      setBoosterSetSizeError(null)
+                      useGameStore.setState({ boosterSetSize: n })
                     }
                   }}
                   style={{
@@ -379,6 +389,12 @@ useEffect(() => {
                   }}
                 />
               </label>
+
+              {boosterSetSizeError && (
+                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>
+                  {boosterSetSizeError}
+                </div>
+              )}
             </div>
 
             <div style={{ marginTop: 20 }}>
@@ -408,9 +424,9 @@ useEffect(() => {
             </div>
 
             <button
-              disabled={!!turnTimeSecondsError || !!targetPointsError}
+              disabled={!!turnTimeSecondsError || !!targetPointsError || !!boosterSetSizeError}
               onClick={() => {
-                if (turnTimeSecondsError || targetPointsError) return
+                if (turnTimeSecondsError || targetPointsError || boosterSetSizeError) return
                 socketClient.createMatch({
                   turnTimeSeconds,
                   targetPoints,
@@ -430,8 +446,8 @@ useEffect(() => {
                 fontSize: 18,
                 fontWeight: 800,
                 color: "white",
-                cursor: (turnTimeSecondsError || targetPointsError) ? "not-allowed" : "pointer",
-                opacity: (turnTimeSecondsError || targetPointsError) ? 0.5 : 1,
+                cursor: (turnTimeSecondsError || targetPointsError || boosterSetSizeError) ? "not-allowed" : "pointer",
+                opacity: (turnTimeSecondsError || targetPointsError || boosterSetSizeError) ? 0.5 : 1,
                 background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
                 boxShadow: "0 0 16px rgba(156,39,176,0.6)",
                 textShadow: "0 0 4px rgba(0,0,0,0.5)",
