@@ -95,6 +95,8 @@ export class WebSocketServer {
         hasMatch,
         phase,
         lobbyPlayers,
+        turnTimeSeconds: match?.state?.turnTimeSeconds,
+        targetPoints: match?.state?.targetPoints,
       },
     }))
   }

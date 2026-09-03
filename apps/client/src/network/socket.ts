@@ -43,10 +43,17 @@ class SocketClient {
         // ROOM JOINED
         // ======================
         if (message.type === "room_joined") {
-          const { channel, hasMatch, phase, lobbyPlayers } = message.payload
+          const { channel, hasMatch, phase, lobbyPlayers, turnTimeSeconds, targetPoints } = message.payload
 
           useGameStore.setState({ twitchChannel: channel })
           useGameStore.getState().setLobbyPlayers(lobbyPlayers ?? [])
+
+          if (turnTimeSeconds !== undefined) {
+            useGameStore.setState({ turnTimeSeconds })
+          }
+          if (targetPoints !== undefined) {
+            useGameStore.setState({ targetPoints })
+          }
 
           if (hasMatch && phase !== "WAITING_FOR_PLAYERS") {
             useGameStore.setState({ screen: "GAME" })
@@ -85,6 +92,13 @@ class SocketClient {
 
           if (useGameStore.getState().matchFinished) {
             return
+          }
+
+          if (match.turnTimeSeconds !== undefined) {
+            useGameStore.setState({ turnTimeSeconds: match.turnTimeSeconds })
+          }
+          if (match.targetPoints !== undefined) {
+            useGameStore.setState({ targetPoints: match.targetPoints })
           }
 
           const prevPlayers = useGameStore.getState().players

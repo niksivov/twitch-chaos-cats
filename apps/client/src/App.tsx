@@ -619,6 +619,15 @@ if (screen === "RESULT") {
             </div>
           </div>
 
+          <div style={{
+            textAlign: "center",
+            fontSize: 13,
+            color: "#8a9bae",
+            marginBottom: 16,
+          }}>
+            Команда стримера <code style={{ color: "#ffd54a" }}>!reset</code> сбросит текущую игру
+          </div>
+
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
             {orderedPlayers.map((player, index) => (
               <PlayerCard

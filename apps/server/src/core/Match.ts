@@ -138,9 +138,10 @@ public toJSON() {
     round: this.round,
     turn: this.turn,
     turnOrder: this.turnOrder,
-    // 👇 currentTurnPlayerId теперь internalId
     currentTurnPlayerId: this.currentPlayerId,
     currentTurnStartedAt: this.state.turnStartedAt,
+    turnTimeSeconds: this.state.turnTimeSeconds,
+    targetPoints: this.state.targetPoints,
 
     leaderId: this.state.leaderId,
 
