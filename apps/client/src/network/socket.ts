@@ -12,18 +12,17 @@ class SocketClient {
   private socket: WebSocket | null = null
   public onMessage?: (data: any) => void
 
-connect() {
-  const WS_URL =
-    window.location.hostname === "localhost"
-      ? "ws://localhost:8080"
-      : `wss://${window.location.host}`
+  connect() {
+    const WS_URL =
+      window.location.hostname === "localhost"
+        ? "ws://localhost:8080"
+        : `wss://${window.location.host}`
 
-  const socket = new WebSocket(WS_URL)
-  this.socket = socket
+    const socket = new WebSocket(WS_URL)
+    this.socket = socket
 
     socket.onopen = () => {
       useGameStore.getState().setConnected(true)
-      socket.send(JSON.stringify({ type: "GET_LOBBY" }))
       socket.send(JSON.stringify({ type: "GET_BOOSTER_LIST" }))
       console.log("websocket connected")
     }
@@ -67,7 +66,6 @@ connect() {
           const match = message.payload
           if (!match) return
 
-          // 💣 ВАЖНО: если матч уже завершён — игнорируем любые дальнейшие апдейты
           if (useGameStore.getState().matchFinished) {
             return
           }
@@ -117,7 +115,7 @@ connect() {
         }
 
         // ======================
-        // WHEEL RESULT (колесо фортуны)
+        // WHEEL RESULT
         // ======================
         if (message.type === "wheel_result") {
           useGameStore.setState({
@@ -127,7 +125,7 @@ connect() {
         }
 
         // ======================
-        // MATCH RESULT (ФИНАЛ)
+        // MATCH RESULT
         // ======================
         if (message.type === "match_result") {
           const payload = message.payload
@@ -167,6 +165,13 @@ connect() {
   sendMessage(data: any) {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return
     this.socket.send(JSON.stringify(data))
+  }
+
+  joinRoom(channel: string) {
+    this.sendMessage({
+      type: "JOIN_ROOM",
+      payload: { channel },
+    })
   }
 
   createMatch(settings: MatchSettings) {

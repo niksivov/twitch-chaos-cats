@@ -5,13 +5,7 @@ import { MatchSettings } from "../models/MatchSettings"
 export class MatchManager {
   private matches = new Map<string, Match>()
 
-  private twitchBotService: any = null
-
   constructor() {}
-
-  public setTwitchBotService(service: any) {
-    this.twitchBotService = service
-  }
 
   createMatch(settings: Partial<MatchSettings> & { twitchChannel: string; maxPlayers: number }): Match {
     const matchId = randomUUID()
@@ -23,10 +17,6 @@ export class MatchManager {
     match.state.boosterSetSize = settings.boosterSetSize ?? 3
     match.state.registrationOpen = true
     this.matches.set(matchId, match)
-
-    if (this.twitchBotService?.setCurrentMatch) {
-      this.twitchBotService.setCurrentMatch(matchId)
-    }
 
     return match
   }

@@ -9,11 +9,11 @@ export class GameBroadcaster {
   broadcastMatchState(match: Match) {
     this.websocketServer.broadcast({
       type: "match_state",
+      roomId: match.state.twitchChannel,
       payload: match.toJSON(),
     })
   }
 
-  // 💣 ДОБАВИЛИ ЭТО
   broadcast(event: any) {
     this.websocketServer.broadcast(event)
   }

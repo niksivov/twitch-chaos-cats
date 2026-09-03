@@ -2,7 +2,7 @@ import tmi from "tmi.js"
 import { MatchManager } from "../core/MatchManager"
 import { GameLoop } from "../core/GameLoop"
 import { CommandProcessor } from "../core/CommandProcessor"
-import { RegistrationLobby, RegisteredPlayer } from "../core/RegistrationLobby"
+import { Room } from "../core/Room"
 import { WebSocketServer } from "./WebSocketServer"
 
 type MatchCreateInput = {
@@ -17,30 +17,30 @@ export class TwitchBotService {
   private matchManager: MatchManager
   private gameLoop: GameLoop
   private commandProcessor: CommandProcessor
-  private currentMatchId: string | null = null
   private availableAvatars: string[]
-  private registrationLobby: RegistrationLobby
+  private room: Room
   private websocketServer: WebSocketServer
+  private channel: string
+  private onStopped: () => void
 
   constructor(
-    registrationLobby: RegistrationLobby,
+    room: Room,
     matchManager: MatchManager,
     gameLoop: GameLoop,
     commandProcessor: CommandProcessor,
     availableAvatars: string[],
-    websocketServer: WebSocketServer
+    websocketServer: WebSocketServer,
+    channel: string,
+    onStopped: () => void
   ) {
-    this.registrationLobby = registrationLobby
+    this.room = room
     this.matchManager = matchManager
     this.gameLoop = gameLoop
     this.commandProcessor = commandProcessor
     this.availableAvatars = [...availableAvatars]
     this.websocketServer = websocketServer
-  }
-
-  // 🔹 Новая функция для уведомления бота о текущем матче
-  public setCurrentMatch(matchId: string) {
-    this.currentMatchId = matchId
+    this.channel = channel
+    this.onStopped = onStopped
   }
 
   async start(channel: string) {
@@ -56,34 +56,32 @@ export class TwitchBotService {
         return
       }
 
-      this.handleMessage(twitchUserId, username, message)
+      this.handleMessage(twitchUserId, username, message, tags)
+    })
+
+    this.client.on("disconnected", () => {
+      this.onStopped()
     })
 
     await this.client.connect()
   }
 
   public createMatch(config: MatchCreateInput) {
-    const twitchChannel = this.client.getChannels()[0]
-
-    if (!twitchChannel) {
-      throw new Error("Twitch channel is not connected yet")
-    }
-
     const match = this.matchManager.createMatch({
-      twitchChannel,
+      twitchChannel: this.channel,
       maxPlayers: config.maxPlayers,
       turnTimeSeconds: config.turnTimeSeconds,
       targetPoints: config.targetPoints,
       boosterSetSize: config.boosterSetSize,
     })
 
-    this.currentMatchId = match.id
+    this.room.matchId = match.id
 
-    for (const p of this.registrationLobby.getPlayers()) {
+    for (const p of this.room.lobby.getPlayers()) {
       match.addTwitchPlayer(p.twitchUserId, p.username, p.avatarId)
     }
 
-    this.registrationLobby.clear()
+    this.room.lobby.clear()
 
     return match
   }
@@ -93,22 +91,44 @@ export class TwitchBotService {
       this.client.disconnect()
       this.client = undefined as any
     }
-    this.currentMatchId = null
+    this.room.matchId = null
   }
 
-  private handleMessage(twitchUserId: string, username: string, message: string) {
+  private handleMessage(
+    twitchUserId: string,
+    username: string,
+    message: string,
+    tags: tmi.ChatUserstate
+  ) {
     const msg = message.trim().toLowerCase()
 
+    // !reset — только от стримера
+    if (msg === "!reset") {
+      const isBroadcaster = (tags as any)?.badges?.broadcaster === "1"
+      if (!isBroadcaster) return
+
+      if (this.room.matchId) {
+        this.matchManager.removeMatch(this.room.matchId)
+        this.room.matchId = null
+      }
+
+      this.room.lobby.clear()
+
+      this.websocketServer.broadcastLobbyState(this.channel)
+      return
+    }
+
+    // !join — добавление в лобби комнаты
     if (msg === "!join") {
-      if (this.currentMatchId) {
+      if (this.room.matchId) {
         return
       }
 
-      if (this.registrationLobby.hasPlayer(twitchUserId)) {
+      if (this.room.lobby.hasPlayer(twitchUserId)) {
         return
       }
 
-      const usedAvatars = this.registrationLobby.getPlayers().map(p => p.avatarId)
+      const usedAvatars = this.room.lobby.getPlayers().map(p => p.avatarId)
       const remainingAvatars = this.availableAvatars.filter(a => !usedAvatars.includes(a))
 
       if (remainingAvatars.length === 0) {
@@ -118,25 +138,26 @@ export class TwitchBotService {
       const avatarId =
         remainingAvatars[Math.floor(Math.random() * remainingAvatars.length)]
 
-      this.registrationLobby.addPlayer({
+      this.room.lobby.addPlayer({
         twitchUserId,
         username,
         avatarId,
       })
 
       setImmediate(() => {
-        this.websocketServer.broadcastLobbyState()
+        this.websocketServer.broadcastLobbyState(this.channel)
       })
 
       return
     }
 
+    // !N — активация бустера
     if (/^!\d+$/.test(msg)) {
-      if (!this.currentMatchId) {
+      if (!this.room.matchId) {
         return
       }
 
-      const match = this.matchManager.getMatch(this.currentMatchId)
+      const match = this.matchManager.getMatch(this.room.matchId)
 
       if (!match) {
         return
@@ -144,10 +165,8 @@ export class TwitchBotService {
 
       const slot = parseInt(msg.slice(1), 10)
 
-      // 🔹 Убираем проверку currentPlayerId полностью
       const internalPlayerId = match.getPlayerIdByTwitchId(twitchUserId) ?? twitchUserId
 
-      // 🔹 Просто ставим команду в очередь
       this.commandProcessor.enqueue({
         type: "SELECT_BOOSTER",
         matchId: match.id,
