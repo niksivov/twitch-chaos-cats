@@ -94,6 +94,20 @@ export function applyPandoraEffect(match: Match, roll: number, sourcePlayerId: s
       player.score += Math.ceil(match.state.targetPoints * 0.5)
       break
   }
+
+  const targetPoints = match.state.targetPoints ?? 100
+  const winnerByPoints = Object.values(match.state.registeredPlayers).find(
+    p => p.score >= targetPoints
+  )
+  if (winnerByPoints) {
+    match.winnerId = match.getPlayerIdByTwitchId(winnerByPoints.twitchUserId) ?? null
+    return
+  }
+
+  const alivePlayers = match.getAlivePlayers()
+  if (alivePlayers.length === 1) {
+    match.winnerId = match.getPlayerIdByTwitchId(alivePlayers[0].twitchUserId) ?? null
+  }
 }
 
 export const pandoraBox: BoosterDefinition = {

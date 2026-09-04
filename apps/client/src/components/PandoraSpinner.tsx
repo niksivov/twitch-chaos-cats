@@ -203,7 +203,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           {/* Segments */}
           {segments.map((seg, i) => {
             const midAngle = (seg.startAngle + seg.endAngle) / 2
-            const textPos = polarToCartesian(cx, cy, r * 0.55, midAngle)
+            const textPos = polarToCartesian(cx, cy, r * 0.82, midAngle)
             const isSelected = phase === "done" && i === selectedIndex
 
             return (

@@ -42,6 +42,11 @@ export class GameLoop {
 
     if (match.state.paused) return
 
+    if (match.winnerId && match.phase !== MatchPhase.MATCH_END) {
+      this.finishMatch(match, match.winnerId)
+      return
+    }
+
     match.state.tick++
 
     switch (match.phase) {
