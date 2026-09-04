@@ -244,11 +244,14 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
                     startOffset="50%"
                     textAnchor="middle"
                   >
-                    {seg.effect.label.split("\n").map((line, li) => (
-                      <tspan key={li} dy={li === 0 ? 0 : "1.2em"}>
-                        {line}
-                      </tspan>
-                    ))}
+                    {seg.effect.label.split("\n").map((line, li, arr) => {
+                      const offset = arr.length > 1 ? "-0.6em" : "0"
+                      return (
+                        <tspan key={li} dy={li === 0 ? offset : "1.2em"}>
+                          {line}
+                        </tspan>
+                      )
+                    })}
                   </textPath>
                 </text>
               </g>

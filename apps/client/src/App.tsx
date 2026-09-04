@@ -598,7 +598,13 @@ if (screen === "RESULT") {
           <WheelSpinner
             players={wheelResult.players}
             winnerId={wheelResult.winnerId}
-            onClose={() => useGameStore.setState({ wheelResult: null })}
+            onClose={() => {
+              const wasFinished = useGameStore.getState().matchFinished
+              useGameStore.setState({ wheelResult: null })
+              if (wasFinished) {
+                useGameStore.setState({ screen: "RESULT" })
+              }
+            }}
           />
         )}
 
@@ -606,7 +612,13 @@ if (screen === "RESULT") {
           <PandoraSpinner
             effects={pandoraResult.effects}
             selectedIndex={pandoraResult.selectedIndex}
-            onClose={() => useGameStore.setState({ pandoraResult: null })}
+            onClose={() => {
+              const wasFinished = useGameStore.getState().matchFinished
+              useGameStore.setState({ pandoraResult: null })
+              if (wasFinished) {
+                useGameStore.setState({ screen: "RESULT" })
+              }
+            }}
           />
         )}
       </>
