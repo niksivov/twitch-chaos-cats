@@ -175,14 +175,15 @@ class SocketClient {
         if (message.type === "match_result") {
           const payload = message.payload
 
-          const hasWheel = useGameStore.getState().wheelResult !== null
+          const hasOverlay = useGameStore.getState().wheelResult !== null
+            || useGameStore.getState().pandoraResult !== null
 
           useGameStore.setState({
             matchFinished: true,
             matchWinnerId: payload.winnerId,
             matchPlayers: payload.players ?? [],
             matchWinReason: payload.reason ?? "points",
-            ...(hasWheel ? {} : { screen: "RESULT" }),
+            ...(hasOverlay ? {} : { screen: "RESULT" }),
           })
 
           return

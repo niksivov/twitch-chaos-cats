@@ -94,8 +94,14 @@ export class WebSocketServer {
     const room = rooms.get(channel)
     if (!room) return { type: "room_joined", payload: { channel, hasMatch: false, phase: "WAITING_FOR_PLAYERS", lobbyPlayers: [], turnTimeSeconds: undefined, targetPoints: undefined } }
 
-    const hasMatch = !!room.matchId
-    const match = hasMatch ? this.matchManager.getMatch(room.matchId!) : null
+    let hasMatch = !!room.matchId
+    let match = hasMatch ? this.matchManager.getMatch(room.matchId!) : null
+    if (match && match.phase === "MATCH_END") {
+      this.matchManager.removeMatch(room.matchId!)
+      room.matchId = null
+      hasMatch = false
+      match = null
+    }
     const phase = match?.phase ?? "WAITING_FOR_PLAYERS"
     const lobbyPlayers = room.lobby.getPlayers()
 
