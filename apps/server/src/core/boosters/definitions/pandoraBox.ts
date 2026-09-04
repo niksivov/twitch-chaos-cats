@@ -2,16 +2,16 @@ import { BoosterDefinition } from "../BoosterTypes"
 import type { Match } from "../../Match"
 
 export const PANDORA_EFFECTS = [
-  { id: 0, label: "300 соперникам", color: "#c62828" },
-  { id: 1, label: "Ты умираешь, остальные +100", color: "#b71c1c" },
-  { id: 2, label: "Твои очки раздаются", color: "#e65100" },
-  { id: 3, label: "Случайный -5000", color: "#880e4f" },
-  { id: 4, label: "+1 очко", color: "#2e7d32" },
+  { id: 0, label: "300 между соперниками", color: "#c62828" },
+  { id: 1, label: "Вы умираете, +100 каждому противнику", color: "#b71c1c" },
+  { id: 2, label: "Ваши очки достаются соперникам", color: "#e65100" },
+  { id: 3, label: "-5000 случайному игроку", color: "#880e4f" },
+  { id: 4, label: "+1 очко Вам", color: "#2e7d32" },
   { id: 5, label: "Половина умирает", color: "#b71c1c" },
-  { id: 6, label: "Перемешать очки", color: "#e65100" },
-  { id: 7, label: "Кража 50 у каждого", color: "#1565c0" },
-  { id: 8, label: "×3 очков", color: "#2e7d32" },
-  { id: 9, label: "50% цели", color: "#1b5e20" },
+  { id: 6, label: "Все очки перемешиваются", color: "#e65100" },
+  { id: 7, label: "Вы крадете 50 очков у каждого", color: "#1565c0" },
+  { id: 8, label: "×3 очков Вам", color: "#2e7d32" },
+  { id: 9, label: "+50% от цели Вам", color: "#1b5e20" },
 ]
 
 export function applyPandoraEffect(match: Match, roll: number, sourcePlayerId: string) {

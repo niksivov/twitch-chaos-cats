@@ -220,7 +220,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           {segments.map((seg, i) => {
             const isSelected = phase === "done" && i === selectedIndex
             const labelLen = seg.effect.label.length
-            const fontSize = labelLen > 20 ? 12 : labelLen > 14 ? 14 : 16
+            const fontSize = labelLen > 28 ? 10 : labelLen > 20 ? 12 : labelLen > 14 ? 14 : 16
 
             return (
               <g
