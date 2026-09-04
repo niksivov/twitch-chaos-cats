@@ -78,9 +78,6 @@ function App() {
 useEffect(() => {
   socketClient.connect()
 
-  socketClient.onMessage = (_data: any) => {
-  }
- 
     const style = document.createElement("style")
     style.innerHTML = `
       input[type="number"]::-webkit-inner-spin-button,

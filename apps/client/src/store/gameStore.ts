@@ -62,13 +62,6 @@ interface StateUpdatePayload {
   matchWinReason?: string
 }
 
-
-interface MatchResultSnapshot {
-  winnerId: string
-  players: PlayerSnapshot[]
-  reason: string
-}
-
 interface WheelPlayer {
   id: string
   username: string
@@ -109,8 +102,6 @@ interface GameState {
   matchWinnerId?: string
   matchPlayers: PlayerSnapshot[]
   matchWinReason?: string
-
-  matchResultSnapshot?: MatchResultSnapshot
 
   wheelResult?: WheelResult | null
 
@@ -155,8 +146,6 @@ export const useGameStore = create<GameState>((set) => ({
   matchWinnerId: undefined,
   matchPlayers: [],
   matchWinReason: undefined,
-
-  matchResultSnapshot: undefined,
 
   wheelResult: null,
 
@@ -224,8 +213,6 @@ export const useGameStore = create<GameState>((set) => ({
         matchWinnerId: undefined,
         matchPlayers: [],
         matchWinReason: undefined,
-
-  matchResultSnapshot: undefined,
 
   wheelResult: null,
       }),
