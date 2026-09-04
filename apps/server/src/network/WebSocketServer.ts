@@ -82,13 +82,19 @@ export class WebSocketServer {
       startTwitchBot(channel)
     }
 
-    const room = rooms.get(channel)
-    const hasMatch = !!room?.matchId
-    const match = hasMatch ? this.matchManager.getMatch(room!.matchId!) : null
-    const phase = match?.phase ?? "WAITING_FOR_PLAYERS"
-    const lobbyPlayers = room ? room.lobby.getPlayers() : []
+    socket.send(JSON.stringify(this.buildRoomJoinedPayload(channel)))
+  }
 
-    socket.send(JSON.stringify({
+  private buildRoomJoinedPayload(channel: string) {
+    const room = rooms.get(channel)
+    if (!room) return { type: "room_joined", payload: { channel, hasMatch: false, phase: "WAITING_FOR_PLAYERS", lobbyPlayers: [], turnTimeSeconds: undefined, targetPoints: undefined } }
+
+    const hasMatch = !!room.matchId
+    const match = hasMatch ? this.matchManager.getMatch(room.matchId!) : null
+    const phase = match?.phase ?? "WAITING_FOR_PLAYERS"
+    const lobbyPlayers = room.lobby.getPlayers()
+
+    return {
       type: "room_joined",
       payload: {
         channel,
@@ -98,7 +104,13 @@ export class WebSocketServer {
         turnTimeSeconds: match?.state?.turnTimeSeconds,
         targetPoints: match?.state?.targetPoints,
       },
-    }))
+    }
+  }
+
+  private buildLobbyStatePayload(channel: string) {
+    const room = rooms.get(channel)
+    const players = room ? room.lobby.getPlayers() : []
+    return { type: "lobby_state", payload: { players } }
   }
 
   private handleCreateMatch(socket: WebSocket, message: any) {
@@ -151,28 +163,14 @@ export class WebSocketServer {
   }
 
   public sendLobbyState(socket: WebSocket, channel: string) {
-    const room = rooms.get(channel)
-    const players = room ? room.lobby.getPlayers() : []
-
-    const payload = {
-      type: "lobby_state",
-      payload: { players },
-    }
-
+    const payload = this.buildLobbyStatePayload(channel)
     if (socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(payload))
     }
   }
 
   public broadcastLobbyState(channel: string) {
-    const room = rooms.get(channel)
-    const players = room ? room.lobby.getPlayers() : []
-
-    const payload = {
-      type: "lobby_state",
-      payload: { players },
-    }
-
+    const payload = this.buildLobbyStatePayload(channel)
     const serialized = JSON.stringify(payload)
 
     for (const [client, clientRoom] of this.clients) {
@@ -183,27 +181,12 @@ export class WebSocketServer {
   }
 
   public broadcastRoomJoined(channel: string) {
-    const room = rooms.get(channel)
-    if (!room) return
-
-    const hasMatch = !!room.matchId
-    const match = hasMatch ? this.matchManager.getMatch(room.matchId!) : null
-    const phase = match?.phase ?? "WAITING_FOR_PLAYERS"
-    const lobbyPlayers = room.lobby.getPlayers()
+    const payload = this.buildRoomJoinedPayload(channel)
+    const serialized = JSON.stringify(payload)
 
     for (const [client, clientRoom] of this.clients) {
       if (clientRoom === channel && client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({
-          type: "room_joined",
-          payload: {
-            channel,
-            hasMatch,
-            phase,
-            lobbyPlayers,
-            turnTimeSeconds: match?.state?.turnTimeSeconds,
-            targetPoints: match?.state?.targetPoints,
-          },
-        }))
+        client.send(serialized)
       }
     }
   }

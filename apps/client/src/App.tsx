@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { socketClient } from "./network/socket"
 import { useGameStore } from "./store/gameStore"
 import { PlayerCard } from "./components/PlayerCard"
@@ -14,6 +14,56 @@ import settingsBackground from "./assets/backgrounds/MatchSettings.png"
 import gameBackground from "./assets/backgrounds/Game1.png"
 import channelSelectBackground from "./assets/backgrounds/ChannelSelectPage.png"
 
+const INPUT_STYLE: React.CSSProperties = {
+  marginTop: 6,
+  padding: "12px 14px",
+  borderRadius: 10,
+  border: "1px solid #9575cd",
+  background: "#11161d",
+  color: "white",
+  fontSize: 18,
+  fontWeight: 700,
+  outline: "none",
+}
+
+const PRIMARY_BUTTON_STYLE: React.CSSProperties = {
+  background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
+  boxShadow: "0 0 16px rgba(156,39,176,0.6)",
+  textShadow: "0 0 4px rgba(0,0,0,0.5)",
+  border: "none",
+  borderRadius: 12,
+  color: "white",
+  fontSize: 18,
+  fontWeight: 800,
+  cursor: "pointer",
+}
+
+function useValidatedNumericInput(
+  storageKey: string,
+  min: number,
+  max: number,
+  errorMsg: string
+) {
+  const [raw, setRaw] = useState(() => String(useGameStore.getState()[storageKey as keyof ReturnType<typeof useGameStore.getState>]))
+  const [error, setError] = useState<string | null>(null)
+
+  const value = useGameStore((s) => s[storageKey as keyof typeof s]) as number
+
+  const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value
+    setRaw(v)
+    const n = Number(v)
+    if (v.trim() === "" || !Number.isInteger(n) || n < min || n > max) {
+      setError(errorMsg)
+    } else {
+      setError(null)
+      useGameStore.setState({ [storageKey]: n } as any)
+    }
+  }, [min, max, errorMsg, storageKey])
+
+  return { raw, error, value, onChange }
+}
+
 function App() {
   const screen = useGameStore((s) => s.screen)
   const setScreen = useGameStore((s) => s.setScreen)
@@ -21,33 +71,15 @@ function App() {
   const [showHowToPlay, setShowHowToPlay] = useState(false)
   const [showBoosterTable, setShowBoosterTable] = useState(false)
   const boosterCatalog = useGameStore((s) => s.boosterCatalog)
-  const [maxPlayersRaw, setMaxPlayersRaw] = useState(() =>
-    String(useGameStore.getState().maxPlayers)
-  )
-  const [maxPlayersError, setMaxPlayersError] = useState<string | null>(null)
-
-  const [turnTimeSecondsRaw, setTurnTimeSecondsRaw] = useState(() =>
-    String(useGameStore.getState().turnTimeSeconds)
-  )
-  const [turnTimeSecondsError, setTurnTimeSecondsError] = useState<string | null>(null)
-
-  const [targetPointsRaw, setTargetPointsRaw] = useState(() =>
-    String(useGameStore.getState().targetPoints)
-  )
-  const [targetPointsError, setTargetPointsError] = useState<string | null>(null)
-
-  const [boosterSetSizeRaw, setBoosterSetSizeRaw] = useState(() =>
-    String(useGameStore.getState().boosterSetSize)
-  )
-  const [boosterSetSizeError, setBoosterSetSizeError] = useState<string | null>(null)
-
-  const turnTimeSeconds = useGameStore((s) => s.turnTimeSeconds)
-  const targetPoints = useGameStore((s) => s.targetPoints)
   const maxPoolSize = boosterCatalog.reduce((sum, b) => sum + b.poolCount, 0) || 1
 
-  const boosterSetSize = useGameStore((s) => s.boosterSetSize)
+  const maxPlayers = useValidatedNumericInput("maxPlayers", 2, 20, "Введите целое число от 2 до 20")
+  const turnTimeSeconds = useValidatedNumericInput("turnTimeSeconds", 5, 600, "Введите целое число от 5 до 600")
+  const targetPoints = useValidatedNumericInput("targetPoints", 50, Infinity, "Введите целое число от 50")
+  const boosterSetSize = useValidatedNumericInput("boosterSetSize", 1, maxPoolSize, `Введите целое число от 1 до ${maxPoolSize}`)
+
   const twitchChannel = useGameStore((s) => s.twitchChannel)
-  const maxPlayers = useGameStore((s) => s.maxPlayers)
+  const lobbyPlayers = useGameStore((s) => s.lobbyPlayers)
 
   const round = useGameStore((s) => s.round)
   const currentTurnPlayerId = useGameStore((s) => s.currentTurnPlayerId)
@@ -66,8 +98,6 @@ function App() {
   const currentPlayer = players.find(
     (player) => player.id === currentTurnPlayerId
   )
- 
-  const lobbyPlayers = useGameStore((s) => s.lobbyPlayers)
 
   const orderedPlayers = turnOrder.length
     ? turnOrder
@@ -142,17 +172,7 @@ useEffect(() => {
                   type="text"
                   value={twitchChannel}
                   onChange={(e) => useGameStore.setState({ twitchChannel: e.target.value })}
-                  style={{
-                    marginTop: 6,
-                    padding: "12px 14px",
-                    borderRadius: 10,
-                    border: "1px solid #9575cd",
-                    background: "#11161d",
-                    color: "white",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    outline: "none",
-                  }}
+                  style={INPUT_STYLE}
                 />
               </label>
 
@@ -162,59 +182,33 @@ useEffect(() => {
                   type="number"
                   min={2}
                   max={20}
-                  value={maxPlayersRaw}
-                  onChange={(e) => {
-                    const v = e.target.value
-                    setMaxPlayersRaw(v)
-                    const n = Number(v)
-                    if (v.trim() === "" || !Number.isInteger(n) || n < 2 || n > 20) {
-                      setMaxPlayersError("Введите целое число от 2 до 20")
-                    } else {
-                      setMaxPlayersError(null)
-                      useGameStore.setState({ maxPlayers: n })
-                    }
-                  }}
-                  style={{
-                    marginTop: 6,
-                    padding: "12px 14px",
-                    borderRadius: 10,
-                    border: "1px solid #9575cd",
-                    background: "#11161d",
-                    color: "white",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    outline: "none",
-                  }}
+                  value={maxPlayers.raw}
+                  onChange={maxPlayers.onChange}
+                  style={INPUT_STYLE}
                 />
               </label>
 
-              {maxPlayersError && (
+              {maxPlayers.error && (
                 <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>
-                  {maxPlayersError}
+                  {maxPlayers.error}
                 </div>
               )}
 
               <button
-                disabled={!!maxPlayersError || !!turnTimeSecondsError}
+                disabled={!!maxPlayers.error}
                 onClick={() => {
-                  if (maxPlayersError || turnTimeSecondsError) return
+                  if (maxPlayers.error) return
                   if (twitchChannel.trim()) {
                     socketClient.joinRoom(twitchChannel.trim())
                   }
                 }}
                 style={{
+                  ...PRIMARY_BUTTON_STYLE,
                   marginTop: 12,
                   padding: "14px 0",
-                  borderRadius: 12,
-                  border: "none",
-                  fontSize: 18,
-                  fontWeight: 800,
-                  color: "white",
-                  cursor: maxPlayersError ? "not-allowed" : "pointer",
-                  opacity: maxPlayersError ? 0.5 : 1,
-                  background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
-                  boxShadow: "0 0 16px rgba(156,39,176,0.6)",
-                  textShadow: "0 0 4px rgba(0,0,0,0.5)",
+                  width: "100%",
+                  cursor: maxPlayers.error ? "not-allowed" : "pointer",
+                  opacity: maxPlayers.error ? 0.5 : 1,
                   transition: "transform 0.2s ease",
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
@@ -286,36 +280,13 @@ useEffect(() => {
                   type="number"
                   min={5}
                   max={600}
-                  value={turnTimeSecondsRaw}
-                  onChange={(e) => {
-                    const v = e.target.value
-                    setTurnTimeSecondsRaw(v)
-                    const n = Number(v)
-                    if (v.trim() === "" || !Number.isInteger(n) || n < 5 || n > 600) {
-                      setTurnTimeSecondsError("Введите целое число от 5 до 600")
-                    } else {
-                      setTurnTimeSecondsError(null)
-                      useGameStore.setState({ turnTimeSeconds: n })
-                    }
-                  }}
-                  style={{
-                    marginTop: 6,
-                    padding: "12px 14px",
-                    borderRadius: 10,
-                    border: "1px solid #9575cd",
-                    background: "#11161d",
-                    color: "white",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    outline: "none",
-                  }}
+                  value={turnTimeSeconds.raw}
+                  onChange={turnTimeSeconds.onChange}
+                  style={INPUT_STYLE}
                 />
               </label>
-
-              {turnTimeSecondsError && (
-                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>
-                  {turnTimeSecondsError}
-                </div>
+              {turnTimeSeconds.error && (
+                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>{turnTimeSeconds.error}</div>
               )}
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
@@ -323,36 +294,13 @@ useEffect(() => {
                 <input
                   type="number"
                   min={50}
-                  value={targetPointsRaw}
-                  onChange={(e) => {
-                    const v = e.target.value
-                    setTargetPointsRaw(v)
-                    const n = Number(v)
-                    if (v.trim() === "" || !Number.isInteger(n) || n < 50) {
-                      setTargetPointsError("Введите целое число от 50")
-                    } else {
-                      setTargetPointsError(null)
-                      useGameStore.setState({ targetPoints: n })
-                    }
-                  }}
-                  style={{
-                    marginTop: 6,
-                    padding: "12px 14px",
-                    borderRadius: 10,
-                    border: "1px solid #9575cd",
-                    background: "#11161d",
-                    color: "white",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    outline: "none",
-                  }}
+                  value={targetPoints.raw}
+                  onChange={targetPoints.onChange}
+                  style={INPUT_STYLE}
                 />
               </label>
-
-              {targetPointsError && (
-                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>
-                  {targetPointsError}
-                </div>
+              {targetPoints.error && (
+                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>{targetPoints.error}</div>
               )}
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
@@ -361,36 +309,13 @@ useEffect(() => {
                   type="number"
                   min={1}
                   max={maxPoolSize}
-                  value={boosterSetSizeRaw}
-                  onChange={(e) => {
-                    const v = e.target.value
-                    setBoosterSetSizeRaw(v)
-                    const n = Number(v)
-                    if (v.trim() === "" || !Number.isInteger(n) || n < 1 || n > maxPoolSize) {
-                      setBoosterSetSizeError(`Введите целое число от 1 до ${maxPoolSize}`)
-                    } else {
-                      setBoosterSetSizeError(null)
-                      useGameStore.setState({ boosterSetSize: n })
-                    }
-                  }}
-                  style={{
-                    marginTop: 6,
-                    padding: "12px 14px",
-                    borderRadius: 10,
-                    border: "1px solid #9575cd",
-                    background: "#11161d",
-                    color: "white",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    outline: "none",
-                  }}
+                  value={boosterSetSize.raw}
+                  onChange={boosterSetSize.onChange}
+                  style={INPUT_STYLE}
                 />
               </label>
-
-              {boosterSetSizeError && (
-                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>
-                  {boosterSetSizeError}
-                </div>
+              {boosterSetSize.error && (
+                <div style={{ color: "#ff6b6b", fontSize: 13, marginTop: 8 }}>{boosterSetSize.error}</div>
               )}
             </div>
 
@@ -421,39 +346,32 @@ useEffect(() => {
             </div>
 
             <button
-              disabled={!!turnTimeSecondsError || !!targetPointsError || !!boosterSetSizeError}
+              disabled={!!turnTimeSeconds.error || !!targetPoints.error || !!boosterSetSize.error}
               onClick={() => {
-                if (turnTimeSecondsError || targetPointsError || boosterSetSizeError) return
+                if (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error) return
                 socketClient.createMatch({
-                  turnTimeSeconds,
-                  targetPoints,
-                  boosterSetSize,
+                  turnTimeSeconds: turnTimeSeconds.value,
+                  targetPoints: targetPoints.value,
+                  boosterSetSize: boosterSetSize.value,
                   twitchChannel,
-                  maxPlayers,
+                  maxPlayers: maxPlayers.value,
                 })
                 setScreen("GAME")
               }}
               style={{
+                ...PRIMARY_BUTTON_STYLE,
                 marginTop: 20,
                 padding: "14px 0",
                 width: "100%",
                 display: "block",
-                borderRadius: 12,
-                border: "none",
-                fontSize: 18,
-                fontWeight: 800,
-                color: "white",
-                cursor: (turnTimeSecondsError || targetPointsError || boosterSetSizeError) ? "not-allowed" : "pointer",
-                opacity: (turnTimeSecondsError || targetPointsError || boosterSetSizeError) ? 0.5 : 1,
-                background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
-                boxShadow: "0 0 16px rgba(156,39,176,0.6)",
-                textShadow: "0 0 4px rgba(0,0,0,0.5)",
+                cursor: (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error) ? "not-allowed" : "pointer",
+                opacity: (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error) ? 0.5 : 1,
                 transition: "transform 0.2s ease",
               }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              >
-                Играть
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            >
+              Играть
               </button>
 
               <div
@@ -603,7 +521,7 @@ if (screen === "RESULT") {
               border: "1px solid #2d3742",
             }}>
               <div style={{ fontSize: 20, fontWeight: 700, color: "#ffd54a" }}>
-                🏆 {targetPoints}
+                🏆 {targetPoints.value}
               </div>
 
               <div style={{ fontSize: 20, fontWeight: 700, opacity: 0.9 }}>
@@ -613,7 +531,7 @@ if (screen === "RESULT") {
               <div style={{ minWidth: 240 }}>
                 <TurnTimer
                   startedAt={currentTurnStartedAt}
-                  durationSeconds={turnTimeSeconds}
+                  durationSeconds={turnTimeSeconds.value}
                   playerName={currentPlayer?.nickname}
                 />
               </div>
