@@ -219,8 +219,8 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           {/* Segments */}
           {segments.map((seg, i) => {
             const isSelected = phase === "done" && i === selectedIndex
-            const labelLen = seg.effect.label.length
-            const fontSize = labelLen > 28 ? 10 : labelLen > 20 ? 12 : labelLen > 14 ? 14 : 16
+            const maxLineLen = Math.max(...seg.effect.label.split("\n").map(l => l.length))
+            const fontSize = maxLineLen > 18 ? 12 : maxLineLen > 14 ? 14 : 16
 
             return (
               <g
@@ -244,7 +244,11 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
                     startOffset="50%"
                     textAnchor="middle"
                   >
-                    {seg.effect.label}
+                    {seg.effect.label.split("\n").map((line, li) => (
+                      <tspan key={li} dy={li === 0 ? 0 : "1.2em"}>
+                        {line}
+                      </tspan>
+                    ))}
                   </textPath>
                 </text>
               </g>
