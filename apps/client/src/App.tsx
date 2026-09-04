@@ -465,6 +465,8 @@ if (screen === "RESULT") {
           matchWinnerId: undefined,
           matchPlayers: [],
           matchWinReason: undefined,
+          pandoraResult: null,
+          wheelResult: null,
           screen: "CHANNEL_SELECT",
         })
       }

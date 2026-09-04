@@ -58,7 +58,12 @@ class SocketClient {
           if (hasMatch && phase !== "WAITING_FOR_PLAYERS") {
             useGameStore.setState({ screen: "GAME" })
           } else {
-            useGameStore.setState({ screen: "MATCH_SETTINGS" })
+            useGameStore.setState({
+              screen: "MATCH_SETTINGS",
+              pandoraResult: null,
+              wheelResult: null,
+              matchFinished: false,
+            })
           }
           return
         }
