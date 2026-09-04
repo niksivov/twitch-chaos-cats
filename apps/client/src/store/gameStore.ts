@@ -75,6 +75,17 @@ interface WheelResult {
   winnerId: string
 }
 
+interface PandoraEffect {
+  id: number
+  label: string
+  color: string
+}
+
+interface PandoraResult {
+  effects: PandoraEffect[]
+  selectedIndex: number
+}
+
 interface GameState {
   connected: boolean
   screen: AppScreen
@@ -104,6 +115,7 @@ interface GameState {
   matchWinReason?: string
 
   wheelResult?: WheelResult | null
+  pandoraResult?: PandoraResult | null
 
   boosterCatalog: BoosterCatalogItem[]
 
@@ -148,6 +160,7 @@ export const useGameStore = create<GameState>((set) => ({
   matchWinReason: undefined,
 
   wheelResult: null,
+  pandoraResult: null,
 
   boosterCatalog: [],
 
@@ -215,5 +228,6 @@ export const useGameStore = create<GameState>((set) => ({
         matchWinReason: undefined,
 
   wheelResult: null,
+  pandoraResult: null,
       }),
 }))

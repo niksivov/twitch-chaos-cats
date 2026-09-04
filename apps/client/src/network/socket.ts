@@ -160,6 +160,16 @@ class SocketClient {
         }
 
         // ======================
+        // PANDORA RESULT
+        // ======================
+        if (message.type === "pandora_result") {
+          useGameStore.setState({
+            pandoraResult: message.payload,
+          })
+          return
+        }
+
+        // ======================
         // MATCH RESULT
         // ======================
         if (message.type === "match_result") {
@@ -220,6 +230,12 @@ class SocketClient {
     this.sendMessage({
       type: "SELECT_BOOSTER",
       payload: { slot },
+    })
+  }
+
+  pandoraDone() {
+    this.sendMessage({
+      type: "PANDORA_DONE",
     })
   }
 }

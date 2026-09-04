@@ -100,6 +100,15 @@ export class GameLoop {
       match.state.wheelResult = null
     }
 
+    if (match.state.pandoraResult) {
+      this.broadcaster.broadcast({
+        type: "pandora_result",
+        roomId: match.state.twitchChannel,
+        payload: match.state.pandoraResult,
+      })
+      match.state.pandoraResult = null
+    }
+
     this.broadcaster.broadcastMatchState(match)
   }
 

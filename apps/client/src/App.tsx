@@ -8,6 +8,7 @@ import { TurnTimer } from "./components/TurnTimer"
 import { MatchResultScreen } from "./components/MatchResultScreen"
 import { HowToPlayModal } from "./components/HowToPlayModal"
 import { WheelSpinner } from "./components/WheelSpinner"
+import { PandoraSpinner } from "./components/PandoraSpinner"
 
 // Фоны
 import settingsBackground from "./assets/backgrounds/MatchSettings.webp"
@@ -94,6 +95,7 @@ function App() {
   const matchPlayers = useGameStore((s) => s.matchPlayers)
   const roomId = useGameStore((s) => s.roomId)
   const wheelResult = useGameStore((s) => s.wheelResult)
+  const pandoraResult = useGameStore((s) => s.pandoraResult)
 
   const currentPlayer = players.find(
     (player) => player.id === currentTurnPlayerId
@@ -597,6 +599,14 @@ if (screen === "RESULT") {
             players={wheelResult.players}
             winnerId={wheelResult.winnerId}
             onClose={() => useGameStore.setState({ wheelResult: null })}
+          />
+        )}
+
+        {pandoraResult && (
+          <PandoraSpinner
+            effects={pandoraResult.effects}
+            selectedIndex={pandoraResult.selectedIndex}
+            onClose={() => useGameStore.setState({ pandoraResult: null })}
           />
         )}
       </>

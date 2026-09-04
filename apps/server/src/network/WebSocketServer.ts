@@ -5,6 +5,7 @@ import { Room } from "../core/Room"
 import { ALL_BOOSTERS } from "../core/boosters/definitions"
 
 import { startTwitchBot, createMatchFromLobby, rooms, getOrCreateRoom } from "../index"
+import { applyPandoraEffect } from "../core/boosters/definitions/pandoraBox"
 
 export class WebSocketServer {
   private wss: WSServer
@@ -68,6 +69,10 @@ export class WebSocketServer {
 
       case "GET_BOOSTER_LIST":
         this.sendBoosterList(socket)
+        break
+
+      case "PANDORA_DONE":
+        this.handlePandoraDone(socket)
         break
     }
   }
@@ -160,6 +165,23 @@ export class WebSocketServer {
     if (!roomId) return
 
     this.sendLobbyState(socket, roomId)
+  }
+
+  private handlePandoraDone(socket: WebSocket) {
+    const roomId = this.clients.get(socket)
+    if (!roomId) return
+
+    const room = rooms.get(roomId)
+    if (!room?.matchId) return
+
+    const match = this.matchManager.getMatch(room.matchId)
+    if (!match) return
+
+    const roll = match.state.pendingPandoraRoll
+    if (roll === null || roll === undefined) return
+
+    match.state.pendingPandoraRoll = null
+    applyPandoraEffect(match, roll)
   }
 
   public sendLobbyState(socket: WebSocket, channel: string) {

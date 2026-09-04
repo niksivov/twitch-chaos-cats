@@ -57,6 +57,11 @@ export interface MatchInternalState {
     }[]
     winnerId: string
   } | null
+  pandoraResult: {
+    effects: { id: number; label: string; color: string }[]
+    selectedIndex: number
+  } | null
+  pendingPandoraRoll: number | null
 }
 
 export class Match {
@@ -110,6 +115,8 @@ export class Match {
       boosterUsageCounts: {},
       playerRpsCollection: {},
       wheelResult: null,
+      pandoraResult: null,
+      pendingPandoraRoll: null,
     }
 
     this.stateMachine = new MatchStateMachine(this.phase)
@@ -268,6 +275,8 @@ const internalId = randomUUID()
     this.state.boosterUsageCounts = {}
     this.state.playerRpsCollection = {}
     this.state.wheelResult = null
+    this.state.pandoraResult = null
+    this.state.pendingPandoraRoll = null
 
     this.transition(MatchPhase.WAITING_FOR_PLAYERS)
   }
