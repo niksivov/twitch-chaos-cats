@@ -90,6 +90,11 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
     color: PANDORA_COLORS[i % 2],
   }))
 
+  const getFontSize = (label: string) => {
+    const maxLineLen = Math.max(...label.split("\n").map(l => l.length))
+    return maxLineLen > 18 ? 12 : maxLineLen > 14 ? 14 : 16
+  }
+
   useEffect(() => {
     const selected = segments[selectedIndex]
     if (!selected) return
@@ -183,14 +188,37 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           }}
         >
           <defs>
-            {segments.map((seg, i) => (
-              <path
-                key={`textPath-${i}`}
-                id={`pandoraTextPath-${i}`}
-                d={describeTextArc(cx, cy, textR, seg.startAngle + 1, seg.endAngle - 1)}
-                fill="none"
-              />
-            ))}
+            {segments.map((seg, i) => {
+              const lines = seg.effect.label.split("\n")
+              const fontSize = getFontSize(seg.effect.label)
+              const lineSpacing = fontSize * 1.3
+
+              if (lines.length === 1) {
+                return (
+                  <path
+                    key={`tp-${i}-0`}
+                    id={`pandoraTextPath-${i}-0`}
+                    d={describeTextArc(cx, cy, textR, seg.startAngle + 1, seg.endAngle - 1)}
+                    fill="none"
+                  />
+                )
+              }
+
+              return lines.map((_, li) => (
+                <path
+                  key={`tp-${i}-${li}`}
+                  id={`pandoraTextPath-${i}-${li}`}
+                  d={describeTextArc(
+                    cx, cy,
+                    textR + (li === 0 ? lineSpacing / 2 : -lineSpacing / 2),
+                    seg.startAngle + 1,
+                    seg.endAngle - 1
+                  )}
+                  fill="none"
+                />
+              ))
+            })}
+
             {segments.map((seg, i) => {
               const mid = (seg.startAngle + seg.endAngle) / 2
               const lightPos = polarToCartesian(cx, cy, r * 0.4, mid)
@@ -219,8 +247,8 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           {/* Segments */}
           {segments.map((seg, i) => {
             const isSelected = phase === "done" && i === selectedIndex
-            const maxLineLen = Math.max(...seg.effect.label.split("\n").map(l => l.length))
-            const fontSize = maxLineLen > 18 ? 12 : maxLineLen > 14 ? 14 : 16
+            const lines = seg.effect.label.split("\n")
+            const fontSize = getFontSize(seg.effect.label)
 
             return (
               <g
@@ -238,22 +266,22 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
                   strokeWidth={3}
                 />
 
-                <text fill="white" fontWeight={800} fontSize={fontSize}>
-                  <textPath
-                    href={`#pandoraTextPath-${i}`}
-                    startOffset="50%"
-                    textAnchor="middle"
+                {lines.map((line, li) => (
+                  <text
+                    key={li}
+                    fill="white"
+                    fontWeight={800}
+                    fontSize={fontSize}
                   >
-                    {seg.effect.label.split("\n").map((line, li, arr) => {
-                      const offset = arr.length > 1 ? "-0.6em" : "0"
-                      return (
-                        <tspan key={li} dy={li === 0 ? offset : "1.2em"}>
-                          {line}
-                        </tspan>
-                      )
-                    })}
-                  </textPath>
-                </text>
+                    <textPath
+                      href={`#pandoraTextPath-${i}-${li}`}
+                      startOffset="50%"
+                      textAnchor="middle"
+                    >
+                      {line}
+                    </textPath>
+                  </text>
+                ))}
               </g>
             )
           })}
@@ -278,6 +306,8 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
                 color: "#ffd54f",
                 textShadow: "0 0 20px rgba(255,213,79,0.7), 0 0 40px rgba(255,213,79,0.4)",
                 animation: "pulse 0.5s ease-in-out 3",
+                whiteSpace: "pre-line",
+                textAlign: "center",
               }}
             >
               {selectedEffect.label}
