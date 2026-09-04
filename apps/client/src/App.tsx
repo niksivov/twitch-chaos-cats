@@ -346,9 +346,9 @@ useEffect(() => {
             </div>
 
             <button
-              disabled={!!turnTimeSeconds.error || !!targetPoints.error || !!boosterSetSize.error}
+              disabled={!!turnTimeSeconds.error || !!targetPoints.error || !!boosterSetSize.error || lobbyPlayers.length < 2}
               onClick={() => {
-                if (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error) return
+                if (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error || lobbyPlayers.length < 2) return
                 socketClient.createMatch({
                   turnTimeSeconds: turnTimeSeconds.value,
                   targetPoints: targetPoints.value,
@@ -364,8 +364,8 @@ useEffect(() => {
                 padding: "14px 0",
                 width: "100%",
                 display: "block",
-                cursor: (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error) ? "not-allowed" : "pointer",
-                opacity: (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error) ? 0.5 : 1,
+                cursor: (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error || lobbyPlayers.length < 2) ? "not-allowed" : "pointer",
+                opacity: (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error || lobbyPlayers.length < 2) ? 0.5 : 1,
                 transition: "transform 0.2s ease",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
