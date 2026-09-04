@@ -79,7 +79,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
   const cy = 330
   const r = 300
   const innerR = 45
-  const textR = r * 0.75
+  const textR = r * 0.85
 
   const segAngle = 360 / effects.length
 
