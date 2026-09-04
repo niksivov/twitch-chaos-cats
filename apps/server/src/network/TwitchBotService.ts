@@ -121,7 +121,13 @@ export class TwitchBotService {
     // !join — добавление в лобби комнаты
     if (msg === "!join") {
       if (this.room.matchId) {
-        return
+        const match = this.matchManager.getMatch(this.room.matchId)
+        if (!match || match.phase === "MATCH_END") {
+          if (match) this.matchManager.removeMatch(this.room.matchId)
+          this.room.matchId = null
+        } else {
+          return
+        }
       }
 
       if (this.room.lobby.hasPlayer(twitchUserId)) {
