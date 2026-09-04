@@ -177,11 +177,11 @@ export class WebSocketServer {
     const match = this.matchManager.getMatch(room.matchId)
     if (!match) return
 
-    const roll = match.state.pendingPandoraRoll
-    if (roll === null || roll === undefined) return
+    const pending = match.state.pendingPandoraRoll
+    if (!pending) return
 
     match.state.pendingPandoraRoll = null
-    applyPandoraEffect(match, roll)
+    applyPandoraEffect(match, pending.roll, pending.sourcePlayerId)
   }
 
   public sendLobbyState(socket: WebSocket, channel: string) {

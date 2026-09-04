@@ -14,9 +14,7 @@ export const PANDORA_EFFECTS = [
   { id: 9, label: "50% цели", color: "#1b5e20" },
 ]
 
-export function applyPandoraEffect(match: Match, roll: number) {
-  const sourcePlayerId = match.currentPlayerId
-  if (!sourcePlayerId) return
+export function applyPandoraEffect(match: Match, roll: number, sourcePlayerId: string) {
 
   const player = match.state.registeredPlayers[sourcePlayerId]
   if (!player) return
@@ -111,7 +109,7 @@ export const pandoraBox: BoosterDefinition = {
 
     const roll = Math.floor(Math.random() * 10)
 
-    match.state.pendingPandoraRoll = roll
+    match.state.pendingPandoraRoll = { roll, sourcePlayerId }
     match.state.pandoraResult = {
       effects: PANDORA_EFFECTS,
       selectedIndex: roll,

@@ -61,7 +61,7 @@ export interface MatchInternalState {
     effects: { id: number; label: string; color: string }[]
     selectedIndex: number
   } | null
-  pendingPandoraRoll: number | null
+  pendingPandoraRoll: { roll: number, sourcePlayerId: string } | null
 }
 
 export class Match {

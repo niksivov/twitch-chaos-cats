@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react"
+import { useEffect, useState, useMemo, useRef } from "react"
 import { socketClient } from "../network/socket"
 
 interface PandoraEffect {
@@ -12,6 +12,8 @@ interface Props {
   selectedIndex: number
   onClose: () => void
 }
+
+const PANDORA_COLORS = ["#9c27b0", "#c62828"]
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const rad = ((angleDeg - 90) * Math.PI) / 180
@@ -33,7 +35,7 @@ function Confetti({ count = 50 }: { count?: number }) {
       delay: Math.random() * 1.5,
       duration: 2 + Math.random() * 2.5,
       size: 4 + Math.random() * 6,
-      color: ["#c62828", "#e65100", "#ffd54f", "#2e7d32", "#1565c0"][i % 5],
+      color: PANDORA_COLORS[i % 2],
       rotation: Math.random() * 360,
     }))
   }, [count])
@@ -63,6 +65,8 @@ function Confetti({ count = 50 }: { count?: number }) {
 export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
   const [phase, setPhase] = useState<"spinning" | "done">("spinning")
   const [rotation, setRotation] = useState(0)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   const cx = 330
   const cy = 330
@@ -75,6 +79,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
     effect,
     startAngle: i * segAngle,
     endAngle: (i + 1) * segAngle,
+    color: PANDORA_COLORS[i % 2],
   }))
 
   useEffect(() => {
@@ -93,11 +98,11 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
     if (phase === "done") {
       const timer = setTimeout(() => {
         socketClient.pandoraDone()
-        onClose()
+        onCloseRef.current()
       }, 3500)
       return () => clearTimeout(timer)
     }
-  }, [phase, onClose])
+  }, [phase])
 
   const selectedEffect = effects[selectedIndex]
 
@@ -131,8 +136,8 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
         style={{
           fontSize: 32,
           fontWeight: 900,
-          color: "#ff6b6b",
-          textShadow: "0 0 16px rgba(255,107,107,0.6), 0 0 40px rgba(255,107,107,0.3)",
+          color: "#c62828",
+          textShadow: "0 0 16px rgba(198,40,40,0.6), 0 0 40px rgba(198,40,40,0.3)",
           letterSpacing: 2,
         }}
       >
@@ -175,23 +180,23 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
               const lightPos = polarToCartesian(cx, cy, r * 0.4, mid)
               return (
                 <radialGradient key={`grad-${i}`} id={`pandoraGrad-${i}`} cx={`${(lightPos.x / 660) * 100}%`} cy={`${(lightPos.y / 660) * 100}%`} r="60%">
-                  <stop offset="0%" stopColor={seg.effect.color} stopOpacity="1" />
-                  <stop offset="100%" stopColor={seg.effect.color} stopOpacity="0.6" />
+                  <stop offset="0%" stopColor={seg.color} stopOpacity="1" />
+                  <stop offset="100%" stopColor={seg.color} stopOpacity="0.6" />
                 </radialGradient>
               )
             })}
           </defs>
 
           {/* Outer ring */}
-          <circle cx={cx} cy={cy} r={r + 16} fill="none" stroke="#ff6b6b" strokeWidth="4" opacity="0.5" />
-          <circle cx={cx} cy={cy} r={r + 10} fill="none" stroke="#ff6b6b" strokeWidth="1.5" opacity="0.3" />
+          <circle cx={cx} cy={cy} r={r + 16} fill="none" stroke="#c62828" strokeWidth="4" opacity="0.5" />
+          <circle cx={cx} cy={cy} r={r + 10} fill="none" stroke="#9c27b0" strokeWidth="1.5" opacity="0.3" />
 
           {/* Tick marks */}
           {segments.map((seg, i) => {
             const outer = polarToCartesian(cx, cy, r + 18, seg.startAngle)
             const inner = polarToCartesian(cx, cy, r + 5, seg.startAngle)
             return (
-              <line key={`tick-${i}`} x1={outer.x} y1={outer.y} x2={inner.x} y2={inner.y} stroke="#ff6b6b" strokeWidth="2.5" opacity="0.6" />
+              <line key={`tick-${i}`} x1={outer.x} y1={outer.y} x2={inner.x} y2={inner.y} stroke={seg.color} strokeWidth="2.5" opacity="0.6" />
             )
           })}
 
@@ -237,9 +242,9 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           })}
 
           {/* Center hub */}
-          <circle cx={cx} cy={cy} r={innerR + 8} fill="none" stroke="#ff6b6b" strokeWidth="2.5" opacity="0.4" />
-          <circle cx={cx} cy={cy} r={innerR} fill="#1a1a2e" stroke="#ff6b6b" strokeWidth={4} />
-          <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#ff6b6b" fontSize={36} fontWeight={900}>
+          <circle cx={cx} cy={cy} r={innerR + 8} fill="none" stroke="#c62828" strokeWidth="2.5" opacity="0.4" />
+          <circle cx={cx} cy={cy} r={innerR} fill="#1a1a2e" stroke="#9c27b0" strokeWidth={4} />
+          <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#ffd54f" fontSize={36} fontWeight={900}>
             📦
           </text>
         </svg>
@@ -253,8 +258,8 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
               style={{
                 fontSize: 30,
                 fontWeight: 900,
-                color: selectedEffect.color,
-                textShadow: `0 0 20px ${selectedEffect.color}80, 0 0 40px ${selectedEffect.color}40`,
+                color: "#ffd54f",
+                textShadow: "0 0 20px rgba(255,213,79,0.7), 0 0 40px rgba(255,213,79,0.4)",
                 animation: "pulse 0.5s ease-in-out 3",
               }}
             >
