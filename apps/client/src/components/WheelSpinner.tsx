@@ -156,6 +156,8 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
             transform: "translateX(-50%)",
             zIndex: 2,
             fontSize: 36,
+            color: "#ffd54f",
+            textShadow: "0 0 8px rgba(255,213,79,0.6)",
             filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))",
           }}
         >
