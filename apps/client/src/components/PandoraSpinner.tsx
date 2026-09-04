@@ -27,6 +27,13 @@ function describeArc(cx: number, cy: number, r: number, startAngle: number, endA
   return ["M", cx, cy, "L", start.x, start.y, "A", r, r, 0, largeArc, 0, end.x, end.y, "Z"].join(" ")
 }
 
+function describeTextArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
+  const start = polarToCartesian(cx, cy, r, startAngle)
+  const end = polarToCartesian(cx, cy, r, endAngle)
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0
+  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y}`
+}
+
 function Confetti({ count = 50 }: { count?: number }) {
   const particles = useMemo(() => {
     return Array.from({ length: count }, (_, i) => ({
@@ -72,6 +79,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
   const cy = 330
   const r = 300
   const innerR = 45
+  const textR = r * 0.75
 
   const segAngle = 360 / effects.length
 
@@ -175,6 +183,14 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           }}
         >
           <defs>
+            {segments.map((seg, i) => (
+              <path
+                key={`textPath-${i}`}
+                id={`pandoraTextPath-${i}`}
+                d={describeTextArc(cx, cy, textR, seg.startAngle + 1, seg.endAngle - 1)}
+                fill="none"
+              />
+            ))}
             {segments.map((seg, i) => {
               const mid = (seg.startAngle + seg.endAngle) / 2
               const lightPos = polarToCartesian(cx, cy, r * 0.4, mid)
@@ -202,9 +218,9 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
 
           {/* Segments */}
           {segments.map((seg, i) => {
-            const midAngle = (seg.startAngle + seg.endAngle) / 2
-            const textPos = polarToCartesian(cx, cy, r * 0.82, midAngle)
             const isSelected = phase === "done" && i === selectedIndex
+            const labelLen = seg.effect.label.length
+            const fontSize = labelLen > 20 ? 12 : labelLen > 14 ? 14 : 16
 
             return (
               <g
@@ -222,20 +238,14 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
                   strokeWidth={3}
                 />
 
-                <text
-                  x={textPos.x}
-                  y={textPos.y}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fill="white"
-                  fontSize={22}
-                  fontWeight={800}
-                  style={{
-                    transform: `rotate(${midAngle}deg)`,
-                    transformOrigin: `${textPos.x}px ${textPos.y}px`,
-                  }}
-                >
-                  {seg.effect.label}
+                <text fill="white" fontWeight={800} fontSize={fontSize}>
+                  <textPath
+                    href={`#pandoraTextPath-${i}`}
+                    startOffset="50%"
+                    textAnchor="middle"
+                  >
+                    {seg.effect.label}
+                  </textPath>
                 </text>
               </g>
             )
