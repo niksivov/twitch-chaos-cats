@@ -154,7 +154,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           letterSpacing: 2,
         }}
       >
-        📦 ЯЩИК ПАНДОРЫ!
+        ХАОС!
       </div>
 
       <div style={{ position: "relative", width: 660, height: 660 }}>
@@ -290,7 +290,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           <circle cx={cx} cy={cy} r={innerR + 8} fill="none" stroke="#c62828" strokeWidth="2.5" opacity="0.4" />
           <circle cx={cx} cy={cy} r={innerR} fill="#1a1a2e" stroke="#9c27b0" strokeWidth={4} />
           <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#ffd54f" fontSize={36} fontWeight={900}>
-            📦
+            ✦
           </text>
         </svg>
       </div>
