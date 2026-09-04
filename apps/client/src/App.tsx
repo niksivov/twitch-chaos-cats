@@ -10,9 +10,9 @@ import { HowToPlayModal } from "./components/HowToPlayModal"
 import { WheelSpinner } from "./components/WheelSpinner"
 
 // Фоны
-import settingsBackground from "./assets/backgrounds/MatchSettings.png"
-import gameBackground from "./assets/backgrounds/Game1.png"
-import channelSelectBackground from "./assets/backgrounds/ChannelSelectPage.png"
+import settingsBackground from "./assets/backgrounds/MatchSettings.webp"
+import gameBackground from "./assets/backgrounds/Game1.webp"
+import channelSelectBackground from "./assets/backgrounds/ChannelSelectPage.webp"
 
 const INPUT_STYLE: React.CSSProperties = {
   marginTop: 6,
@@ -424,7 +424,7 @@ useEffect(() => {
                       {boosterCatalog.map((b) => (
                         <tr key={b.id} style={{ borderBottom: "1px solid #1a1f26" }}>
                           <td style={{ padding: "6px", textAlign: "center" }}>
-                            <img src={`/boosters/${b.icon}.png`} alt={b.name} style={{ width: 100, height: 100, objectFit: "contain" }} />
+                            <img src={`/boosters/${b.icon}.webp`} alt={b.name} style={{ width: 100, height: 100, objectFit: "contain" }} />
                           </td>
                           <td style={{ padding: "6px", fontWeight: 600, whiteSpace: "normal", wordBreak: "break-word" }}>{b.name}</td>
                           <td style={{ padding: "6px", color: "#aaa", lineHeight: "18px" }}>{b.description}</td>

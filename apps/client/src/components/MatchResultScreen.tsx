@@ -1,5 +1,5 @@
 import React from "react"
-import backgroundImage from "../assets/backgrounds/MatchResultScreen.png"
+import backgroundImage from "../assets/backgrounds/MatchResultScreen.webp"
 
 type MatchPlayer = {
   id: string
@@ -117,7 +117,7 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
           {winner && (
             <>
               <img
-                src={`/avatars/${winner.avatarId}.png`}
+                src={`/avatars/${winner.avatarId}.webp`}
                 alt={winner.username}
                 style={{
                   width: 380,

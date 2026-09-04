@@ -60,10 +60,10 @@ export function PlayerCard({ player, index, isCurrentTurn, isLeader }: Props) {
         }}
       >
         <img
-          src={`/avatars/${player.avatarId}.png`}
+          src={`/avatars/${player.avatarId}.webp`}
           alt={player.nickname}
           onError={(e) => {
-            e.currentTarget.src = "/avatars/default.png"
+            e.currentTarget.src = "/avatars/default.webp"
           }}
           style={{
             width: 140,

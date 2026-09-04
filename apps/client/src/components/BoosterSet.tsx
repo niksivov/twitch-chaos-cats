@@ -192,7 +192,7 @@ export function BoosterSet({ boosters }: Props) {
               >
                 <span className="booster-tooltip">{booster.description}</span>
                 <img
-                  src={`/boosters/${booster.boosterIcon}.png`}
+                  src={`/boosters/${booster.boosterIcon}.webp`}
                   alt={booster.boosterName}
                   style={{
                     width: "100%",
