@@ -50,7 +50,6 @@ function Confetti({ count = 60 }: { count?: number }) {
       size: 4 + Math.random() * 6,
       color: COLORS[i % COLORS.length].base,
       rotation: Math.random() * 360,
-      drift: (Math.random() - 0.5) * 100,
     }))
   }, [count])
 
@@ -81,10 +80,10 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
   const [rotation, setRotation] = useState(0)
   const svgRef = useRef<SVGSVGElement>(null)
 
-  const cx = 220
-  const cy = 220
-  const r = 200
-  const innerR = 30
+  const cx = 330
+  const cy = 330
+  const r = 300
+  const innerR = 45
 
   const segments: { player: WheelPlayer; startAngle: number; endAngle: number; color: typeof COLORS[0] }[] = []
   let currentAngle = 0
@@ -138,10 +137,6 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
           0% { opacity: 1; transform: translateY(0) rotate(0deg); }
           100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
         }
-        @keyframes winnerGlow {
-          0%, 100% { filter: drop-shadow(0 0 8px rgba(255,213,79,0.4)); }
-          50% { filter: drop-shadow(0 0 24px rgba(255,213,79,0.9)); }
-        }
         @keyframes spinPulse {
           0%, 100% { transform: translateX(-50%) scale(1); }
           50% { transform: translateX(-50%) scale(1.2); }
@@ -160,30 +155,30 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
         🎰 Колесо Фортуны!
       </div>
 
-      <div style={{ position: "relative", width: 440, height: 440 }}>
+      <div style={{ position: "relative", width: 660, height: 660 }}>
         {/* Arrow */}
         <div
           style={{
             position: "absolute",
-            top: -14,
+            top: -20,
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: 2,
             width: 0,
             height: 0,
-            borderLeft: "14px solid transparent",
-            borderRight: "14px solid transparent",
-            borderTop: "28px solid #ffd54f",
-            filter: "drop-shadow(0 0 8px rgba(255,213,79,0.8)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))",
+            borderLeft: "20px solid transparent",
+            borderRight: "20px solid transparent",
+            borderTop: "40px solid #ffd54f",
+            filter: "drop-shadow(0 0 10px rgba(255,213,79,0.8)) drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
             animation: phase === "spinning" ? "spinPulse 0.3s ease-in-out infinite" : "none",
           }}
         />
 
         <svg
           ref={svgRef}
-          viewBox="0 0 440 440"
-          width={440}
-          height={440}
+          viewBox="0 0 660 660"
+          width={660}
+          height={660}
           style={{
             transform: `rotate(${rotation}deg)`,
             transition: phase === "spinning"
@@ -194,7 +189,7 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
         >
           <defs>
             <filter id="winnerGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+              <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur" />
               <feFlood floodColor="#ffd54f" floodOpacity="0.6" result="color" />
               <feComposite in="color" in2="blur" operator="in" result="glow" />
               <feMerge>
@@ -204,46 +199,40 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
               </feMerge>
             </filter>
 
-            {/* Radial gradients for each segment */}
             {segments.map((seg, i) => {
               const mid = (seg.startAngle + seg.endAngle) / 2
               const lightPos = polarToCartesian(cx, cy, r * 0.4, mid)
               return (
-                <radialGradient key={`grad-${i}`} id={`${gradId}-${i}`} cx={`${(lightPos.x / 440) * 100}%`} cy={`${(lightPos.y / 440) * 100}%`} r="60%">
+                <radialGradient key={`grad-${i}`} id={`${gradId}-${i}`} cx={`${(lightPos.x / 660) * 100}%`} cy={`${(lightPos.y / 660) * 100}%`} r="60%">
                   <stop offset="0%" stopColor={seg.color.base} stopOpacity="1" />
                   <stop offset="100%" stopColor={seg.color.base} stopOpacity="0.65" />
                 </radialGradient>
               )
             })}
+
+            <radialGradient id="centerGrad" cx="40%" cy="40%">
+              <stop offset="0%" stopColor="#2a2a4a" />
+              <stop offset="100%" stopColor="#1a1a2e" />
+            </radialGradient>
           </defs>
 
           {/* Outer decorative ring */}
-          <circle cx={cx} cy={cy} r={r + 12} fill="none" stroke="#ffd54f" strokeWidth="3" opacity="0.5" />
-          <circle cx={cx} cy={cy} r={r + 8} fill="none" stroke="#ffd54f" strokeWidth="1" opacity="0.3" />
+          <circle cx={cx} cy={cy} r={r + 16} fill="none" stroke="#ffd54f" strokeWidth="4" opacity="0.5" />
+          <circle cx={cx} cy={cy} r={r + 10} fill="none" stroke="#ffd54f" strokeWidth="1.5" opacity="0.3" />
 
-          {/* Tick marks on outer ring */}
+          {/* Tick marks */}
           {segments.map((seg, i) => {
-            const outer = polarToCartesian(cx, cy, r + 14, seg.startAngle)
-            const inner = polarToCartesian(cx, cy, r + 4, seg.startAngle)
+            const outer = polarToCartesian(cx, cy, r + 18, seg.startAngle)
+            const inner = polarToCartesian(cx, cy, r + 5, seg.startAngle)
             return (
-              <line
-                key={`tick-${i}`}
-                x1={outer.x}
-                y1={outer.y}
-                x2={inner.x}
-                y2={inner.y}
-                stroke="#ffd54f"
-                strokeWidth="2"
-                opacity="0.6"
-              />
+              <line key={`tick-${i}`} x1={outer.x} y1={outer.y} x2={inner.x} y2={inner.y} stroke="#ffd54f" strokeWidth="2.5" opacity="0.6" />
             )
           })}
 
-          {/* Segments with gradient fills and glow */}
+          {/* Segments */}
           {segments.map((seg, i) => {
             const midAngle = (seg.startAngle + seg.endAngle) / 2
-            const avatarPos = polarToCartesian(cx, cy, r * 0.72, midAngle)
-            const textPos = polarToCartesian(cx, cy, r * 0.45, midAngle)
+            const textPos = polarToCartesian(cx, cy, r * 0.55, midAngle)
             const isWinner = phase === "done" && seg.player.id === winnerId
 
             return (
@@ -251,60 +240,28 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
                 key={seg.player.id}
                 style={{
                   filter: isWinner
-                    ? "drop-shadow(0 0 12px rgba(255,213,79,0.8))"
-                    : `drop-shadow(0 0 3px ${seg.color.glow})`,
+                    ? "drop-shadow(0 0 16px rgba(255,213,79,0.9))"
+                    : `drop-shadow(0 0 4px ${seg.color.glow})`,
                 }}
               >
                 <path
                   d={describeArc(cx, cy, r, seg.startAngle, seg.endAngle)}
                   fill={`url(#${gradId}-${i})`}
                   stroke="#1a1a2e"
-                  strokeWidth={2.5}
+                  strokeWidth={3}
                 />
 
-                {/* Segment border glow line */}
-                <path
-                  d={describeArc(cx, cy, r - 1, seg.startAngle, seg.startAngle + 0.5)}
-                  fill="none"
-                  stroke="rgba(255,255,255,0.15)"
-                  strokeWidth={1}
-                />
-
-                {/* Avatar circle */}
-                <clipPath id={`clip-${seg.player.id}`}>
-                  <circle cx={avatarPos.x} cy={avatarPos.y} r={18} />
-                </clipPath>
-                <image
-                  href={`/avatars/${seg.player.avatarId}.webp`}
-                  x={avatarPos.x - 18}
-                  y={avatarPos.y - 18}
-                  width={36}
-                  height={36}
-                  clipPath={`url(#clip-${seg.player.id})`}
-                  preserveAspectRatio="xMidYMid slice"
-                />
-                <circle
-                  cx={avatarPos.x}
-                  cy={avatarPos.y}
-                  r={18}
-                  fill="none"
-                  stroke="rgba(255,255,255,0.5)"
-                  strokeWidth={1.5}
-                />
-
-                {/* Username */}
                 <text
                   x={textPos.x}
                   y={textPos.y}
                   textAnchor="middle"
                   dominantBaseline="central"
                   fill="white"
-                  fontSize={11}
+                  fontSize={33}
                   fontWeight={800}
                   style={{
                     transform: `rotate(${midAngle}deg)`,
                     transformOrigin: `${textPos.x}px ${textPos.y}px`,
-                    textShadow: "0 1px 3px rgba(0,0,0,0.8)",
                   }}
                 >
                   {seg.player.username}
@@ -314,22 +271,9 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
           })}
 
           {/* Center hub */}
-          <circle cx={cx} cy={cy} r={innerR + 6} fill="none" stroke="#ffd54f" strokeWidth="2" opacity="0.4" />
-          <circle
-            cx={cx}
-            cy={cy}
-            r={innerR}
-            fill="url(#centerGrad)"
-            stroke="#ffd54f"
-            strokeWidth={3}
-          />
-          <defs>
-            <radialGradient id="centerGrad" cx="40%" cy="40%">
-              <stop offset="0%" stopColor="#2a2a4a" />
-              <stop offset="100%" stopColor="#1a1a2e" />
-            </radialGradient>
-          </defs>
-          <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#ffd54f" fontSize={22} fontWeight={900}>
+          <circle cx={cx} cy={cy} r={innerR + 8} fill="none" stroke="#ffd54f" strokeWidth="2.5" opacity="0.4" />
+          <circle cx={cx} cy={cy} r={innerR} fill="url(#centerGrad)" stroke="#ffd54f" strokeWidth={4} />
+          <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="#ffd54f" fontSize={36} fontWeight={900}>
             🎰
           </text>
         </svg>
