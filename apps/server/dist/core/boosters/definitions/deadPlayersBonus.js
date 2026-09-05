@@ -4,7 +4,7 @@ exports.deadPlayersBonus = void 0;
 exports.deadPlayersBonus = {
     id: "DEAD_PLAYERS_BONUS_75",
     name: "+75 за умершего",
-    description: "+75 очков за умершего",
+    description: "Вы получаете +75 очков за КАЖДОГО умершего игрока",
     poolCount: 1,
     icon: "deadBonus",
     execute: ({ match, sourcePlayerId, }) => {

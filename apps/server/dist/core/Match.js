@@ -11,7 +11,6 @@ class Match {
         this.turnOrder = [];
         // 🔹 Twitch → internal playerId mapping
         this.twitchToPlayerId = {};
-        console.log('[MATCH ctor 0] settings IN:', settings);
         this.id = matchId;
         this.phase = matchPhase_1.MatchPhase.WAITING_FOR_PLAYERS;
         this.round = 0;
@@ -44,16 +43,13 @@ class Match {
             targetPoints: settings?.targetPoints ?? 10,
             boosterSetSize: settings?.boosterSetSize ?? 3,
             exhaustiblePool: settings?.exhaustiblePool ?? true,
+            boosterUsageCounts: {},
+            playerRpsCollection: {},
+            wheelResult: null,
+            pandoraResult: null,
+            pendingPandoraRoll: null,
         };
-        console.log('[MATCH ctor 1] state AFTER init:', {
-            twitchChannel: this.state.twitchChannel,
-            maxPlayers: this.state.maxPlayers,
-            turnTimeSeconds: this.state.turnTimeSeconds,
-            targetPoints: this.state.targetPoints,
-            boosterSetSize: this.state.boosterSetSize,
-        });
         this.stateMachine = new MatchStateMachine_1.MatchStateMachine(this.phase);
-        console.log('[MATCH ctor 2] FINAL STATE SNAPSHOT:', this.state);
     }
     // 🔹 получение игрока по Twitch ID
     getPlayerByTwitchId(twitchUserId) {
@@ -76,9 +72,10 @@ class Match {
             round: this.round,
             turn: this.turn,
             turnOrder: this.turnOrder,
-            // 👇 currentTurnPlayerId теперь internalId
             currentTurnPlayerId: this.currentPlayerId,
             currentTurnStartedAt: this.state.turnStartedAt,
+            turnTimeSeconds: this.state.turnTimeSeconds,
+            targetPoints: this.state.targetPoints,
             leaderId: this.state.leaderId,
             // 👇 добавлен id для фронта
             players: Object.entries(this.state.registeredPlayers).map(([internalId, p]) => ({
@@ -186,6 +183,11 @@ class Match {
         this.state.twitchChannel = null;
         this.state.maxPlayers = 0;
         this.state.registrationOpen = false;
+        this.state.boosterUsageCounts = {};
+        this.state.playerRpsCollection = {};
+        this.state.wheelResult = null;
+        this.state.pandoraResult = null;
+        this.state.pendingPandoraRoll = null;
         this.transition(matchPhase_1.MatchPhase.WAITING_FOR_PLAYERS);
     }
     isAbandoned() {

@@ -16,7 +16,6 @@ class BoosterSetManager {
         for (let i = 1; i <= setSize; i++) {
             this.replaceSlot(match, i);
         }
-        console.log("[BOOSTERSET INIT]", match.round, match.state.boosterSet);
     }
     fillBoosterPool(match) {
         const boosters = this.boosterRegistry.getAll();
@@ -56,6 +55,7 @@ class BoosterSetManager {
             boosterId,
             boosterName: booster.name,
             boosterIcon: booster.icon,
+            description: booster.description,
         };
         if (existingIndex === -1) {
             match.state.boosterSet.push(setItem);

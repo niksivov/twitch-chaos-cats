@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RandomRemoveBooster = void 0;
 exports.RandomRemoveBooster = {
     id: "RANDOM_REMOVE",
-    name: "случайная смерть",
-    description: "Remove random enemy from game",
+    name: "Случайная смерть",
+    description: "Случайный игрок умирает. Вероятность умереть у всех (включая Вас) равная",
     poolCount: 1,
     icon: "random_remove",
     execute: ({ match, sourcePlayerId, }) => {

@@ -34,6 +34,10 @@ class GameLoop {
         }
         if (match.state.paused)
             return;
+        if (match.winnerId && match.phase !== matchPhase_1.MatchPhase.MATCH_END) {
+            this.finishMatch(match, match.winnerId);
+            return;
+        }
         match.state.tick++;
         switch (match.phase) {
             case matchPhase_1.MatchPhase.WAITING_FOR_PLAYERS:
@@ -71,6 +75,22 @@ class GameLoop {
         }
         this.effectEngine.process(match);
         this.leaderEngine.process(match);
+        if (match.state.wheelResult) {
+            this.broadcaster.broadcast({
+                type: "wheel_result",
+                roomId: match.state.twitchChannel,
+                payload: match.state.wheelResult,
+            });
+            match.state.wheelResult = null;
+        }
+        if (match.state.pandoraResult) {
+            this.broadcaster.broadcast({
+                type: "pandora_result",
+                roomId: match.state.twitchChannel,
+                payload: match.state.pandoraResult,
+            });
+            match.state.pandoraResult = null;
+        }
         this.broadcaster.broadcastMatchState(match);
     }
     resetMatch(match) {
@@ -128,6 +148,10 @@ class GameLoop {
         match.transition(matchPhase_1.MatchPhase.TURN_END);
     }
     handleTurnEnd(match) {
+        if (match.winnerId) {
+            this.finishMatch(match, match.winnerId);
+            return;
+        }
         const targetPoints = match.state.targetPoints ?? 10;
         const winnerByPoints = Object.values(match.state.registeredPlayers).find(p => p.score >= targetPoints);
         if (winnerByPoints) {
@@ -185,6 +209,7 @@ class GameLoop {
         const players = Object.values(match.state.registeredPlayers);
         this.broadcaster.broadcast({
             type: "match_result",
+            roomId: match.state.twitchChannel,
             payload: {
                 winnerId,
                 reason: "points",

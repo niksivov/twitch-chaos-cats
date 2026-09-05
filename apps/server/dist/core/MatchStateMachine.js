@@ -8,15 +8,19 @@ const transitions = {
     ],
     [matchPhase_1.MatchPhase.ROUND_START]: [
         matchPhase_1.MatchPhase.TURN_START,
+        matchPhase_1.MatchPhase.MATCH_END, // досрочная победа (напр. пандора)
     ],
     [matchPhase_1.MatchPhase.TURN_START]: [
         matchPhase_1.MatchPhase.BOOSTER_SELECTION,
+        matchPhase_1.MatchPhase.MATCH_END, // досрочная победа (напр. пандора)
     ],
     [matchPhase_1.MatchPhase.BOOSTER_SELECTION]: [
         matchPhase_1.MatchPhase.BOOSTER_RESOLUTION,
+        matchPhase_1.MatchPhase.MATCH_END, // досрочная победа (напр. пандора)
     ],
     [matchPhase_1.MatchPhase.BOOSTER_RESOLUTION]: [
         matchPhase_1.MatchPhase.TURN_END,
+        matchPhase_1.MatchPhase.MATCH_END, // досрочная победа (напр. пандора)
     ],
     [matchPhase_1.MatchPhase.TURN_END]: [
         matchPhase_1.MatchPhase.TURN_START,

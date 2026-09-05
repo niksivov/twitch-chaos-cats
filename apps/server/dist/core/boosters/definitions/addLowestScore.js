@@ -4,7 +4,7 @@ exports.addLowestScore = void 0;
 exports.addLowestScore = {
     id: "ADD_LOWEST_SCORE",
     name: "+ очки аутсайдера",
-    description: "Добавляет к вашим очкам наименьший счет в матче",
+    description: "Добавляет к Вашим очкам наименьший счет в матче",
     poolCount: 1,
     icon: "addLowestScore",
     execute: ({ match, sourcePlayerId, }) => {

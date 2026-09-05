@@ -40,6 +40,12 @@ const pandoraBox_1 = require("./pandoraBox");
 const averageWithAllLeaders_1 = require("./averageWithAllLeaders");
 const deadPlayersBonus_1 = require("./deadPlayersBonus");
 const TimeBonusBooster_1 = require("./TimeBonusBooster");
+const Death300Booster_1 = require("./Death300Booster");
+const EscalatingPlus10Booster_1 = require("./EscalatingPlus10Booster");
+const RockBooster_1 = require("./RockBooster");
+const ScissorsBooster_1 = require("./ScissorsBooster");
+const PaperBooster_1 = require("./PaperBooster");
+const WheelBooster_1 = require("./WheelBooster");
 exports.ALL_BOOSTERS = [
     Plus10Booster_1.Plus10Booster,
     Plus20Booster_1.Plus20Booster,
@@ -80,4 +86,10 @@ exports.ALL_BOOSTERS = [
     averageWithAllLeaders_1.averageWithAllLeaders,
     deadPlayersBonus_1.deadPlayersBonus,
     RandomRemoveBooster_1.RandomRemoveBooster,
+    Death300Booster_1.Death300Booster,
+    EscalatingPlus10Booster_1.EscalatingPlus10Booster,
+    RockBooster_1.RockBooster,
+    ScissorsBooster_1.ScissorsBooster,
+    PaperBooster_1.PaperBooster,
+    WheelBooster_1.WheelBooster,
 ];

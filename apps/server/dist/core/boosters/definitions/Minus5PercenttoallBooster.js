@@ -4,7 +4,7 @@ exports.Minus5PercenttoallBooster = void 0;
 exports.Minus5PercenttoallBooster = {
     id: "MINUS_5PERCENT_TO_ALL",
     name: "-5% всем противникам",
-    description: "All other players lose 5% points",
+    description: "Все противники теряют 5% от счета",
     poolCount: 0,
     icon: "minus5percenttoall",
     execute: ({ match, sourcePlayerId, }) => {

@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.squareRoundPoints = void 0;
 exports.squareRoundPoints = {
     id: "SQUARE_ROUND_POINTS",
-    name: "+Очки = квадрат раунда",
-    description: "Добавляет себе количество очков равное квадрату текущего раунда",
+    name: "+ очки = квадрат раунда",
+    description: "Вы получаете количество очков равное квадрату текущего раунда",
     poolCount: 1,
     icon: "squareRoundPoints",
     execute: ({ match, sourcePlayerId, }) => {

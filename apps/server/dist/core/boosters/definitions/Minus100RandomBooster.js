@@ -4,7 +4,7 @@ exports.Minus100RandomBooster = void 0;
 exports.Minus100RandomBooster = {
     id: "MINUS_100_RANDOM",
     name: "-100 случайному противнику",
-    description: "Remove 100 points from random enemy",
+    description: "Случайный противник теряет 100 очков",
     poolCount: 1,
     icon: "minus100random",
     execute: ({ match, sourcePlayerId, }) => {

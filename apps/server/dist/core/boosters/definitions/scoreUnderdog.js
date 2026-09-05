@@ -4,7 +4,7 @@ exports.scoreUnderdog = void 0;
 exports.scoreUnderdog = {
     id: "SCORE_UNDERDOG",
     name: "+15 за каждого, у кого > очков",
-    description: "+15 за каждого игрока, у которого больше очков, чем у вас",
+    description: "Вы получаете +15 очков за каждого игрока, у которого больше очков, чем у Вас",
     poolCount: 2,
     icon: "scoreUnderdog",
     execute: ({ match, sourcePlayerId, }) => {

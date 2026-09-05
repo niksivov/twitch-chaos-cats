@@ -4,7 +4,7 @@ exports.TimeBonusBooster = void 0;
 exports.TimeBonusBooster = {
     id: "TIME_BONUS_BOOSTER",
     name: "+1 за каждые 10 секунд матча",
-    description: "Добавляет себе +1 за каждые 10 секунд матча",
+    description: "Вы получаете +1 очко за каждые 10 секунд, что идет эта игра",
     poolCount: 2,
     icon: "timebonus",
     execute: ({ match, sourcePlayerId, }) => {

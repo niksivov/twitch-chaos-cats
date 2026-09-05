@@ -4,7 +4,7 @@ exports.swapscore = void 0;
 exports.swapscore = {
     id: "SWAP_SCORE_RANDOM_OPPONENT",
     name: "Обмен очками",
-    description: "Поменяться очками со случайным противником",
+    description: "Вы меняетесь очками со случайным противником",
     poolCount: 3,
     icon: "swapscore",
     execute: ({ match, sourcePlayerId, }) => {

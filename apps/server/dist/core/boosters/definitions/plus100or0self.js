@@ -4,7 +4,7 @@ exports.plus100or0self = void 0;
 exports.plus100or0self = {
     id: "PLUS_100_OR_0_SELF",
     name: "+100 или 0 себе",
-    description: "+100 очков себе или ничего",
+    description: "Вы получите +100 очков или не получите ничего - вероятность 50%/50%",
     poolCount: 1,
     icon: "plus100or0self",
     execute: ({ match, sourcePlayerId }) => {

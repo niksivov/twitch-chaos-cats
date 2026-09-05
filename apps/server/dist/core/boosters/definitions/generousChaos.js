@@ -4,8 +4,8 @@ exports.generousChaos = void 0;
 exports.generousChaos = {
     id: "GENEROUS_CHAOS",
     name: "+75 тебе, +100 между другими",
-    description: "Вы получаете 75 очков, а между соперниками случайно распределяется 100",
-    poolCount: 2,
+    description: "Вы получаете 75 очков, а между противниками случайно распределяется 100",
+    poolCount: 1,
     icon: "generousChaos",
     execute: ({ match, sourcePlayerId, }) => {
         const sourcePlayer = match.state.registeredPlayers[sourcePlayerId];

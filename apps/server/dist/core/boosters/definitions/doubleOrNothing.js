@@ -4,7 +4,7 @@ exports.doubleOrNothing = void 0;
 exports.doubleOrNothing = {
     id: "DOUBLE_OR_NOTHING",
     name: "+200 или смерть",
-    description: "50%: +200 очков. 50%: смерть",
+    description: "Вы получите +200 очков или Вы умрете - вероятность 50%/50%",
     poolCount: 1,
     icon: "doubleOrNothing",
     execute: ({ match, sourcePlayerId, }) => {

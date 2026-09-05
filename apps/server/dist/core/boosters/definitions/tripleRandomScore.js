@@ -4,7 +4,7 @@ exports.tripleRandomScore = void 0;
 exports.tripleRandomScore = {
     id: "TRIPLE_RANDOM_PLAYER_SCORE",
     name: "×3 случайному игроку",
-    description: "Очки случайного игрока умножаются на 3",
+    description: "Счет случайного игрока умножается на 3",
     poolCount: 1,
     icon: "tripleRandomScore",
     execute: ({ match, }) => {

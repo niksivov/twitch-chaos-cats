@@ -4,7 +4,7 @@ exports.Plus40Booster = void 0;
 exports.Plus40Booster = {
     id: "PLUS_40",
     name: "+40",
-    description: "Add 40 points to yourself",
+    description: "Вы получаете 40 очков",
     poolCount: 3,
     icon: "plus40",
     execute: ({ match, sourcePlayerId, }) => {

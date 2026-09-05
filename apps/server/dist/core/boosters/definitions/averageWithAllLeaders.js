@@ -4,8 +4,8 @@ exports.averageWithAllLeaders = void 0;
 exports.averageWithAllLeaders = {
     id: "AVERAGE_WITH_ALL_LEADERS",
     name: "Усреднение с лидером",
-    description: "Ваш счет и счет всех лидеров становятся равны их среднему значению (округление вверх)",
-    poolCount: 2,
+    description: "Ваш счет и счет всех лидеров становятся равны их среднему значению",
+    poolCount: 1,
     icon: "averageWithLeader",
     execute: ({ match, sourcePlayerId, }) => {
         const player = match.state.registeredPlayers[sourcePlayerId];

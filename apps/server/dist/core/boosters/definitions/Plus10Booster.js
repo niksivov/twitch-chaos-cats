@@ -4,7 +4,7 @@ exports.Plus10Booster = void 0;
 exports.Plus10Booster = {
     id: "PLUS_10",
     name: "+10",
-    description: "Add 10 points to yourself",
+    description: "Вы получаете 10 очков",
     poolCount: 5,
     icon: "plus10",
     execute: ({ match, sourcePlayerId, }) => {

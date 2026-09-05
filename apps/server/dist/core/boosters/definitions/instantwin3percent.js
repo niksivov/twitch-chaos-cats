@@ -4,7 +4,7 @@ exports.instantwin3percent = void 0;
 exports.instantwin3percent = {
     id: "INSTANT_WIN_ELIMINATION",
     name: "Мгновенная победа (3%)",
-    description: "С вероятностью 3% вы выбиваете всех остальных игроков",
+    description: "С вероятностью 3% Вы сразу побеждаете в этой игре",
     poolCount: 2,
     icon: "instantwin3percent",
     execute: ({ match, sourcePlayerId }) => {

@@ -4,7 +4,7 @@ exports.Plus25PercentBooster = void 0;
 exports.Plus25PercentBooster = {
     id: "MULTIPLY_125",
     name: "+25%",
-    description: "Increase your score by 25%",
+    description: "Вы получаете +25% к счету",
     poolCount: 3,
     icon: "multiply_125",
     execute: ({ match, sourcePlayerId, }) => {
