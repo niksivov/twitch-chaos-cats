@@ -10,18 +10,22 @@ const transitions: Record<
 
   [MatchPhase.ROUND_START]: [
     MatchPhase.TURN_START,
+    MatchPhase.MATCH_END, // досрочная победа (напр. пандора)
   ],
 
   [MatchPhase.TURN_START]: [
     MatchPhase.BOOSTER_SELECTION,
+    MatchPhase.MATCH_END, // досрочная победа (напр. пандора)
   ],
 
   [MatchPhase.BOOSTER_SELECTION]: [
     MatchPhase.BOOSTER_RESOLUTION,
+    MatchPhase.MATCH_END, // досрочная победа (напр. пандора)
   ],
 
   [MatchPhase.BOOSTER_RESOLUTION]: [
     MatchPhase.TURN_END,
+    MatchPhase.MATCH_END, // досрочная победа (напр. пандора)
   ],
 
   [MatchPhase.TURN_END]: [
