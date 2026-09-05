@@ -38,6 +38,18 @@ class GameLoop {
             this.finishMatch(match, match.winnerId);
             return;
         }
+        if (match.state.pendingPandoraRoll) {
+            if (match.state.pandoraResult) {
+                this.broadcaster.broadcast({
+                    type: "pandora_result",
+                    roomId: match.state.twitchChannel,
+                    payload: match.state.pandoraResult,
+                });
+                match.state.pandoraResult = null;
+            }
+            this.broadcaster.broadcastMatchState(match);
+            return;
+        }
         match.state.tick++;
         switch (match.phase) {
             case matchPhase_1.MatchPhase.WAITING_FOR_PLAYERS:
