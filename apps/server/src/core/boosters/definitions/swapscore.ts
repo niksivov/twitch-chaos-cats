@@ -10,7 +10,7 @@ export const swapscore: BoosterDefinition =
     description:
       "Вы меняетесь очками со случайным противником",
 
-    poolCount: 3,
+    poolCount: 2,
 
     icon: "swapscore",
 
