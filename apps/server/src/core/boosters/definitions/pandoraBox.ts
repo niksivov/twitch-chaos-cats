@@ -2,14 +2,14 @@ import { BoosterDefinition } from "../BoosterTypes"
 import type { Match } from "../../Match"
 
 export const PANDORA_EFFECTS = [
-  { id: 0, label: "300 очков случайно\nмежду соперниками", color: "#c62828" },
-  { id: 1, label: "Вы умираете,\n+100 каждому противнику", color: "#b71c1c" },
+  { id: 0, label: "300 очков распределяются\nслучайно между соперниками", color: "#c62828" },
+  { id: 1, label: "Вы умираете,\n+100 очков каждому противнику", color: "#b71c1c" },
   { id: 2, label: "Ваши очки достаются\nсоперникам", color: "#e65100" },
   { id: 3, label: "-5000 случайному\nигроку", color: "#880e4f" },
   { id: 4, label: "+1 очко\nВам", color: "#2e7d32" },
   { id: 5, label: "Половина игроков\nумирает", color: "#b71c1c" },
   { id: 6, label: "Все очки\nперемешиваются", color: "#e65100" },
-  { id: 7, label: "Вы крадете 50\nочков у каждого", color: "#1565c0" },
+  { id: 7, label: "Вы крадете до 50 очков\n у каждого (если очки есть)", color: "#1565c0" },
   { id: 8, label: "×3 очков\nВам", color: "#2e7d32" },
   { id: 9, label: "+50% от цели\nВам", color: "#1b5e20" },
 ]
