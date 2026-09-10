@@ -21,6 +21,28 @@ const COLORS = [
   "#550751",
 ]
 
-export function getPlayerColor(_id: string, index: number) {
-  return COLORS[index % COLORS.length]
+const colorIndexByKey = new Map<string, number>()
+const usedIndexes = new Set<number>()
+
+export function getPlayerColor(key: string): string {
+  if (!key) return COLORS[0]
+
+  const existing = colorIndexByKey.get(key)
+  if (existing !== undefined) return COLORS[existing]
+
+  let idx = 0
+  while (usedIndexes.has(idx) && idx < COLORS.length) {
+    idx++
+  }
+
+  const index = idx % COLORS.length
+  usedIndexes.add(index)
+  colorIndexByKey.set(key, index)
+
+  return COLORS[index]
+}
+
+export function resetPlayerColors(): void {
+  colorIndexByKey.clear()
+  usedIndexes.clear()
 }

@@ -1,4 +1,5 @@
 import { useGameStore } from "../store/gameStore"
+import { resetPlayerColors } from "../utils/getPlayerColor"
 
 export interface MatchSettings {
   twitchChannel: string
@@ -94,6 +95,11 @@ class SocketClient {
         if (message.type === "match_state") {
           const match = message.payload
           if (!match) return
+
+          const newRoomId = match.roomId ?? match.id ?? ""
+          if (newRoomId && newRoomId !== useGameStore.getState().roomId) {
+            resetPlayerColors()
+          }
 
           if (useGameStore.getState().matchFinished) {
             return
