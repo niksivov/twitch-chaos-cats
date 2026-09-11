@@ -56,6 +56,8 @@ export class TwitchBotService {
         return
       }
 
+      this.recordViewerNumber(twitchUserId, message)
+
       this.handleMessage(twitchUserId, username, message, tags)
     })
 
@@ -92,6 +94,23 @@ export class TwitchBotService {
       this.client = undefined as any
     }
     this.room.matchId = null
+  }
+
+  private recordViewerNumber(twitchUserId: string, message: string) {
+    if (!this.room.matchId) return
+
+    const match = this.matchManager.getMatch(this.room.matchId)
+    if (!match) return
+
+    if (match.getPlayerByTwitchId(twitchUserId)) return
+
+    const trimmed = message.trim()
+    if (!/^[-+]?\d+$/.test(trimmed)) return
+
+    const value = Number(trimmed)
+    if (value < -100 || value > 100) return
+
+    match.state.lastViewerNumber = value
   }
 
   private handleMessage(

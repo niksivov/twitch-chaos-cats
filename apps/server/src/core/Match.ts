@@ -44,6 +44,7 @@ export interface MatchInternalState {
   turnTimeSeconds: number
   targetPoints: number
   boosterSetSize: number
+  lastViewerNumber: number | null
   exhaustiblePool: boolean
   boosterUsageCounts: Record<string, number>
   playerRpsCollection: Record<string, string[]>
@@ -111,6 +112,7 @@ export class Match {
       turnTimeSeconds: settings?.turnTimeSeconds ?? 30,
       targetPoints: settings?.targetPoints ?? 10,
       boosterSetSize: settings?.boosterSetSize ?? 3,
+      lastViewerNumber: null,
       exhaustiblePool: settings?.exhaustiblePool ?? true,
       boosterUsageCounts: {},
       playerRpsCollection: {},
@@ -272,6 +274,7 @@ const internalId = randomUUID()
     this.state.twitchChannel = null
     this.state.maxPlayers = 0
     this.state.registrationOpen = false
+    this.state.lastViewerNumber = null
     this.state.boosterUsageCounts = {}
     this.state.playerRpsCollection = {}
     this.state.wheelResult = null
