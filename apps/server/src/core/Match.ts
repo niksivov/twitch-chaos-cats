@@ -45,6 +45,7 @@ export interface MatchInternalState {
   turnTimeSeconds: number
   targetPoints: number
   boosterSetSize: number
+  boosterPoolConfig: Record<string, number>
   lastViewerNumber: number | null
   exhaustiblePool: boolean
   boosterUsageCounts: Record<string, number>
@@ -114,6 +115,7 @@ export class Match {
       turnTimeSeconds: settings?.turnTimeSeconds ?? 30,
       targetPoints: settings?.targetPoints ?? 10,
       boosterSetSize: settings?.boosterSetSize ?? 3,
+      boosterPoolConfig: settings?.boosterPoolConfig ?? {},
       lastViewerNumber: null,
       exhaustiblePool: settings?.exhaustiblePool ?? true,
       boosterUsageCounts: {},

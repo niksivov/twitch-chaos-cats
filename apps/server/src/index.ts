@@ -133,6 +133,7 @@ function createMatchFromLobby(
     turnTimeSeconds: input.turnTimeSeconds,
     targetPoints: input.targetPoints,
     boosterSetSize: input.boosterSetSize,
+    boosterPoolConfig: room.boosterPoolConfig,
   })
 
   room.matchId = match.id

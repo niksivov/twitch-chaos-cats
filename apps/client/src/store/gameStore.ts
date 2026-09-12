@@ -119,6 +119,8 @@ interface GameState {
 
   boosterCatalog: BoosterCatalogItem[]
 
+  boosterPoolStatus: string | null
+
   setConnected: (connected: boolean) => void
   setScreen: (screen: AppScreen) => void
   setTwitchChannel: (channel: string) => void
@@ -128,6 +130,7 @@ interface GameState {
   setBoosterSetSize: (value: number) => void
   setLobbyPlayers: (players: LobbyPlayer[]) => void
   applySnapshot: (snapshot: StateUpdatePayload) => void
+  setBoosterPoolStatus: (message: string | null) => void
   resetToStart: () => void
 }
 
@@ -163,6 +166,8 @@ export const useGameStore = create<GameState>((set) => ({
   pandoraResult: null,
 
   boosterCatalog: [],
+
+  boosterPoolStatus: null,
 
   setConnected: (connected) => set({ connected }),
   setScreen: (screen) => set({ screen }),
@@ -230,4 +235,7 @@ export const useGameStore = create<GameState>((set) => ({
   wheelResult: null,
   pandoraResult: null,
       }),
+
+  setBoosterPoolStatus: (message) =>
+    set({ boosterPoolStatus: message }),
 }))

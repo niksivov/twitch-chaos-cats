@@ -72,7 +72,19 @@ function App() {
   const [showHowToPlay, setShowHowToPlay] = useState(false)
   const [showBoosterTable, setShowBoosterTable] = useState(false)
   const boosterCatalog = useGameStore((s) => s.boosterCatalog)
-  const maxPoolSize = boosterCatalog.reduce((sum, b) => sum + b.poolCount, 0) || 1
+  const boosterPoolStatus = useGameStore((s) => s.boosterPoolStatus)
+  const [poolDraft, setPoolDraft] = useState<Record<string, number>>({})
+  const [prevCatalog, setPrevCatalog] = useState(boosterCatalog)
+
+  if (prevCatalog !== boosterCatalog) {
+    setPrevCatalog(boosterCatalog)
+    const next: Record<string, number> = {}
+    for (const b of boosterCatalog) next[b.id] = b.poolCount
+    setPoolDraft(next)
+  }
+
+  const draftPoolSize = Object.values(poolDraft).reduce((sum, n) => sum + n, 0) || 1
+  const maxPoolSize = draftPoolSize
 
   const maxPlayers = useValidatedNumericInput("maxPlayers", 2, 20, "Введите целое число от 2 до 20")
   const turnTimeSeconds = useValidatedNumericInput("turnTimeSeconds", 5, 600, "Введите целое число от 5 до 600")
@@ -401,8 +413,18 @@ useEffect(() => {
                   fontWeight: 600,
                 }}
               >
-                {showBoosterTable ? "▲" : "▼"} Все бустеры ({boosterCatalog.length} видов, {boosterCatalog.reduce((s, b) => s + b.poolCount, 0)} в пуле)
+                {showBoosterTable ? "▲" : "▼"} Все бустеры ({boosterCatalog.length} видов, {draftPoolSize} в пуле)
               </div>
+
+              <div style={{ marginTop: 8, textAlign: "center", color: "#9e9e9e", fontSize: 12 }}>
+                !save = сохранить настройки, !default = вернуться к изначальным настройкам
+              </div>
+
+              {boosterPoolStatus && (
+                <div style={{ marginTop: 6, textAlign: "center", color: "#00ff66", fontSize: 13, fontWeight: 700 }}>
+                  ✓ {boosterPoolStatus}
+                </div>
+              )}
 
               <div style={{
                 marginTop: 12,
@@ -430,7 +452,32 @@ useEffect(() => {
                           </td>
                           <td style={{ padding: "6px", fontWeight: 600, whiteSpace: "normal", wordBreak: "break-word" }}>{b.name}</td>
                           <td style={{ padding: "6px", color: "#aaa", lineHeight: "18px" }}>{b.description}</td>
-                          <td style={{ padding: "6px", textAlign: "center", fontWeight: 700, color: b.poolCount === 0 ? "#ff6b6b" : "#00ff66" }}>{b.poolCount}</td>
+                          <td style={{ padding: "6px", textAlign: "center", fontWeight: 700 }}>
+                            <input
+                              type="number"
+                              min={0}
+                              max={50}
+                              value={poolDraft[b.id] ?? b.poolCount}
+                              onChange={(e) => {
+                                const raw = e.target.value
+                                const n = Math.floor(Number(raw))
+                                const value = raw.trim() === "" ? 0 : Number.isFinite(n) ? Math.min(50, Math.max(0, n)) : (poolDraft[b.id] ?? b.poolCount)
+                                setPoolDraft((prev) => ({ ...prev, [b.id]: value }))
+                                socketClient.setBoosterPoolDraft({ ...poolDraft, [b.id]: value })
+                              }}
+                              style={{
+                                width: 50,
+                                textAlign: "center",
+                                padding: "4px 2px",
+                                borderRadius: 6,
+                                border: "1px solid #2d3742",
+                                background: "#11161d",
+                                color: (poolDraft[b.id] ?? b.poolCount) === 0 ? "#ff6b6b" : "#00ff66",
+                                fontWeight: 700,
+                                outline: "none",
+                              }}
+                            />
+                          </td>
                         </tr>
                       ))}
                     </tbody>

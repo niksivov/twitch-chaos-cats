@@ -7,7 +7,7 @@ export class MatchManager {
 
   constructor() {}
 
-  createMatch(settings: Partial<MatchSettings> & { twitchChannel: string; maxPlayers: number }): Match {
+  createMatch(settings: Partial<MatchSettings> & { twitchChannel: string; maxPlayers: number; boosterPoolConfig?: Record<string, number> }): Match {
     const matchId = randomUUID()
     const match = new Match(matchId, settings)
     match.state.twitchChannel = settings.twitchChannel
@@ -15,6 +15,7 @@ export class MatchManager {
     match.state.turnTimeSeconds = settings.turnTimeSeconds ?? 30
     match.state.targetPoints = settings.targetPoints ?? 10
     match.state.boosterSetSize = settings.boosterSetSize ?? 3
+    match.state.boosterPoolConfig = settings.boosterPoolConfig ?? {}
     match.state.registrationOpen = true
     this.matches.set(matchId, match)
 

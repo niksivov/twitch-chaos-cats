@@ -48,6 +48,9 @@ class SocketClient {
 
           useGameStore.setState({ twitchChannel: channel })
           useGameStore.getState().setLobbyPlayers(lobbyPlayers ?? [])
+          useGameStore.getState().setBoosterPoolStatus(null)
+
+          socket.send(JSON.stringify({ type: "GET_BOOSTER_LIST" }))
 
           if (turnTimeSeconds !== undefined) {
             useGameStore.setState({ turnTimeSeconds })
@@ -86,6 +89,14 @@ class SocketClient {
           useGameStore.setState({
             boosterCatalog: message.payload ?? [],
           })
+          return
+        }
+
+        // ======================
+        // BOOSTER POOL STATUS
+        // ======================
+        if (message.type === "booster_pool_status") {
+          useGameStore.getState().setBoosterPoolStatus(message.payload?.message ?? null)
           return
         }
 
@@ -235,6 +246,13 @@ class SocketClient {
     this.sendMessage({
       type: "CREATE_MATCH",
       payload: settings,
+    })
+  }
+
+  setBoosterPoolDraft(poolCounts: Record<string, number>) {
+    this.sendMessage({
+      type: "SET_BOOSTER_POOL_DRAFT",
+      payload: { poolCounts },
     })
   }
 

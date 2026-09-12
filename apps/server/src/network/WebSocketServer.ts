@@ -6,6 +6,7 @@ import { ALL_BOOSTERS } from "../core/boosters/definitions"
 
 import { startTwitchBot, createMatchFromLobby, rooms, getOrCreateRoom } from "../index"
 import { applyPandoraEffect } from "../core/boosters/definitions/pandoraBox"
+import { normalizeBoosterPoolConfig } from "../core/boosters/boosterPoolConfig"
 
 export class WebSocketServer {
   private wss: WSServer
@@ -69,6 +70,10 @@ export class WebSocketServer {
 
       case "GET_BOOSTER_LIST":
         this.sendBoosterList(socket)
+        break
+
+      case "SET_BOOSTER_POOL_DRAFT":
+        this.handleSetBoosterPoolDraft(socket, message)
         break
 
       case "PANDORA_DONE":
@@ -220,20 +225,77 @@ export class WebSocketServer {
   }
 
   private sendBoosterList(socket: WebSocket) {
+    const channel = this.clients.get(socket)
+    const room = channel ? rooms.get(channel) : undefined
+
     const payload = {
       type: "booster_list",
-      payload: ALL_BOOSTERS.map((b) => ({
-        id: b.id,
-        name: b.name,
-        description: b.description,
-        icon: b.icon,
-        poolCount: b.poolCount,
-      })),
+      payload: ALL_BOOSTERS.map((b) => {
+        const configured = room?.boosterPoolConfig?.[b.id]
+        return {
+          id: b.id,
+          name: b.name,
+          description: b.description,
+          icon: b.icon,
+          poolCount: typeof configured === "number" ? configured : b.poolCount,
+        }
+      }),
     }
 
     if (socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(payload))
     }
+  }
+
+  public broadcastBoosterList(channel: string) {
+    const serialized = JSON.stringify(this.buildBoosterListPayload(channel))
+
+    for (const [client, clientRoom] of this.clients) {
+      if (clientRoom === channel && client.readyState === WebSocket.OPEN) {
+        client.send(serialized)
+      }
+    }
+  }
+
+  private buildBoosterListPayload(channel: string) {
+    const room = rooms.get(channel)
+
+    return {
+      type: "booster_list",
+      payload: ALL_BOOSTERS.map((b) => {
+        const configured = room?.boosterPoolConfig?.[b.id]
+        return {
+          id: b.id,
+          name: b.name,
+          description: b.description,
+          icon: b.icon,
+          poolCount: typeof configured === "number" ? configured : b.poolCount,
+        }
+      }),
+    }
+  }
+
+  public broadcastBoosterPoolStatus(channel: string, message: string) {
+    const serialized = JSON.stringify({
+      type: "booster_pool_status",
+      payload: { message },
+    })
+
+    for (const [client, clientRoom] of this.clients) {
+      if (clientRoom === channel && client.readyState === WebSocket.OPEN) {
+        client.send(serialized)
+      }
+    }
+  }
+
+  private handleSetBoosterPoolDraft(socket: WebSocket, message: any) {
+    const channel = this.clients.get(socket)
+    if (!channel) return
+
+    const room = rooms.get(channel)
+    if (!room) return
+
+    room.pendingBoosterConfig = normalizeBoosterPoolConfig(message.payload?.poolCounts)
   }
 
   broadcast(data: any) {

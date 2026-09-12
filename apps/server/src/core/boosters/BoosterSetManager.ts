@@ -53,8 +53,13 @@ export class BoosterSetManager {
     const pool: string[] = []
 
     for (const booster of boosters) {
-      const copies =
-        booster.poolCount
+      const configured =
+        match.state.boosterPoolConfig?.[booster.id]
+
+      const copies: number =
+        typeof configured === "number"
+          ? configured
+          : booster.poolCount
 
       for (
         let i = 0;
