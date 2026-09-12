@@ -416,6 +416,8 @@ useEffect(() => {
                 {showBoosterTable ? "▲" : "▼"} Все бустеры ({boosterCatalog.length} видов, {draftPoolSize} в пуле)
               </div>
 
+              {showBoosterTable && (
+                <>
               {/* ==================== ВАРИАНТ Б (активен): КНОПКИ ==================== */}
               <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 8 }}>
                 <button
@@ -453,6 +455,8 @@ useEffect(() => {
                 <div style={{ marginTop: 6, textAlign: "center", color: "#00ff66", fontSize: 13, fontWeight: 700 }}>
                   ✓ {boosterPoolStatus}
                 </div>
+              )}
+                </>
               )}
 
               <div style={{
