@@ -13,6 +13,8 @@ class SocketClient {
   private socket: WebSocket | null = null
   public onMessage?: (data: any) => void
 
+  private boosterPoolStatusTimer: ReturnType<typeof setTimeout> | null = null
+
   connect() {
     const WS_URL =
       window.location.hostname === "localhost"
@@ -48,6 +50,10 @@ class SocketClient {
 
           useGameStore.setState({ twitchChannel: channel })
           useGameStore.getState().setLobbyPlayers(lobbyPlayers ?? [])
+          if (this.boosterPoolStatusTimer) {
+            clearTimeout(this.boosterPoolStatusTimer)
+            this.boosterPoolStatusTimer = null
+          }
           useGameStore.getState().setBoosterPoolStatus(null)
 
           socket.send(JSON.stringify({ type: "GET_BOOSTER_LIST" }))
@@ -96,7 +102,12 @@ class SocketClient {
         // BOOSTER POOL STATUS
         // ======================
         if (message.type === "booster_pool_status") {
+          if (this.boosterPoolStatusTimer) clearTimeout(this.boosterPoolStatusTimer)
           useGameStore.getState().setBoosterPoolStatus(message.payload?.message ?? null)
+          this.boosterPoolStatusTimer = setTimeout(() => {
+            this.boosterPoolStatusTimer = null
+            useGameStore.getState().setBoosterPoolStatus(null)
+          }, 3000)
           return
         }
 
