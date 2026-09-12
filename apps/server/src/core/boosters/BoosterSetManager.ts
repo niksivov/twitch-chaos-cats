@@ -13,9 +13,17 @@ export class BoosterSetManager {
   private boosterRegistry = new BoosterRegistry()
 
   initialize(match: Match) {
+    for (const id of match.state.roundDealtIds) {
+      match.state.boosterPool.push(id)
+    }
+
+    match.state.roundDealtIds = []
+
     if (match.state.boosterPool.length === 0) {
       this.fillBoosterPool(match)
     }
+
+    this.shuffle(match.state.boosterPool)
 
     match.state.boosterSet = []
 
@@ -93,6 +101,8 @@ export class BoosterSetManager {
     if (!boosterId) {
       return
     }
+
+    match.state.roundDealtIds.push(boosterId)
 
     const booster =
       this.boosterRegistry.getById(

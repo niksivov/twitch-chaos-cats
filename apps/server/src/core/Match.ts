@@ -31,6 +31,7 @@ export interface MatchInternalState {
   recentEvents: any[]
   boosterPool: string[]
   boosterSet: BoosterSetItem[]
+  roundDealtIds: string[]
   effects: ActiveEffect[]
   eventLog: EventLogEntry[]
   roundPlayedPlayerIds: string[]
@@ -100,6 +101,7 @@ export class Match {
       emptySince: null,
       boosterPool: [],
       boosterSet: [],
+      roundDealtIds: [],
       effects: [],
       eventLog: [],
       recentEvents: [],
@@ -266,6 +268,7 @@ const internalId = randomUUID()
     this.state.emptySince = null
     this.state.boosterPool = []
     this.state.boosterSet = []
+    this.state.roundDealtIds = []
     this.state.effects = []
     this.state.eventLog = []
     this.state.roundPlayedPlayerIds = []
