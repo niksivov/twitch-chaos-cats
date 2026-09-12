@@ -267,18 +267,18 @@ class SocketClient {
     })
   }
 
-  // ==================== ВАРИАНТ Б (активен): КНОПКИ ====================
-  saveBoosterPool() {
-    this.sendMessage({
-      type: "SAVE_BOOSTER_POOL",
-    })
-  }
+  // ==================== ВАРИАНТ Б (закомментирован): КНОПКИ ====================
+  // saveBoosterPool() {
+  //   this.sendMessage({
+  //     type: "SAVE_BOOSTER_POOL",
+  //   })
+  // }
 
-  resetBoosterPool() {
-    this.sendMessage({
-      type: "RESET_BOOSTER_POOL",
-    })
-  }
+  // resetBoosterPool() {
+  //   this.sendMessage({
+  //     type: "RESET_BOOSTER_POOL",
+  //   })
+  // }
   // =====================================================================
 
   selectBooster(slot: number) {

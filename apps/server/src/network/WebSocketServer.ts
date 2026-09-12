@@ -77,14 +77,14 @@ export class WebSocketServer {
         this.handleSetBoosterPoolDraft(socket, message)
         break
 
-      // ==================== ВАРИАНТ Б (активен): КНОПКИ ====================
-      case "SAVE_BOOSTER_POOL":
-        this.handleSaveBoosterPool(socket)
-        break
+      // ==================== ВАРИАНТ Б (закомментирован): КНОПКИ ====================
+      // case "SAVE_BOOSTER_POOL":
+      //   this.handleSaveBoosterPool(socket)
+      //   break
 
-      case "RESET_BOOSTER_POOL":
-        this.handleResetBoosterPool(socket)
-        break
+      // case "RESET_BOOSTER_POOL":
+      //   this.handleResetBoosterPool(socket)
+      //   break
       // =====================================================================
 
       case "PANDORA_DONE":
@@ -309,23 +309,23 @@ export class WebSocketServer {
     room.pendingBoosterConfig = normalizeBoosterPoolConfig(message.payload?.poolCounts)
   }
 
-  // ==================== ВАРИАНТ Б (активен): КНОПКИ ====================
-  private handleSaveBoosterPool(socket: WebSocket) {
-    const channel = this.clients.get(socket)
-    const room = channel ? rooms.get(channel) : undefined
-    if (!room) return
+  // ==================== ВАРИАНТ Б (закомментирован): КНОПКИ ====================
+  // private handleSaveBoosterPool(socket: WebSocket) {
+  //   const channel = this.clients.get(socket)
+  //   const room = channel ? rooms.get(channel) : undefined
+  //   if (!room) return
 
-    applyBoosterPoolConfig(room, this.matchManager, this, room.pendingBoosterConfig, "Сохранено")
-  }
+  //   applyBoosterPoolConfig(room, this.matchManager, this, room.pendingBoosterConfig, "Сохранено")
+  // }
 
-  private handleResetBoosterPool(socket: WebSocket) {
-    const channel = this.clients.get(socket)
-    const room = channel ? rooms.get(channel) : undefined
-    if (!room) return
+  // private handleResetBoosterPool(socket: WebSocket) {
+  //   const channel = this.clients.get(socket)
+  //   const room = channel ? rooms.get(channel) : undefined
+  //   if (!room) return
 
-    applyBoosterPoolConfig(room, this.matchManager, this, {}, "Возвращено к дефолту")
-    room.pendingBoosterConfig = {}
-  }
+  //   applyBoosterPoolConfig(room, this.matchManager, this, {}, "Возвращено к дефолту")
+  //   room.pendingBoosterConfig = {}
+  // }
   // =====================================================================
 
   broadcast(data: any) {

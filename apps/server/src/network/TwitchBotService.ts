@@ -138,25 +138,25 @@ export class TwitchBotService {
       return
     }
 
-    // ==================== ВАРИАНТ А (закомментирован): ТВИЧ-КОМАНДЫ ====================
+    // ==================== ВАРИАНТ А (активен): ТВИЧ-КОМАНДЫ ====================
     // !save — сохранить настройки пула бустеров, только от стримера
-    // if (msg === "!save") {
-    //   const isBroadcaster = (tags as any)?.badges?.broadcaster === "1"
-    //   if (!isBroadcaster) return
+    if (msg === "!save") {
+      const isBroadcaster = (tags as any)?.badges?.broadcaster === "1"
+      if (!isBroadcaster) return
 
-    //   applyBoosterPoolConfig(this.room, this.matchManager, this.websocketServer, this.room.pendingBoosterConfig, "Сохранено")
-    //   return
-    // }
+      applyBoosterPoolConfig(this.room, this.matchManager, this.websocketServer, this.room.pendingBoosterConfig, "Сохранено")
+      return
+    }
 
-    // // !default — вернуть пул бустеров к дефолту, только от стримера
-    // if (msg === "!default") {
-    //   const isBroadcaster = (tags as any)?.badges?.broadcaster === "1"
-    //   if (!isBroadcaster) return
+    // !default — вернуть пул бустеров к дефолту, только от стримера
+    if (msg === "!default") {
+      const isBroadcaster = (tags as any)?.badges?.broadcaster === "1"
+      if (!isBroadcaster) return
 
-    //   this.room.pendingBoosterConfig = {}
-    //   applyBoosterPoolConfig(this.room, this.matchManager, this.websocketServer, {}, "Возвращено к дефолту")
-    //   return
-    // }
+      this.room.pendingBoosterConfig = {}
+      applyBoosterPoolConfig(this.room, this.matchManager, this.websocketServer, {}, "Возвращено к дефолту")
+      return
+    }
     // ====================================================================================
 
     // !join — добавление в лобби комнаты
