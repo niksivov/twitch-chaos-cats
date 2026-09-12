@@ -416,9 +416,38 @@ useEffect(() => {
                 {showBoosterTable ? "▲" : "▼"} Все бустеры ({boosterCatalog.length} видов, {draftPoolSize} в пуле)
               </div>
 
+              {/* ==================== ВАРИАНТ Б (активен): КНОПКИ ==================== */}
+              <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => socketClient.saveBoosterPool()}
+                  style={{
+                    ...PRIMARY_BUTTON_STYLE,
+                    padding: "10px 20px",
+                    fontSize: 14,
+                  }}
+                >
+                  Сохранить
+                </button>
+                <button
+                  type="button"
+                  onClick={() => socketClient.resetBoosterPool()}
+                  style={{
+                    ...PRIMARY_BUTTON_STYLE,
+                    padding: "10px 20px",
+                    fontSize: 14,
+                  }}
+                >
+                  Сбросить к дефолту
+                </button>
+              </div>
+              {/* ====================================================================== */}
+
+              {/* ==================== ВАРИАНТ А (закомментирован): ТВИЧ-КОМАНДЫ ====================
               <div style={{ marginTop: 8, textAlign: "center", color: "#9e9e9e", fontSize: 12 }}>
                 !save = сохранить настройки, !default = вернуться к изначальным настройкам
               </div>
+              ====================================================================================== */}
 
               {boosterPoolStatus && (
                 <div style={{ marginTop: 6, textAlign: "center", color: "#00ff66", fontSize: 13, fontWeight: 700 }}>

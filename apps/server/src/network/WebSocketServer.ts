@@ -7,6 +7,7 @@ import { ALL_BOOSTERS } from "../core/boosters/definitions"
 import { startTwitchBot, createMatchFromLobby, rooms, getOrCreateRoom } from "../index"
 import { applyPandoraEffect } from "../core/boosters/definitions/pandoraBox"
 import { normalizeBoosterPoolConfig } from "../core/boosters/boosterPoolConfig"
+import { applyBoosterPoolConfig } from "../core/boosters/boosterPoolApply"
 
 export class WebSocketServer {
   private wss: WSServer
@@ -75,6 +76,16 @@ export class WebSocketServer {
       case "SET_BOOSTER_POOL_DRAFT":
         this.handleSetBoosterPoolDraft(socket, message)
         break
+
+      // ==================== ВАРИАНТ Б (активен): КНОПКИ ====================
+      case "SAVE_BOOSTER_POOL":
+        this.handleSaveBoosterPool(socket)
+        break
+
+      case "RESET_BOOSTER_POOL":
+        this.handleResetBoosterPool(socket)
+        break
+      // =====================================================================
 
       case "PANDORA_DONE":
         this.handlePandoraDone(socket)
@@ -297,6 +308,25 @@ export class WebSocketServer {
 
     room.pendingBoosterConfig = normalizeBoosterPoolConfig(message.payload?.poolCounts)
   }
+
+  // ==================== ВАРИАНТ Б (активен): КНОПКИ ====================
+  private handleSaveBoosterPool(socket: WebSocket) {
+    const channel = this.clients.get(socket)
+    const room = channel ? rooms.get(channel) : undefined
+    if (!room) return
+
+    applyBoosterPoolConfig(room, this.matchManager, this, room.pendingBoosterConfig, "Сохранено")
+  }
+
+  private handleResetBoosterPool(socket: WebSocket) {
+    const channel = this.clients.get(socket)
+    const room = channel ? rooms.get(channel) : undefined
+    if (!room) return
+
+    applyBoosterPoolConfig(room, this.matchManager, this, {}, "Возвращено к дефолту")
+    room.pendingBoosterConfig = {}
+  }
+  // =====================================================================
 
   broadcast(data: any) {
     const roomId = (data as any)?.roomId
