@@ -49,6 +49,7 @@ export interface MatchInternalState {
   lastViewerNumber: number | null
   exhaustiblePool: boolean
   boosterUsageCounts: Record<string, number>
+  keyComboActivations: Record<string, { playerId: string; round: number }>
   playerRpsCollection: Record<string, string[]>
   wheelResult: {
     players: {
@@ -119,6 +120,7 @@ export class Match {
       lastViewerNumber: null,
       exhaustiblePool: settings?.exhaustiblePool ?? true,
       boosterUsageCounts: {},
+      keyComboActivations: {},
       playerRpsCollection: {},
       wheelResult: null,
       pandoraResult: null,
@@ -281,6 +283,7 @@ const internalId = randomUUID()
     this.state.registrationOpen = false
     this.state.lastViewerNumber = null
     this.state.boosterUsageCounts = {}
+    this.state.keyComboActivations = {}
     this.state.playerRpsCollection = {}
     this.state.wheelResult = null
     this.state.pandoraResult = null

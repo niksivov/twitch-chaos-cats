@@ -194,6 +194,14 @@ import {
   KillOutsider250Booster,
 } from "./KillOutsider250Booster"
 
+import {
+  BlueKeyBooster,
+} from "./BlueKeyBooster"
+
+import {
+  PinkKeyBooster,
+} from "./PinkKeyBooster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -291,4 +299,8 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     QueueScoreBooster,
 
     KillOutsider250Booster,
+
+    BlueKeyBooster,
+
+    PinkKeyBooster,
   ]
