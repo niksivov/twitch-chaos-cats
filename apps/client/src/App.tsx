@@ -65,6 +65,12 @@ function useValidatedNumericInput(
   return { raw, error, value, onChange }
 }
 
+const KEY_BOOSTER_IDS = new Set(["BLUE_KEY", "PINK_KEY"])
+
+function maxPoolCountFor(id: string): number {
+  return KEY_BOOSTER_IDS.has(id) ? 1 : 50
+}
+
 function App() {
   const screen = useGameStore((s) => s.screen)
   const setScreen = useGameStore((s) => s.setScreen)
@@ -79,7 +85,7 @@ function App() {
   if (prevCatalog !== boosterCatalog) {
     setPrevCatalog(boosterCatalog)
     const next: Record<string, number> = {}
-    for (const b of boosterCatalog) next[b.id] = b.poolCount
+    for (const b of boosterCatalog) next[b.id] = Math.min(maxPoolCountFor(b.id), b.poolCount)
     setPoolDraft(next)
   }
 
@@ -489,12 +495,12 @@ useEffect(() => {
                             <input
                               type="number"
                               min={0}
-                              max={50}
+                              max={maxPoolCountFor(b.id)}
                               value={poolDraft[b.id] ?? b.poolCount}
                               onChange={(e) => {
                                 const raw = e.target.value
                                 const n = Math.floor(Number(raw))
-                                const value = raw.trim() === "" ? 0 : Number.isFinite(n) ? Math.min(50, Math.max(0, n)) : (poolDraft[b.id] ?? b.poolCount)
+                                const value = raw.trim() === "" ? 0 : Number.isFinite(n) ? Math.min(maxPoolCountFor(b.id), Math.max(0, n)) : (poolDraft[b.id] ?? b.poolCount)
                                 setPoolDraft((prev) => ({ ...prev, [b.id]: value }))
                                 socketClient.setBoosterPoolDraft({ ...poolDraft, [b.id]: value })
                               }}
