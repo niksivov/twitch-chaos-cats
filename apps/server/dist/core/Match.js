@@ -30,6 +30,7 @@ class Match {
             emptySince: null,
             boosterPool: [],
             boosterSet: [],
+            roundDealtIds: [],
             effects: [],
             eventLog: [],
             recentEvents: [],
@@ -42,8 +43,11 @@ class Match {
             turnTimeSeconds: settings?.turnTimeSeconds ?? 30,
             targetPoints: settings?.targetPoints ?? 10,
             boosterSetSize: settings?.boosterSetSize ?? 3,
+            boosterPoolConfig: settings?.boosterPoolConfig ?? {},
+            lastViewerNumber: null,
             exhaustiblePool: settings?.exhaustiblePool ?? true,
             boosterUsageCounts: {},
+            keyComboActivations: {},
             playerRpsCollection: {},
             wheelResult: null,
             pandoraResult: null,
@@ -175,6 +179,7 @@ class Match {
         this.state.emptySince = null;
         this.state.boosterPool = [];
         this.state.boosterSet = [];
+        this.state.roundDealtIds = [];
         this.state.effects = [];
         this.state.eventLog = [];
         this.state.roundPlayedPlayerIds = [];
@@ -183,7 +188,9 @@ class Match {
         this.state.twitchChannel = null;
         this.state.maxPlayers = 0;
         this.state.registrationOpen = false;
+        this.state.lastViewerNumber = null;
         this.state.boosterUsageCounts = {};
+        this.state.keyComboActivations = {};
         this.state.playerRpsCollection = {};
         this.state.wheelResult = null;
         this.state.pandoraResult = null;

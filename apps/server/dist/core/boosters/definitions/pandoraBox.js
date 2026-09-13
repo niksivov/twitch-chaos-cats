@@ -3,14 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.pandoraBox = exports.PANDORA_EFFECTS = void 0;
 exports.applyPandoraEffect = applyPandoraEffect;
 exports.PANDORA_EFFECTS = [
-    { id: 0, label: "300 между\nсоперниками", color: "#c62828" },
-    { id: 1, label: "Вы умираете, +100\nкаждому противнику", color: "#b71c1c" },
-    { id: 2, label: "Ваши очки достаются\nсоперникам", color: "#e65100" },
+    { id: 0, label: "300 очков между\nпротивниками (случайно)", color: "#c62828" },
+    { id: 1, label: "Вы умираете, +100 очков\nкаждому противнику", color: "#b71c1c" },
+    { id: 2, label: "Ваши очки достаются\nпротивникам", color: "#e65100" },
     { id: 3, label: "-5000 случайному\nигроку", color: "#880e4f" },
     { id: 4, label: "+1 очко\nВам", color: "#2e7d32" },
-    { id: 5, label: "Половина\nумирает", color: "#b71c1c" },
+    { id: 5, label: "Половина игроков\nумирает", color: "#b71c1c" },
     { id: 6, label: "Все очки\nперемешиваются", color: "#e65100" },
-    { id: 7, label: "Вы крадете 50\nочков у каждого", color: "#1565c0" },
+    { id: 7, label: "Вы крадете до 50 очков\nу каждого (если очки есть)", color: "#1565c0" },
     { id: 8, label: "×3 очков\nВам", color: "#2e7d32" },
     { id: 9, label: "+50% от цели\nВам", color: "#1b5e20" },
 ];
@@ -106,7 +106,7 @@ function applyPandoraEffect(match, roll, sourcePlayerId) {
 exports.pandoraBox = {
     id: "PANDORA_BOX",
     name: "ХАОС",
-    description: "Выпадает случайный эффект из 10 катастрофических событий",
+    description: "Выпадает случайный эффект из 10 КОТОстрофических событий",
     poolCount: 1,
     icon: "pandoraBox",
     execute: ({ match, sourcePlayerId }) => {

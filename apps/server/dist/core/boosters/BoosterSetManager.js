@@ -7,9 +7,14 @@ class BoosterSetManager {
         this.boosterRegistry = new BoosterRegistry_1.BoosterRegistry();
     }
     initialize(match) {
+        for (const id of match.state.roundDealtIds) {
+            match.state.boosterPool.push(id);
+        }
+        match.state.roundDealtIds = [];
         if (match.state.boosterPool.length === 0) {
             this.fillBoosterPool(match);
         }
+        this.shuffle(match.state.boosterPool);
         match.state.boosterSet = [];
         const setSize = match.state
             .boosterSetSize ?? 3;
@@ -21,7 +26,10 @@ class BoosterSetManager {
         const boosters = this.boosterRegistry.getAll();
         const pool = [];
         for (const booster of boosters) {
-            const copies = booster.poolCount;
+            const configured = match.state.boosterPoolConfig?.[booster.id];
+            const copies = typeof configured === "number"
+                ? configured
+                : booster.poolCount;
             for (let i = 0; i < copies; i++) {
                 pool.push(booster.id);
             }
@@ -45,6 +53,7 @@ class BoosterSetManager {
         if (!boosterId) {
             return;
         }
+        match.state.roundDealtIds.push(boosterId);
         const booster = this.boosterRegistry.getById(boosterId);
         if (!booster) {
             return;

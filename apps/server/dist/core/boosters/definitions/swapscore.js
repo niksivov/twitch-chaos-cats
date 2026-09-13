@@ -5,7 +5,7 @@ exports.swapscore = {
     id: "SWAP_SCORE_RANDOM_OPPONENT",
     name: "Обмен очками",
     description: "Вы меняетесь очками со случайным противником",
-    poolCount: 3,
+    poolCount: 2,
     icon: "swapscore",
     execute: ({ match, sourcePlayerId, }) => {
         const sourcePlayer = match.state.registeredPlayers[sourcePlayerId];

@@ -5,6 +5,7 @@ const ws_1 = require("ws");
 const definitions_1 = require("../core/boosters/definitions");
 const index_1 = require("../index");
 const pandoraBox_1 = require("../core/boosters/definitions/pandoraBox");
+const boosterPoolConfig_1 = require("../core/boosters/boosterPoolConfig");
 class WebSocketServer {
     constructor(server, matchManager, commandProcessor, _rooms, _getOrCreateRoom) {
         this.clients = new Map();
@@ -50,6 +51,17 @@ class WebSocketServer {
             case "GET_BOOSTER_LIST":
                 this.sendBoosterList(socket);
                 break;
+            case "SET_BOOSTER_POOL_DRAFT":
+                this.handleSetBoosterPoolDraft(socket, message);
+                break;
+            // ==================== ВАРИАНТ Б (закомментирован): КНОПКИ ====================
+            // case "SAVE_BOOSTER_POOL":
+            //   this.handleSaveBoosterPool(socket)
+            //   break
+            // case "RESET_BOOSTER_POOL":
+            //   this.handleResetBoosterPool(socket)
+            //   break
+            // =====================================================================
             case "PANDORA_DONE":
                 this.handlePandoraDone(socket);
                 break;
@@ -178,20 +190,84 @@ class WebSocketServer {
         }
     }
     sendBoosterList(socket) {
+        const channel = this.clients.get(socket);
+        const room = channel ? index_1.rooms.get(channel) : undefined;
         const payload = {
             type: "booster_list",
-            payload: definitions_1.ALL_BOOSTERS.map((b) => ({
-                id: b.id,
-                name: b.name,
-                description: b.description,
-                icon: b.icon,
-                poolCount: b.poolCount,
-            })),
+            payload: definitions_1.ALL_BOOSTERS.map((b) => {
+                const configured = room?.boosterPoolConfig?.[b.id];
+                return {
+                    id: b.id,
+                    name: b.name,
+                    description: b.description,
+                    icon: b.icon,
+                    poolCount: typeof configured === "number" ? configured : b.poolCount,
+                };
+            }),
         };
         if (socket.readyState === ws_1.WebSocket.OPEN) {
             socket.send(JSON.stringify(payload));
         }
     }
+    broadcastBoosterList(channel) {
+        const serialized = JSON.stringify(this.buildBoosterListPayload(channel));
+        for (const [client, clientRoom] of this.clients) {
+            if (clientRoom === channel && client.readyState === ws_1.WebSocket.OPEN) {
+                client.send(serialized);
+            }
+        }
+    }
+    buildBoosterListPayload(channel) {
+        const room = index_1.rooms.get(channel);
+        return {
+            type: "booster_list",
+            payload: definitions_1.ALL_BOOSTERS.map((b) => {
+                const configured = room?.boosterPoolConfig?.[b.id];
+                return {
+                    id: b.id,
+                    name: b.name,
+                    description: b.description,
+                    icon: b.icon,
+                    poolCount: typeof configured === "number" ? configured : b.poolCount,
+                };
+            }),
+        };
+    }
+    broadcastBoosterPoolStatus(channel, message) {
+        const serialized = JSON.stringify({
+            type: "booster_pool_status",
+            payload: { message },
+        });
+        for (const [client, clientRoom] of this.clients) {
+            if (clientRoom === channel && client.readyState === ws_1.WebSocket.OPEN) {
+                client.send(serialized);
+            }
+        }
+    }
+    handleSetBoosterPoolDraft(socket, message) {
+        const channel = this.clients.get(socket);
+        if (!channel)
+            return;
+        const room = index_1.rooms.get(channel);
+        if (!room)
+            return;
+        room.pendingBoosterConfig = (0, boosterPoolConfig_1.normalizeBoosterPoolConfig)(message.payload?.poolCounts);
+    }
+    // ==================== ВАРИАНТ Б (закомментирован): КНОПКИ ====================
+    // private handleSaveBoosterPool(socket: WebSocket) {
+    //   const channel = this.clients.get(socket)
+    //   const room = channel ? rooms.get(channel) : undefined
+    //   if (!room) return
+    //   applyBoosterPoolConfig(room, this.matchManager, this, room.pendingBoosterConfig, "Сохранено")
+    // }
+    // private handleResetBoosterPool(socket: WebSocket) {
+    //   const channel = this.clients.get(socket)
+    //   const room = channel ? rooms.get(channel) : undefined
+    //   if (!room) return
+    //   applyBoosterPoolConfig(room, this.matchManager, this, {}, "Возвращено к дефолту")
+    //   room.pendingBoosterConfig = {}
+    // }
+    // =====================================================================
     broadcast(data) {
         const roomId = data?.roomId;
         const serialized = JSON.stringify(data);

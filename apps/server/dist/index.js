@@ -41,7 +41,7 @@ const commandProcessor = new CommandProcessor_1.CommandProcessor(matchManager);
 // ======== Список доступных аватаров ========
 const availableAvatars = [
     "cat1", "cat2", "cat3", "cat4", "cat5", "cat6", "cat7", "cat8", "cat9",
-    "cat10", "cat11", "cat12", "cat13", "cat14", "cat15", "cat16", "cat17", "cat18", "cat19", "cat20", "cat21", "cat22", "cat23", "cat24", "cat25", "cat26", "cat27",
+    "cat10", "cat11", "cat12", "cat13", "cat14", "cat15", "cat16", "cat17", "cat18", "cat19", "cat20", "cat21", "cat22", "cat23", "cat24", "cat25", "cat26", "cat27", "cat28", "cat29",
 ];
 // ======== Комнаты (channel → Room) ========
 const rooms = new Map();
@@ -95,6 +95,7 @@ function createMatchFromLobby(channel, input) {
         turnTimeSeconds: input.turnTimeSeconds,
         targetPoints: input.targetPoints,
         boosterSetSize: input.boosterSetSize,
+        boosterPoolConfig: room.boosterPoolConfig,
     });
     room.matchId = match.id;
     match.state.registrationOpen = true;

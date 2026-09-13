@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TwitchBotService = void 0;
 const tmi_js_1 = __importDefault(require("tmi.js"));
+const boosterPoolApply_1 = require("../core/boosters/boosterPoolApply");
 class TwitchBotService {
     constructor(room, matchManager, gameLoop, commandProcessor, availableAvatars, websocketServer, channel, onStopped) {
         this.room = room;
@@ -26,6 +27,7 @@ class TwitchBotService {
             if (!twitchUserId) {
                 return;
             }
+            this.recordViewerNumber(twitchUserId, message);
             this.handleMessage(twitchUserId, username, message, tags);
         });
         this.client.on("disconnected", () => {
@@ -55,6 +57,22 @@ class TwitchBotService {
         }
         this.room.matchId = null;
     }
+    recordViewerNumber(twitchUserId, message) {
+        if (!this.room.matchId)
+            return;
+        const match = this.matchManager.getMatch(this.room.matchId);
+        if (!match)
+            return;
+        if (match.getPlayerByTwitchId(twitchUserId))
+            return;
+        const trimmed = message.trim();
+        if (!/^[-+]?\d+$/.test(trimmed))
+            return;
+        const value = Number(trimmed);
+        if (value < -100 || value > 100)
+            return;
+        match.state.lastViewerNumber = value;
+    }
     handleMessage(twitchUserId, username, message, tags) {
         const msg = message.trim().toLowerCase();
         // !reset — только от стримера
@@ -70,6 +88,25 @@ class TwitchBotService {
             this.websocketServer.broadcastRoomJoined(this.channel);
             return;
         }
+        // ==================== ВАРИАНТ А (активен): ТВИЧ-КОМАНДЫ ====================
+        // !save — сохранить настройки пула бустеров, только от стримера
+        if (msg === "!save") {
+            const isBroadcaster = tags?.badges?.broadcaster === "1";
+            if (!isBroadcaster)
+                return;
+            (0, boosterPoolApply_1.applyBoosterPoolConfig)(this.room, this.matchManager, this.websocketServer, this.room.pendingBoosterConfig, "Сохранено");
+            return;
+        }
+        // !default — вернуть пул бустеров к дефолту, только от стримера
+        if (msg === "!default") {
+            const isBroadcaster = tags?.badges?.broadcaster === "1";
+            if (!isBroadcaster)
+                return;
+            this.room.pendingBoosterConfig = {};
+            (0, boosterPoolApply_1.applyBoosterPoolConfig)(this.room, this.matchManager, this.websocketServer, {}, "Возвращено к дефолту");
+            return;
+        }
+        // ====================================================================================
         // !join — добавление в лобби комнаты
         if (msg === "!join") {
             if (this.room.matchId) {

@@ -46,6 +46,11 @@ const RockBooster_1 = require("./RockBooster");
 const ScissorsBooster_1 = require("./ScissorsBooster");
 const PaperBooster_1 = require("./PaperBooster");
 const WheelBooster_1 = require("./WheelBooster");
+const goodBadViewer_1 = require("./goodBadViewer");
+const QueueScoreBooster_1 = require("./QueueScoreBooster");
+const KillOutsider250Booster_1 = require("./KillOutsider250Booster");
+const BlueKeyBooster_1 = require("./BlueKeyBooster");
+const PinkKeyBooster_1 = require("./PinkKeyBooster");
 exports.ALL_BOOSTERS = [
     Plus10Booster_1.Plus10Booster,
     Plus20Booster_1.Plus20Booster,
@@ -92,4 +97,9 @@ exports.ALL_BOOSTERS = [
     ScissorsBooster_1.ScissorsBooster,
     PaperBooster_1.PaperBooster,
     WheelBooster_1.WheelBooster,
+    goodBadViewer_1.goodBadViewer,
+    QueueScoreBooster_1.QueueScoreBooster,
+    KillOutsider250Booster_1.KillOutsider250Booster,
+    BlueKeyBooster_1.BlueKeyBooster,
+    PinkKeyBooster_1.PinkKeyBooster,
 ];
