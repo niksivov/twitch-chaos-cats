@@ -335,7 +335,7 @@ useEffect(() => {
 
             <div style={{ marginTop: 20 }}>
               <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
-                Напиши в чат !join и присоединяйся. Зарегистрированные игроки:
+                Напиши в чат !join и присоединяйся. Зарегистрированные игроки ({lobbyPlayers.length}):
               </div>
 
               {lobbyPlayers.length === 0 && (
