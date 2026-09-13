@@ -186,6 +186,10 @@ import {
   goodBadViewer,
 } from "./goodBadViewer"
 
+import {
+  QueueScoreBooster,
+} from "./QueueScoreBooster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -279,4 +283,6 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     WheelBooster,
 
     goodBadViewer,
+
+    QueueScoreBooster,
   ]
