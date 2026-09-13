@@ -3,7 +3,7 @@ import { BoosterDefinition } from "../BoosterTypes"
 export const KillOutsider250Booster: BoosterDefinition = {
   id: "KILL_OUTSIDER_250",
 
-  name: "Заплатите 250 (если есть) за убийство аутсайдера",
+  name: "-250 (если есть) за смерть аутсайдера",
 
   description:
     "Если у Вас 250 или больше очков — все игроки с наименьшим счётом умирают, и Вы теряете 250",
