@@ -190,6 +190,10 @@ import {
   QueueScoreBooster,
 } from "./QueueScoreBooster"
 
+import {
+  KillOutsider250Booster,
+} from "./KillOutsider250Booster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -285,4 +289,6 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     goodBadViewer,
 
     QueueScoreBooster,
+
+    KillOutsider250Booster,
   ]
