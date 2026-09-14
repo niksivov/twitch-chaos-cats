@@ -51,6 +51,7 @@ const QueueScoreBooster_1 = require("./QueueScoreBooster");
 const KillOutsider250Booster_1 = require("./KillOutsider250Booster");
 const BlueKeyBooster_1 = require("./BlueKeyBooster");
 const PinkKeyBooster_1 = require("./PinkKeyBooster");
+const BetBooster_1 = require("./BetBooster");
 exports.ALL_BOOSTERS = [
     Plus10Booster_1.Plus10Booster,
     Plus20Booster_1.Plus20Booster,
@@ -102,4 +103,5 @@ exports.ALL_BOOSTERS = [
     KillOutsider250Booster_1.KillOutsider250Booster,
     BlueKeyBooster_1.BlueKeyBooster,
     PinkKeyBooster_1.PinkKeyBooster,
+    BetBooster_1.BetBooster,
 ];

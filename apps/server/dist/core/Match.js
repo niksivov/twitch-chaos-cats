@@ -45,6 +45,7 @@ class Match {
             boosterSetSize: settings?.boosterSetSize ?? 3,
             boosterPoolConfig: settings?.boosterPoolConfig ?? {},
             lastViewerNumber: null,
+            lastBetNumber: {},
             exhaustiblePool: settings?.exhaustiblePool ?? true,
             boosterUsageCounts: {},
             keyComboActivations: {},
@@ -189,6 +190,7 @@ class Match {
         this.state.maxPlayers = 0;
         this.state.registrationOpen = false;
         this.state.lastViewerNumber = null;
+        this.state.lastBetNumber = {};
         this.state.boosterUsageCounts = {};
         this.state.keyComboActivations = {};
         this.state.playerRpsCollection = {};

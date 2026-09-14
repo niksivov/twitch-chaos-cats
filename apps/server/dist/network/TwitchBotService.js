@@ -28,6 +28,7 @@ class TwitchBotService {
                 return;
             }
             this.recordViewerNumber(twitchUserId, message);
+            this.recordBetNumber(twitchUserId, message);
             this.handleMessage(twitchUserId, username, message, tags);
         });
         this.client.on("disconnected", () => {
@@ -72,6 +73,26 @@ class TwitchBotService {
         if (value < -100 || value > 100)
             return;
         match.state.lastViewerNumber = value;
+    }
+    recordBetNumber(twitchUserId, message) {
+        if (!this.room.matchId)
+            return;
+        const match = this.matchManager.getMatch(this.room.matchId);
+        if (!match)
+            return;
+        const playerId = match.getPlayerIdByTwitchId(twitchUserId);
+        if (!playerId)
+            return;
+        const player = match.state.registeredPlayers[playerId];
+        if (!player)
+            return;
+        const trimmed = message.trim();
+        if (!/^\d+$/.test(trimmed))
+            return;
+        const value = Number(trimmed);
+        if (value < 1 || value > 99)
+            return;
+        match.state.lastBetNumber[playerId] = value;
     }
     handleMessage(twitchUserId, username, message, tags) {
         const msg = message.trim().toLowerCase();
