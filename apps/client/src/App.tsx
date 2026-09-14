@@ -452,7 +452,7 @@ useEffect(() => {
               ====================================================================== */}
 
               {/* ==================== ВАРИАНТ А (активен): ТВИЧ-КОМАНДЫ ==================== */}
-              <div style={{ marginTop: 8, textAlign: "center", color: "#9e9e9e", fontSize: 12 }}>
+              <div style={{ marginTop: 8, textAlign: "center", color: "white", fontSize: 12 }}>
                 !save = сохранить настройки, !default = вернуться к изначальным настройкам
               </div>
               {/* ====================================================================== */}
@@ -490,7 +490,7 @@ useEffect(() => {
                             <img src={`/boosters/${b.icon}.webp`} alt={b.name} style={{ width: 100, height: 100, objectFit: "contain" }} />
                           </td>
                           <td style={{ padding: "6px", fontWeight: 600, whiteSpace: "normal", wordBreak: "break-word" }}>{b.name}</td>
-                          <td style={{ padding: "6px", color: "#aaa", lineHeight: "18px" }}>{b.description}</td>
+                          <td style={{ padding: "6px", color: "white", lineHeight: "18px" }}>{b.description}</td>
                           <td style={{ padding: "6px", textAlign: "center", fontWeight: 700 }}>
                             <input
                               type="number"
