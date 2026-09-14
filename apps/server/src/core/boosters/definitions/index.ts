@@ -202,6 +202,10 @@ import {
   PinkKeyBooster,
 } from "./PinkKeyBooster"
 
+import {
+  BetBooster,
+} from "./BetBooster"
+
 export const ALL_BOOSTERS: BoosterDefinition[] =
   [
     Plus10Booster,
@@ -303,4 +307,6 @@ export const ALL_BOOSTERS: BoosterDefinition[] =
     BlueKeyBooster,
 
     PinkKeyBooster,
+
+    BetBooster,
   ]

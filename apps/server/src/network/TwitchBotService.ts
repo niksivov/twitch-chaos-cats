@@ -58,6 +58,7 @@ export class TwitchBotService {
       }
 
       this.recordViewerNumber(twitchUserId, message)
+      this.recordBetNumber(twitchUserId, message)
 
       this.handleMessage(twitchUserId, username, message, tags)
     })
@@ -112,6 +113,27 @@ export class TwitchBotService {
     if (value < -100 || value > 100) return
 
     match.state.lastViewerNumber = value
+  }
+
+  private recordBetNumber(twitchUserId: string, message: string) {
+    if (!this.room.matchId) return
+
+    const match = this.matchManager.getMatch(this.room.matchId)
+    if (!match) return
+
+    const playerId = match.getPlayerIdByTwitchId(twitchUserId)
+    if (!playerId) return
+
+    const player = match.state.registeredPlayers[playerId]
+    if (!player) return
+
+    const trimmed = message.trim()
+    if (!/^\d+$/.test(trimmed)) return
+
+    const value = Number(trimmed)
+    if (value < 1 || value > 99) return
+
+    match.state.lastBetNumber[playerId] = value
   }
 
   private handleMessage(

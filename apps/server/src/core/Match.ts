@@ -47,6 +47,7 @@ export interface MatchInternalState {
   boosterSetSize: number
   boosterPoolConfig: Record<string, number>
   lastViewerNumber: number | null
+  lastBetNumber: Record<string, number>
   exhaustiblePool: boolean
   boosterUsageCounts: Record<string, number>
   keyComboActivations: Record<string, { playerId: string; round: number }>
@@ -118,6 +119,7 @@ export class Match {
       boosterSetSize: settings?.boosterSetSize ?? 3,
       boosterPoolConfig: settings?.boosterPoolConfig ?? {},
       lastViewerNumber: null,
+      lastBetNumber: {},
       exhaustiblePool: settings?.exhaustiblePool ?? true,
       boosterUsageCounts: {},
       keyComboActivations: {},
@@ -282,6 +284,7 @@ const internalId = randomUUID()
     this.state.maxPlayers = 0
     this.state.registrationOpen = false
     this.state.lastViewerNumber = null
+    this.state.lastBetNumber = {}
     this.state.boosterUsageCounts = {}
     this.state.keyComboActivations = {}
     this.state.playerRpsCollection = {}
