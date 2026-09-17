@@ -23,19 +23,24 @@ interface PlayerSnapshot {
 interface MatchEventSnapshot {
   id: string
   message: string
+  messageEn: string
 }
 
 interface BoosterSnapshot {
   slot: number
   boosterName: string
+  boosterNameEn: string
   boosterIcon: string
   description: string
+  descriptionEn: string
 }
 
 export interface BoosterCatalogItem {
   id: string
   name: string
+  nameEn: string
   description: string
+  descriptionEn: string
   icon: string
   poolCount: number
 }
@@ -80,6 +85,7 @@ interface WheelResult {
 interface PandoraEffect {
   id: number
   label: string
+  labelEn: string
   color: string
 }
 
@@ -123,7 +129,7 @@ interface GameState {
 
   boosterCatalog: BoosterCatalogItem[]
 
-  boosterPoolStatus: string | null
+  boosterPoolStatus: "SAVED" | "RESET" | null
 
   setConnected: (connected: boolean) => void
   setScreen: (screen: AppScreen) => void
@@ -135,7 +141,7 @@ interface GameState {
   setBoosterSetSize: (value: number) => void
   setLobbyPlayers: (players: LobbyPlayer[]) => void
   applySnapshot: (snapshot: StateUpdatePayload) => void
-  setBoosterPoolStatus: (message: string | null) => void
+  setBoosterPoolStatus: (status: "SAVED" | "RESET" | null) => void
   resetToStart: () => void
 }
 
@@ -248,6 +254,6 @@ export const useGameStore = create<GameState>((set) => ({
   pandoraResult: null,
       }),
 
-  setBoosterPoolStatus: (message) =>
-    set({ boosterPoolStatus: message }),
+  setBoosterPoolStatus: (status) =>
+    set({ boosterPoolStatus: status }),
 }))

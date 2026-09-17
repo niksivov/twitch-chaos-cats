@@ -1,11 +1,13 @@
 import { getPlayerColor } from "../utils/getPlayerColor"
 import { useGameStore } from "../store/gameStore"
-import { t } from "../i18n"
+import { pickLang, t } from "../i18n"
 
 interface MatchEventSnapshot {
   id: string
 
   message: string
+
+  messageEn: string
 }
 
 interface Props {
@@ -89,7 +91,7 @@ export function EventLog({
                     : "white",
                 }}
               >
-                ⚡ {event.message}
+                ⚡ {pickLang(lang, event.message, event.messageEn)}
               </div>
             )
           }

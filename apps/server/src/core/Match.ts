@@ -63,7 +63,7 @@ export interface MatchInternalState {
     winnerId: string
   } | null
   pandoraResult: {
-    effects: { id: number; label: string; color: string }[]
+    effects: { id: number; label: string; labelEn: string; color: string }[]
     selectedIndex: number
   } | null
   pendingPandoraRoll: { roll: number, sourcePlayerId: string } | null

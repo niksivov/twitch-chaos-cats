@@ -5,8 +5,10 @@ export interface BoosterSetItem {
   slot: number
   boosterId: string
   boosterName: string
+  boosterNameEn: string
   boosterIcon: string
   description: string
+  descriptionEn: string
 }
 
 export class BoosterSetManager {
@@ -130,10 +132,14 @@ export class BoosterSetManager {
         boosterId,
         boosterName:
           booster.name,
+        boosterNameEn:
+          booster.nameEn,
         boosterIcon:
           booster.icon,
         description:
           booster.description,
+        descriptionEn:
+          booster.descriptionEn,
       }
 
     if (

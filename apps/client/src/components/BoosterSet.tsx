@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import { useGameStore } from "../store/gameStore"
-import { t } from "../i18n"
+import { pickLang, t } from "../i18n"
 
 interface BoosterSnapshot {
   slot: number
   boosterName: string
+  boosterNameEn: string
   boosterIcon: string
   description: string
+  descriptionEn: string
 }
 
 interface Props {
@@ -194,10 +196,10 @@ export function BoosterSet({ boosters }: Props) {
                   overflow: "visible",
                 }}
               >
-                <span className="booster-tooltip">{booster.description}</span>
+                <span className="booster-tooltip">{pickLang(lang, booster.description, booster.descriptionEn)}</span>
                 <img
                   src={`/boosters/${booster.boosterIcon}.webp`}
-                  alt={booster.boosterName}
+                  alt={pickLang(lang, booster.boosterName, booster.boosterNameEn)}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -215,7 +217,7 @@ export function BoosterSet({ boosters }: Props) {
                   wordBreak: "break-word",
                 }}
               >
-                {booster.boosterName}
+                {pickLang(lang, booster.boosterName, booster.boosterNameEn)}
               </div>
             </div>
           )

@@ -160,7 +160,11 @@ export class GameLoop {
     this.turnManager.startRound(match)
     this.boosterEngine.initialize(match)
 
-    this.eventLog.add(match, `🎯 Раунд ${match.round} начался`)
+    this.eventLog.add(
+      match,
+      `🎯 Раунд ${match.round} начался`,
+      `🎯 Round ${match.round} started`
+    )
 
     match.transition(MatchPhase.TURN_START)
   }
@@ -270,7 +274,11 @@ export class GameLoop {
 
     const winner = match.state.registeredPlayers[winnerId]
     if (winner) {
-      this.eventLog.add(match, `🏆 Победитель: ${winner.username}`)
+      this.eventLog.add(
+        match,
+        `🏆 Победитель: ${winner.username}`,
+        `🏆 Winner: ${winner.username}`
+      )
     }
 
     const players = Object.values(match.state.registeredPlayers)

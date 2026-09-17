@@ -103,7 +103,10 @@ class SocketClient {
         // ======================
         if (message.type === "booster_pool_status") {
           if (this.boosterPoolStatusTimer) clearTimeout(this.boosterPoolStatusTimer)
-          useGameStore.getState().setBoosterPoolStatus(message.payload?.message ?? null)
+          const status = message.payload?.key
+          useGameStore.getState().setBoosterPoolStatus(
+            status === "SAVED" || status === "RESET" ? status : null
+          )
           this.boosterPoolStatusTimer = setTimeout(() => {
             this.boosterPoolStatusTimer = null
             useGameStore.getState().setBoosterPoolStatus(null)
@@ -155,13 +158,17 @@ class SocketClient {
           const recentEvents = (match.recentEvents ?? []).map((event: any) => ({
             id: event.id ?? crypto.randomUUID(),
             message: event.message ?? event.text ?? "",
+            messageEn:
+              event.messageEn ?? event.message ?? event.text ?? "",
           }))
 
           const boosterSet = (match.boosterSet ?? []).map((booster: any) => ({
             slot: booster.slot,
             boosterName: booster.boosterName ?? "Unknown Booster",
+            boosterNameEn: booster.boosterNameEn ?? booster.boosterName ?? "",
             boosterIcon: booster.boosterIcon ?? "",
             description: booster.description ?? "",
+            descriptionEn: booster.descriptionEn ?? booster.description ?? "",
           }))
 
           useGameStore.getState().applySnapshot({

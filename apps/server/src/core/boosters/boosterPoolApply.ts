@@ -2,7 +2,7 @@ import { MatchManager } from "../MatchManager"
 import { Room } from "../Room"
 
 interface BoosterPoolBroadcaster {
-  broadcastBoosterPoolStatus(channel: string, message: string): void
+  broadcastBoosterPoolStatus(channel: string, statusKey: string): void
   broadcastBoosterList(channel: string): void
 }
 
@@ -11,7 +11,7 @@ export function applyBoosterPoolConfig(
   matchManager: MatchManager,
   broadcaster: BoosterPoolBroadcaster,
   config: Record<string, number>,
-  statusMessage: string
+  statusKey: string
 ) {
   room.boosterPoolConfig = { ...config }
   if (room.matchId) {
@@ -22,6 +22,6 @@ export function applyBoosterPoolConfig(
       match.state.roundDealtIds = []
     }
   }
-  broadcaster.broadcastBoosterPoolStatus(room.channel, statusMessage)
+  broadcaster.broadcastBoosterPoolStatus(room.channel, statusKey)
   broadcaster.broadcastBoosterList(room.channel)
 }

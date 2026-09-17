@@ -28,6 +28,12 @@ export interface BoosterSetItem {
   boosterId: string
 
   boosterName: string
+
+  boosterNameEn?: string
+
+  description?: string
+
+  descriptionEn?: string
 }
 
 export interface MatchSettings {

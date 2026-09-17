@@ -246,7 +246,9 @@ export class WebSocketServer {
         return {
           id: b.id,
           name: b.name,
+          nameEn: b.nameEn,
           description: b.description,
+          descriptionEn: b.descriptionEn,
           icon: b.icon,
           poolCount: typeof configured === "number" ? configured : b.poolCount,
         }
@@ -278,7 +280,9 @@ export class WebSocketServer {
         return {
           id: b.id,
           name: b.name,
+          nameEn: b.nameEn,
           description: b.description,
+          descriptionEn: b.descriptionEn,
           icon: b.icon,
           poolCount: typeof configured === "number" ? configured : b.poolCount,
         }
@@ -286,10 +290,10 @@ export class WebSocketServer {
     }
   }
 
-  public broadcastBoosterPoolStatus(channel: string, message: string) {
+  public broadcastBoosterPoolStatus(channel: string, statusKey: string) {
     const serialized = JSON.stringify({
       type: "booster_pool_status",
-      payload: { message },
+      payload: { key: statusKey },
     })
 
     for (const [client, clientRoom] of this.clients) {

@@ -34,7 +34,11 @@ export class BoosterEngine {
     this.applyEffects(match, playerId)
 
     // 🔹 ДОБАВЛЕН ЛОГ АКТИВАЦИИ БУСТЕРА
-    this.eventLog.add(match, `⚡ ${player.username} активирует ${booster.name}`)
+    this.eventLog.add(
+      match,
+      `⚡ ${player.username} активирует ${booster.name}`,
+      `⚡ ${player.username} activates ${booster.nameEn}`
+    )
 
     // Удаляем слот из набора
     this.boosterSetManager.removeSlot(match, slot)

@@ -166,7 +166,7 @@ export class TwitchBotService {
       const isBroadcaster = (tags as any)?.badges?.broadcaster === "1"
       if (!isBroadcaster) return
 
-      applyBoosterPoolConfig(this.room, this.matchManager, this.websocketServer, this.room.pendingBoosterConfig, "Сохранено")
+      applyBoosterPoolConfig(this.room, this.matchManager, this.websocketServer, this.room.pendingBoosterConfig, "SAVED")
       return
     }
 
@@ -176,7 +176,7 @@ export class TwitchBotService {
       if (!isBroadcaster) return
 
       this.room.pendingBoosterConfig = {}
-      applyBoosterPoolConfig(this.room, this.matchManager, this.websocketServer, {}, "Возвращено к дефолту")
+      applyBoosterPoolConfig(this.room, this.matchManager, this.websocketServer, {}, "RESET")
       return
     }
     // ====================================================================================

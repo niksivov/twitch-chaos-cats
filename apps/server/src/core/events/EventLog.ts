@@ -3,6 +3,8 @@ export interface EventLogEntry {
 
   message: string
 
+  messageEn: string
+
   createdAt: number
 }
 
@@ -12,7 +14,9 @@ export class EventLog {
   add(
     match: any,
 
-    message: string
+    message: string,
+
+    messageEn: string = message
   ) {
     if (
       !match.state.eventLog
@@ -30,6 +34,8 @@ export class EventLog {
         ].join("_"),
 
         message,
+
+        messageEn,
 
         createdAt:
           Date.now(),

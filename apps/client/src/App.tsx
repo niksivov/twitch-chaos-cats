@@ -10,7 +10,7 @@ import { HowToPlayModal } from "./components/HowToPlayModal"
 import { WheelSpinner } from "./components/WheelSpinner"
 import { PandoraSpinner } from "./components/PandoraSpinner"
 import { LangSwitch } from "./components/LangSwitch"
-import { t } from "./i18n"
+import { pickLang, t } from "./i18n"
 
 // Фоны
 import settingsBackground from "./assets/backgrounds/MatchSettings.webp"
@@ -471,7 +471,7 @@ useEffect(() => {
 
               {boosterPoolStatus && (
                 <div style={{ marginTop: 6, textAlign: "center", color: "#00ff66", fontSize: 13, fontWeight: 700 }}>
-                  ✓ {boosterPoolStatus}
+                  ✓ {boosterPoolStatus === "SAVED" ? t(lang, "game.statusSaved") : t(lang, "game.statusReset")}
                 </div>
               )}
                 </>
@@ -499,10 +499,10 @@ useEffect(() => {
                       {boosterCatalog.map((b) => (
                         <tr key={b.id} style={{ borderBottom: "1px solid #1a1f26" }}>
                           <td style={{ padding: "6px", textAlign: "center" }}>
-                            <img src={`/boosters/${b.icon}.webp`} alt={b.name} style={{ width: 100, height: 100, objectFit: "contain" }} />
+                            <img src={`/boosters/${b.icon}.webp`} alt={pickLang(lang, b.name, b.nameEn)} style={{ width: 100, height: 100, objectFit: "contain" }} />
                           </td>
-                          <td style={{ padding: "6px", fontWeight: 600, whiteSpace: "normal", wordBreak: "break-word" }}>{b.name}</td>
-                          <td style={{ padding: "6px", color: "white", lineHeight: "18px" }}>{b.description}</td>
+                          <td style={{ padding: "6px", fontWeight: 600, whiteSpace: "normal", wordBreak: "break-word" }}>{pickLang(lang, b.name, b.nameEn)}</td>
+                          <td style={{ padding: "6px", color: "white", lineHeight: "18px" }}>{pickLang(lang, b.description, b.descriptionEn)}</td>
                           <td style={{ padding: "6px", textAlign: "center", fontWeight: 700 }}>
                             <input
                               type="number"

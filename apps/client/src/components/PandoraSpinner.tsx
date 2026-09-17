@@ -1,11 +1,12 @@
 import { useEffect, useState, useMemo, useRef } from "react"
 import { socketClient } from "../network/socket"
 import { useGameStore } from "../store/gameStore"
-import { t } from "../i18n"
+import { pickLang, t } from "../i18n"
 
 interface PandoraEffect {
   id: number
   label: string
+  labelEn: string
   color: string
 }
 
@@ -73,6 +74,9 @@ function Confetti({ count = 50 }: { count?: number }) {
 
 export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
   const lang = useGameStore((s) => s.lang)
+  const effectLabel = (effect: PandoraEffect) =>
+    pickLang(lang, effect.label, effect.labelEn)
+
   const [phase, setPhase] = useState<"spinning" | "done">("spinning")
   const [rotation, setRotation] = useState(0)
   const onCloseRef = useRef(onClose)
@@ -192,8 +196,8 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
         >
           <defs>
             {segments.map((seg, i) => {
-              const lines = seg.effect.label.split("\n")
-              const fontSize = getFontSize(seg.effect.label)
+              const lines = effectLabel(seg.effect).split("\n")
+              const fontSize = getFontSize(effectLabel(seg.effect))
               const lineSpacing = fontSize * 1.3
 
               if (lines.length === 1) {
@@ -250,8 +254,8 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           {/* Segments */}
           {segments.map((seg, i) => {
             const isSelected = phase === "done" && i === selectedIndex
-            const lines = seg.effect.label.split("\n")
-            const fontSize = getFontSize(seg.effect.label)
+            const lines = effectLabel(seg.effect).split("\n")
+            const fontSize = getFontSize(effectLabel(seg.effect))
 
             return (
               <g
@@ -313,7 +317,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
                 textAlign: "center",
               }}
             >
-              {selectedEffect.label}
+              {effectLabel(selectedEffect)}
             </div>
           )}
         </>
