@@ -1,7 +1,7 @@
 import type { Dict } from "./ru"
 
 export const en: Dict = {
-  "app.title": "Twitch, Chaos and Cats",
+  "app.title": "Twitch Chaos Cats",
 
   "channelSelect.subtitle": "Select a channel and max number of players",
   "channelSelect.twitchChannel": "Twitch channel",
@@ -63,7 +63,7 @@ export const en: Dict = {
 export const enHowToPlay: { title: string; body: string }[] = [
   {
     title: "What is this",
-    body: "«Twitch, Chaos and Cats» is a game played with the Twitch chat. There's no separate game to install: everything happens right in the chat and on the streamer's screen. You control your cat with chat commands.",
+    body: "«Twitch Chaos Cats» is a game played with the Twitch chat. There's no separate game to install: everything happens right in the chat and on the streamer's screen. You control your cat with chat commands.",
   },
   {
     title: "1. Join",
