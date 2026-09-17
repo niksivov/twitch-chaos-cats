@@ -8,6 +8,11 @@ export const scoreUnderdog: BoosterDefinition = {
   description:
     "Вы получаете +15 очков за каждого игрока, у которого больше очков, чем у Вас",
 
+  nameEn: "+15 for each player with more points",
+
+  descriptionEn:
+    "You get +15 points for each player who has more points than you",
+
   poolCount: 2,
 
   icon: "scoreUnderdog",

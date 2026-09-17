@@ -9,6 +9,11 @@ export const BlueKeyBooster: BoosterDefinition = {
   description:
     "(Срабатывает с 7 раунда) Если В ЭТОМ РАУНДЕ активированы ОБА ключа (голубой и розовый), в живых останутся только их владельцы",
 
+  nameEn: "Blue key",
+
+  descriptionEn:
+    "(Works from round 7) If BOTH keys (blue and pink) are activated IN THIS ROUND, only their owners survive",
+
   poolCount: 1,
 
   icon: "bluekey",

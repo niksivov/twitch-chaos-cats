@@ -12,6 +12,10 @@ export const Minus5toallBooster: BoosterDefinition =
     description:
       "Все противники теряют 5 очков",
 
+    nameEn: "-5 to all opponents",
+
+    descriptionEn: "All opponents lose 5 points",
+
     poolCount: 0,
 
     icon: "minus5toall",

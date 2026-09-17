@@ -2,16 +2,16 @@ import { BoosterDefinition } from "../BoosterTypes"
 import type { Match } from "../../Match"
 
 export const PANDORA_EFFECTS = [
-  { id: 0, label: "300 очков между\nпротивниками (случайно)", color: "#c62828" },
-  { id: 1, label: "Вы умираете, +100 очков\nкаждому противнику", color: "#b71c1c" },
-  { id: 2, label: "Ваши очки достаются\nпротивникам", color: "#e65100" },
-  { id: 3, label: "-5000 случайному\nигроку", color: "#880e4f" },
-  { id: 4, label: "+1 очко\nВам", color: "#2e7d32" },
-  { id: 5, label: "Половина игроков\nумирает", color: "#b71c1c" },
-  { id: 6, label: "Все очки\nперемешиваются", color: "#e65100" },
-  { id: 7, label: "Вы крадете до 50 очков\nу каждого (если очки есть)", color: "#1565c0" },
-  { id: 8, label: "×3 очков\nВам", color: "#2e7d32" },
-  { id: 9, label: "+50% от цели\nВам", color: "#1b5e20" },
+  { id: 0, label: "300 очков между\nпротивниками (случайно)", labelEn: "300 points between\nopponents (random)", color: "#c62828" },
+  { id: 1, label: "Вы умираете, +100 очков\nкаждому противнику", labelEn: "You die, +100 points\nto each opponent", color: "#b71c1c" },
+  { id: 2, label: "Ваши очки достаются\nпротивникам", labelEn: "Your points go\nto opponents", color: "#e65100" },
+  { id: 3, label: "-5000 случайному\nигроку", labelEn: "-5000 to a random\nplayer", color: "#880e4f" },
+  { id: 4, label: "+1 очко\nВам", labelEn: "+1 point\nto you", color: "#2e7d32" },
+  { id: 5, label: "Половина игроков\nумирает", labelEn: "Half of the players\ndie", color: "#b71c1c" },
+  { id: 6, label: "Все очки\nперемешиваются", labelEn: "All points\nare shuffled", color: "#e65100" },
+  { id: 7, label: "Вы крадете до 50 очков\nу каждого (если очки есть)", labelEn: "You steal up to 50 points\nfrom each (if they have any)", color: "#1565c0" },
+  { id: 8, label: "×3 очков\nВам", labelEn: "×3 points\nto you", color: "#2e7d32" },
+  { id: 9, label: "+50% от цели\nВам", labelEn: "+50% of target\nto you", color: "#1b5e20" },
 ]
 
 export function applyPandoraEffect(match: Match, roll: number, sourcePlayerId: string) {
@@ -113,7 +113,9 @@ export function applyPandoraEffect(match: Match, roll: number, sourcePlayerId: s
 export const pandoraBox: BoosterDefinition = {
   id: "PANDORA_BOX",
   name: "ХАОС",
-  description: "Выпадает случайный эффект из 10 КОТОстрофических событий",
+  description: "Выпадает случайный эффект из 10 КОТострофических событий",
+  nameEn: "CHAOS",
+  descriptionEn: "A random effect from 10 CAT-astrophic events",
   poolCount: 1,
   icon: "pandoraBox",
 

@@ -11,6 +11,10 @@ export const Plus30Booster: BoosterDefinition =
     description:
       "Вы получаете 30 очков",
 
+    nameEn: "+30",
+
+    descriptionEn: "You get 30 points",
+
     poolCount: 4,
 
     icon: "plus30",

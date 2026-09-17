@@ -22,6 +22,11 @@ export const PaperBooster: BoosterDefinition = {
   description:
     "Соберите Камень, Ножницы и Бумагу для мгновенной победы!",
 
+  nameEn: "Paper",
+
+  descriptionEn:
+    "Collect Rock, Scissors and Paper for an instant win!",
+
   poolCount: 1,
 
   icon: "paper",

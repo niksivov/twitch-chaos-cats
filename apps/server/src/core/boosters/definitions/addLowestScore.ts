@@ -8,6 +8,11 @@ export const addLowestScore: BoosterDefinition = {
   description:
     "Добавляет к Вашим очкам наименьший счет в матче",
 
+  nameEn: "+ outsider's score",
+
+  descriptionEn:
+    "Adds the lowest score in the match to your points",
+
   poolCount: 1,
 
   icon: "addLowestScore",

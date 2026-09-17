@@ -12,6 +12,10 @@ export const Minus50PercentRandomBooster: BoosterDefinition =
     description:
       "Случайный противник теряет 50% очков",
 
+    nameEn: "-50% to a random opponent",
+
+    descriptionEn: "A random opponent loses 50% of their score",
+
     poolCount: 1,
 
     icon: "minus50percentrandom",

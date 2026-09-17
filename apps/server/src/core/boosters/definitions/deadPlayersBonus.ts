@@ -8,6 +8,11 @@ export const deadPlayersBonus: BoosterDefinition = {
   description:
     "Вы получаете +75 очков за КАЖДОГО умершего игрока",
 
+  nameEn: "+75 for the dead",
+
+  descriptionEn:
+    "You get +75 points for EACH dead player",
+
   poolCount: 1,
 
   icon: "deadBonus",

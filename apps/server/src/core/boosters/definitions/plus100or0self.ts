@@ -7,6 +7,10 @@ export const plus100or0self: BoosterDefinition = {
 
   description: "Вы получите +100 очков или не получите ничего - вероятность 50%/50%",
 
+  nameEn: "+100 or nothing",
+
+  descriptionEn: "You get +100 points or get nothing - 50%/50% chance",
+
   poolCount: 1,
 
   icon: "plus100or0self",

@@ -8,6 +8,11 @@ export const TimeBonusBooster: BoosterDefinition = {
   description:
     "Вы получаете +1 очко за каждые 10 секунд, что идет эта игра",
 
+  nameEn: "+1 for every 10 seconds of the match",
+
+  descriptionEn:
+    "You get +1 point for every 10 seconds this game has been running",
+
   poolCount: 2,
 
   icon: "timebonus",

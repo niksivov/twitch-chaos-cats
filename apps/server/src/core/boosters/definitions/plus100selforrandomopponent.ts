@@ -10,6 +10,10 @@ export const plus100selforrandomopponent: BoosterDefinition =
     description:
       "Вы получите +100 очков или случайный противник получит +100 очков - вероятность 50%/50%",
 
+    nameEn: "+100 to you or an opponent",
+
+    descriptionEn: "You get +100 points or a random opponent gets +100 points - 50%/50% chance",
+
     poolCount: 1,
 
     icon: "plus100selforrandomopponent",

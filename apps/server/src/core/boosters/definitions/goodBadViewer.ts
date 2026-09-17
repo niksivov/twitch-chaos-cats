@@ -8,6 +8,11 @@ export const goodBadViewer: BoosterDefinition = {
   description:
     "Зритель (не участник игры) в течение матча может написать число от -100 до 100 в чат — Вы получаете последнее написанное",
 
+  nameEn: "Good viewer, bad viewer",
+
+  descriptionEn:
+    "A viewer (not a game participant) can write a number from -100 to 100 in chat during the match — you get the last number written",
+
   poolCount: 1,
 
   icon: "goodBadViewer",

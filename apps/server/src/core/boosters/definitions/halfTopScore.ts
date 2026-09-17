@@ -8,6 +8,11 @@ export const halfTopScore: BoosterDefinition = {
   description:
     "Ваш счет становится равен 50% от наибольшего счета в матче",
 
+  nameEn: "Your score = 50% of the leader",
+
+  descriptionEn:
+    "Your score becomes 50% of the highest score in the match",
+
   poolCount: 1,
 
   icon: "halfTopScore",

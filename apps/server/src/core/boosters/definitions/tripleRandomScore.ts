@@ -10,6 +10,10 @@ export const tripleRandomScore: BoosterDefinition =
     description:
       "Счет случайного игрока умножается на 3",
 
+    nameEn: "×3 to a random player",
+
+    descriptionEn: "A random player's score is multiplied by 3",
+
     poolCount: 1,
 
     icon: "tripleRandomScore",

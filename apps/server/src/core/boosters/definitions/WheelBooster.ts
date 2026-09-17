@@ -22,6 +22,11 @@ export const WheelBooster: BoosterDefinition = {
   description:
     "Если у Вас больше 80% от цели (от очков, достаточных для победы), то Вы раскручиваете колесо! Победитель выигрывает эту игру. Вероятность победить равна весу очков игрока от общей суммы очков (отрицательные очки не учитываются)",
 
+  nameEn: "WHEEL!",
+
+  descriptionEn:
+    "If you have more than 80% of the target (points needed to win), you spin the wheel! The winner takes this game. The chance to win equals your score's weight of the total sum of scores (negative scores are ignored)",
+
   poolCount: 1,
 
   icon: "wheel",

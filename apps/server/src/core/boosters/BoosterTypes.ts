@@ -9,6 +9,8 @@ export interface BoosterDefinition {
   id: string
   name: string
   description: string
+  nameEn: string
+  descriptionEn: string
   poolCount: number
   icon: string
 

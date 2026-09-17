@@ -8,6 +8,11 @@ export const QueueScoreBooster: BoosterDefinition = {
   description:
     "Вы получаете +10 очков умноженное на Ваше место в очереди ЭТОГО РАУНДА",
 
+  nameEn: "+10 × Your queue position",
+
+  descriptionEn:
+    "You get +10 points multiplied by your position in THIS ROUND's queue",
+
   poolCount: 1,
 
   icon: "queue",

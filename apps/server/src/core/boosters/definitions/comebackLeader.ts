@@ -8,6 +8,11 @@ export const comebackLeader: BoosterDefinition = {
   description:
     "Если у Вас меньше 0 очков, то Ваш счет становится равен максимальному счету в матче + 1",
 
+  nameEn: "If you have <0, become the leader!",
+
+  descriptionEn:
+    "If you have less than 0 points, your score becomes the highest score in the match + 1",
+
   poolCount: 1,
 
   icon: "comebackLeader",

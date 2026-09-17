@@ -8,6 +8,11 @@ export const KillOutsider250Booster: BoosterDefinition = {
   description:
     "Если у Вас 250 или больше очков — все игроки с наименьшим счётом умирают, и Вы теряете 250",
 
+  nameEn: "-250 (if you have it) for an outsider's death",
+
+  descriptionEn:
+    "If you have 250 or more points — all players with the lowest score die, and you lose 250",
+
   poolCount: 1,
 
   icon: "mark",

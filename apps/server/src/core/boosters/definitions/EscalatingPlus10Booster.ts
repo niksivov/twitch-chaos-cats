@@ -10,6 +10,11 @@ export const EscalatingPlus10Booster: BoosterDefinition = {
   description:
     "+10 очков при первом использовании, но каждое следующее использование любым игроком удваивает этот бустер",
 
+  nameEn: "Snowball",
+
+  descriptionEn:
+    "+10 points on first use, but every next use by any player doubles this booster",
+
   poolCount: 1,
 
   icon: "snowball",

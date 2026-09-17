@@ -12,6 +12,10 @@ export const Plus100PercentBooster: BoosterDefinition =
     description:
       "Вы получаете +100% к счету",
 
+    nameEn: "+100%",
+
+    descriptionEn: "You get +100% of your score",
+
     poolCount: 1,
 
     icon: "multiply_200",

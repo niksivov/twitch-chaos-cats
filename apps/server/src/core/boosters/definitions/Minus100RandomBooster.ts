@@ -12,6 +12,10 @@ export const Minus100RandomBooster: BoosterDefinition =
     description:
       "Случайный противник теряет 100 очков",
 
+    nameEn: "-100 to a random opponent",
+
+    descriptionEn: "A random opponent loses 100 points",
+
     poolCount: 1,
 
     icon: "minus100random",

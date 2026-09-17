@@ -12,6 +12,10 @@ export const Minus10PercenttoallBooster: BoosterDefinition =
     description:
       "Все противники теряют 10% от счета",
 
+    nameEn: "-10% to all opponents",
+
+    descriptionEn: "All opponents lose 10% of their score",
+
     poolCount: 1,
 
     icon: "minus10percenttoall",

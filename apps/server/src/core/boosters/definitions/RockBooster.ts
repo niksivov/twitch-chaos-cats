@@ -24,6 +24,11 @@ export const RockBooster: BoosterDefinition = {
   description:
     "Соберите Камень, Ножницы и Бумагу для мгновенной победы!",
 
+  nameEn: "Rock",
+
+  descriptionEn:
+    "Collect Rock, Scissors and Paper for an instant win!",
+
   poolCount: 1,
 
   icon: "rock",

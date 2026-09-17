@@ -8,6 +8,11 @@ export const BetBooster: BoosterDefinition = {
   description:
     "Напишите число от 1 до 99 в чат. Вы умираете с вероятностью X%, но если выживаете, то получаете +X% от цели",
 
+  nameEn: "BET",
+
+  descriptionEn:
+    "Write a number from 1 to 99 in chat. You die with X% chance, but if you survive, you get +X% of the target",
+
   poolCount: 1,
 
   icon: "bet",
