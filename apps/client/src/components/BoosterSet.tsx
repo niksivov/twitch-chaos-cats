@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import { useGameStore } from "../store/gameStore"
+import { t } from "../i18n"
 
 interface BoosterSnapshot {
   slot: number
@@ -16,6 +18,8 @@ type BoosterWithAnim = BoosterSnapshot & {
 }
 
 export function BoosterSet({ boosters }: Props) {
+  const lang = useGameStore((s) => s.lang)
+
   const [visibleBoosters, setVisibleBoosters] = useState<BoosterWithAnim[]>(boosters)
 
   useEffect(() => {
@@ -110,7 +114,7 @@ export function BoosterSet({ boosters }: Props) {
           fontSize: 16,
         }}
       >
-        Бустеры (в свой ход активируйте один бустер командой !номербустера, для пропуска хода введите !0)
+        {t(lang, "boosterSet.header")}
       </div>
 
       <div
@@ -224,7 +228,7 @@ export function BoosterSet({ boosters }: Props) {
               fontSize: 13,
             }}
           >
-            No boosters yet
+            {t(lang, "boosterSet.empty")}
           </div>
         )}
       </div>

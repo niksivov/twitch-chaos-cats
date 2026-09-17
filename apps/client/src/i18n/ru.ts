@@ -35,6 +35,8 @@ export const ru: Dict = {
   "game.statusSaved": "Сохранено",
   "game.statusReset": "Возвращено к дефолту",
 
+  "howToPlay.title": "Как играть?",
+
   "boosterSet.header": "Бустеры (в свой ход активируйте один бустер командой !номербустера, для пропуска хода введите !0)",
   "boosterSet.empty": "Бустеров пока нет",
 

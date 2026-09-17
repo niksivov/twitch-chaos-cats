@@ -2,6 +2,8 @@ import {
   useEffect,
   useState,
 } from "react"
+import { useGameStore } from "../store/gameStore"
+import { t } from "../i18n"
 
 interface Props {
   startedAt?: number
@@ -16,6 +18,7 @@ export function TurnTimer({
   durationSeconds,
   playerName,
 }: Props) {
+  const lang = useGameStore((s) => s.lang)
   const [remaining, setRemaining] =
     useState(durationSeconds)
 
@@ -97,7 +100,7 @@ export function TurnTimer({
               "uppercase",
           }}
         >
-          Ход игрока
+          {t(lang, "turnTimer.playerTurn")}
         </div>
 
         <div
@@ -115,7 +118,7 @@ export function TurnTimer({
           }}
         >
           {playerName ??
-            "Waiting..."}
+            t(lang, "turnTimer.waiting")}
         </div>
       </div>
     </div>

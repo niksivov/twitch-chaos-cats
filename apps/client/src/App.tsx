@@ -9,6 +9,8 @@ import { MatchResultScreen } from "./components/MatchResultScreen"
 import { HowToPlayModal } from "./components/HowToPlayModal"
 import { WheelSpinner } from "./components/WheelSpinner"
 import { PandoraSpinner } from "./components/PandoraSpinner"
+import { LangSwitch } from "./components/LangSwitch"
+import { t } from "./i18n"
 
 // Фоны
 import settingsBackground from "./assets/backgrounds/MatchSettings.webp"
@@ -92,10 +94,12 @@ function App() {
   const draftPoolSize = Object.values(poolDraft).reduce((sum, n) => sum + n, 0) || 1
   const maxPoolSize = draftPoolSize
 
-  const maxPlayers = useValidatedNumericInput("maxPlayers", 2, 20, "Введите целое число от 2 до 20")
-  const turnTimeSeconds = useValidatedNumericInput("turnTimeSeconds", 5, 600, "Введите целое число от 5 до 600")
-  const targetPoints = useValidatedNumericInput("targetPoints", 50, Infinity, "Введите целое число от 50")
-  const boosterSetSize = useValidatedNumericInput("boosterSetSize", 1, maxPoolSize, `Введите целое число от 1 до ${maxPoolSize}`)
+  const lang = useGameStore((s) => s.lang)
+
+  const maxPlayers = useValidatedNumericInput("maxPlayers", 2, 20, t(lang, "validation.maxPlayers"))
+  const turnTimeSeconds = useValidatedNumericInput("turnTimeSeconds", 5, 600, t(lang, "validation.turnTime"))
+  const targetPoints = useValidatedNumericInput("targetPoints", 50, Infinity, t(lang, "validation.targetPoints"))
+  const boosterSetSize = useValidatedNumericInput("boosterSetSize", 1, maxPoolSize, t(lang, "validation.boosterSetSize", { max: maxPoolSize }))
 
   const twitchChannel = useGameStore((s) => s.twitchChannel)
   const lobbyPlayers = useGameStore((s) => s.lobbyPlayers)
@@ -150,6 +154,8 @@ useEffect(() => {
   if (screen === "CHANNEL_SELECT") {
     return (
       <>
+        <LangSwitch style={{ position: "fixed", top: 16, right: 16, zIndex: 5 }} />
+
         <img
           src={channelSelectBackground}
           alt=""
@@ -178,16 +184,16 @@ useEffect(() => {
             }}
           >
             <div style={{ fontSize: 34, fontWeight: 900, marginBottom: 24, textAlign: "center", color: "#e1bee7" }}>
-              Твич, Хаос и Котики
+              {t(lang, "app.title")}
             </div>
 
             <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, textAlign: "center", color: "#d1c4e9" }}>
-              Выберите канал и максимальное количество игроков
+              {t(lang, "channelSelect.subtitle")}
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Канал Twitch
+                {t(lang, "channelSelect.twitchChannel")}
                 <input
                   type="text"
                   value={twitchChannel}
@@ -197,7 +203,7 @@ useEffect(() => {
               </label>
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Максимальное количество игроков (от 2 до 20)
+                {t(lang, "channelSelect.maxPlayers")}
                 <input
                   type="number"
                   min={2}
@@ -234,7 +240,7 @@ useEffect(() => {
                 onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
                 onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               >
-                Далее
+                {t(lang, "channelSelect.next")}
               </button>
 
               <div
@@ -248,7 +254,7 @@ useEffect(() => {
                   fontSize: 14,
                 }}
               >
-                Как играть
+                {t(lang, "settings.howToPlay")}
               </div>
             </div>
           </div>
@@ -262,6 +268,8 @@ useEffect(() => {
   if (screen === "MATCH_SETTINGS") {
     return (
       <>
+        <LangSwitch style={{ position: "fixed", top: 16, right: 16, zIndex: 5 }} />
+
         <img
           src={settingsBackground}
           alt=""
@@ -290,12 +298,12 @@ useEffect(() => {
             }}
           >
             <div style={{ fontSize: 34, fontWeight: 900, marginBottom: 24, textAlign: "center", color: "#e1bee7" }}>
-              Настройки матча
+              {t(lang, "settings.title")}
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Таймер хода (в секундах, от 5 до 600)
+                {t(lang, "settings.turnTime")}
                 <input
                   type="number"
                   min={5}
@@ -310,7 +318,7 @@ useEffect(() => {
               )}
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Очки для победы (от 50)
+                {t(lang, "settings.targetPoints")}
                 <input
                   type="number"
                   min={50}
@@ -324,7 +332,7 @@ useEffect(() => {
               )}
 
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
-                Количество бустеров в наборе (от 1 до {maxPoolSize})
+                {t(lang, "settings.boosterSetSize", { max: maxPoolSize })}
                 <input
                   type="number"
                   min={1}
@@ -341,11 +349,11 @@ useEffect(() => {
 
             <div style={{ marginTop: 20 }}>
               <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
-                Напиши в чат !join и присоединяйся. Зарегистрированные игроки ({lobbyPlayers.length}):
+                {t(lang, "settings.joinHint", { count: lobbyPlayers.length })}
               </div>
 
               {lobbyPlayers.length === 0 && (
-                <div style={{ color: "#ccc" }}>Ожидание игроков в чате...</div>
+                <div style={{ color: "#ccc" }}>{t(lang, "settings.waitingForPlayers")}</div>
               )}
 
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -391,7 +399,7 @@ useEffect(() => {
               onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
             >
-              Играть
+              {t(lang, "settings.play")}
               </button>
 
               <div
@@ -405,7 +413,7 @@ useEffect(() => {
                   fontSize: 14,
                 }}
               >
-                Как играть
+                {t(lang, "settings.howToPlay")}
               </div>
 
               <div
@@ -419,7 +427,11 @@ useEffect(() => {
                   fontWeight: 600,
                 }}
               >
-                {showBoosterTable ? "▲" : "▼"} Все бустеры ({boosterCatalog.length} видов, {draftPoolSize} в пуле)
+                {t(lang, "settings.allBoosters", {
+                  arrow: showBoosterTable ? "▲" : "▼",
+                  kinds: boosterCatalog.length,
+                  pool: draftPoolSize,
+                })}
               </div>
 
               {showBoosterTable && (
@@ -453,7 +465,7 @@ useEffect(() => {
 
               {/* ==================== ВАРИАНТ А (активен): ТВИЧ-КОМАНДЫ ==================== */}
               <div style={{ marginTop: 8, textAlign: "center", color: "white", fontSize: 12 }}>
-                !save = сохранить настройки, !default = вернуться к изначальным настройкам
+                {t(lang, "settings.saveHint")}
               </div>
               {/* ====================================================================== */}
 
@@ -478,9 +490,9 @@ useEffect(() => {
                     <thead>
                       <tr style={{ background: "#1a1f26", position: "sticky", top: 0 }}>
                         <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 40 }}></th>
-                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 110 }}>Название</th>
-                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742" }}>Описание</th>
-                        <th style={{ padding: "8px 6px", textAlign: "center", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 50 }}>Пул</th>
+                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 110 }}>{t(lang, "settings.tableName")}</th>
+                        <th style={{ padding: "8px 6px", textAlign: "left", color: "#ffd54a", borderBottom: "1px solid #2d3742" }}>{t(lang, "settings.tableDescription")}</th>
+                        <th style={{ padding: "8px 6px", textAlign: "center", color: "#ffd54a", borderBottom: "1px solid #2d3742", width: 50 }}>{t(lang, "settings.tablePool")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -574,7 +586,7 @@ if (screen === "RESULT") {
             fontSize: 24,
           }}
         >
-          Waiting for match...
+          {t(lang, "game.waitingForMatch")}
         </div>
       )
     }
@@ -599,7 +611,7 @@ if (screen === "RESULT") {
 
         <div style={{ minHeight: "100vh", color: "white", padding: 20, fontFamily: "Arial, sans-serif" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <div style={{ fontSize: 28, fontWeight: 800 }}>Твич, Хаос и Котики</div>
+            <div style={{ fontSize: 28, fontWeight: 800 }}>{t(lang, "app.title")}</div>
 
             <div style={{
               display: "flex",
@@ -615,7 +627,7 @@ if (screen === "RESULT") {
               </div>
 
               <div style={{ fontSize: 20, fontWeight: 700, opacity: 0.9 }}>
-                Раунд {round}
+                {t(lang, "game.round", { round })}
               </div>
 
               <div style={{ minWidth: 240 }}>
@@ -625,6 +637,8 @@ if (screen === "RESULT") {
                   playerName={currentPlayer?.nickname}
                 />
               </div>
+
+              <LangSwitch style={{ flexShrink: 0 }} />
 
               <button
                 onClick={() => setShowHowToPlay(true)}
@@ -639,7 +653,7 @@ if (screen === "RESULT") {
                   cursor: "pointer",
                 }}
               >
-                Как играть
+                {t(lang, "game.howToPlay")}
               </button>
             </div>
           </div>
@@ -651,12 +665,12 @@ if (screen === "RESULT") {
             color: "#ffffff",
             marginBottom: 16,
           }}>
-            Команда стримера <code style={{
+            {t(lang, "game.resetHintBefore")} <code style={{
               color: "#ffd54a",
               background: "linear-gradient(135deg, #9c27b0, #6a1b9a)",
               padding: "2px 8px",
               borderRadius: 6,
-            }}>!reset</code> сбросит текущую игру
+            }}>!reset</code> {t(lang, "game.resetHintAfter")}
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>

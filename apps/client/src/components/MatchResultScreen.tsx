@@ -1,5 +1,8 @@
 import React from "react"
 import backgroundImage from "../assets/backgrounds/MatchResultScreen.webp"
+import { useGameStore } from "../store/gameStore"
+import { LangSwitch } from "./LangSwitch"
+import { t } from "../i18n"
 
 type MatchPlayer = {
   id: string
@@ -23,6 +26,8 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
   reason,
   onPlayAgain,
 }) => {
+  const lang = useGameStore((s) => s.lang)
+
   // ✅ FIX: унифицировали сравнение ID (только id)
   const winner =
   players.find(
@@ -51,6 +56,8 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
         overflow: "hidden",
       }}
     >
+      <LangSwitch style={{ position: "fixed", top: 16, right: 16, zIndex: 10 }} />
+
       <img
         src={backgroundImage}
         alt=""
@@ -83,7 +90,7 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
           textShadow: "0 0 12px rgba(255,215,0,0.6)",
         }}
       >
-        🏆 Победитель!
+        🏆 {t(lang, "result.winner")}
       </div>
 
       <div
@@ -157,7 +164,7 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
                   }}
                 >
                   {reason === "points"
-                    ? "Победа по очкам"
+                    ? t(lang, "result.byPoints")
                     : reason}
                 </div>
               )}
@@ -185,7 +192,7 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
               marginBottom: 24,
             }}
           >
-            Финальный рейтинг
+            {t(lang, "result.finalRanking")}
           </div>
 
           <div
@@ -253,7 +260,7 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
             e.currentTarget.style.transform = "scale(1)"
           }}
         >
-          🎮 Играть снова
+          {t(lang, "result.playAgain")}
         </button>
       )}
     </div>

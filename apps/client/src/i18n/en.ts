@@ -35,6 +35,8 @@ export const en: Dict = {
   "game.statusSaved": "Saved",
   "game.statusReset": "Restored to default",
 
+  "howToPlay.title": "How to play?",
+
   "boosterSet.header": "Boosters (on your turn activate one booster with the command !boosterNumber, to skip the turn type !0)",
   "boosterSet.empty": "No boosters yet",
 

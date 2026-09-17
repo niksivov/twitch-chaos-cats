@@ -1,5 +1,6 @@
 import { getPlayerColor } from "../utils/getPlayerColor"
 import { useGameStore } from "../store/gameStore"
+import { t } from "../i18n"
 
 interface MatchEventSnapshot {
   id: string
@@ -15,6 +16,7 @@ export function EventLog({
   events,
 }: Props) {
   const players = useGameStore((s) => s.players)
+  const lang = useGameStore((s) => s.lang)
 
   return (
     <div
@@ -39,7 +41,7 @@ export function EventLog({
           fontSize: 16,
         }}
       >
-        События
+        {t(lang, "eventLog.title")}
       </div>
 
       <div
@@ -102,7 +104,7 @@ export function EventLog({
               fontSize: 15,
             }}
           >
-            Событий пока нет
+            {t(lang, "eventLog.empty")}
           </div>
         )}
       </div>

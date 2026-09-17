@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react"
 import { useGameStore } from "../store/gameStore"
+import { t } from "../i18n"
 
 interface WheelPlayer {
   id: string
@@ -76,6 +77,7 @@ function Confetti({ count = 60 }: { count?: number }) {
 }
 
 export function WheelSpinner({ players, winnerId, onClose }: Props) {
+  const lang = useGameStore((s) => s.lang)
   const [phase, setPhase] = useState<"spinning" | "done">("spinning")
   const [rotation, setRotation] = useState(0)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -152,7 +154,7 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
           letterSpacing: 2,
         }}
       >
-        🎰 Колесо Фортуны!
+        {t(lang, "wheel.title")}
       </div>
 
       <div style={{ position: "relative", width: 660, height: 660 }}>
@@ -292,7 +294,7 @@ export function WheelSpinner({ players, winnerId, onClose }: Props) {
                 animation: "pulse 0.5s ease-in-out 3",
               }}
             >
-              🏆 {winner.username} побеждает!
+              {t(lang, "wheel.winner", { winner: winner.username })}
             </div>
           )}
         </>

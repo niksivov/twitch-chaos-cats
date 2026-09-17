@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react"
 import { socketClient } from "../network/socket"
+import { useGameStore } from "../store/gameStore"
+import { t } from "../i18n"
 
 interface PandoraEffect {
   id: number
@@ -70,6 +72,7 @@ function Confetti({ count = 50 }: { count?: number }) {
 }
 
 export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
+  const lang = useGameStore((s) => s.lang)
   const [phase, setPhase] = useState<"spinning" | "done">("spinning")
   const [rotation, setRotation] = useState(0)
   const onCloseRef = useRef(onClose)
@@ -154,7 +157,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
           letterSpacing: 2,
         }}
       >
-        ХАОС!
+        {t(lang, "pandora.chaos")}
       </div>
 
       <div style={{ position: "relative", width: 660, height: 660 }}>
