@@ -1,4 +1,6 @@
 import { create } from "zustand"
+import { detectInitialLang } from "../i18n"
+import type { Lang } from "../i18n"
 
 // 🔹 Состояние матча — просто string от бэка
 type MatchPhase = string
@@ -92,6 +94,8 @@ interface GameState {
   twitchChannel: string
   maxPlayers: number
 
+  lang: Lang
+
   roomId: string
   phase: MatchPhase
   tick: number
@@ -125,6 +129,7 @@ interface GameState {
   setScreen: (screen: AppScreen) => void
   setTwitchChannel: (channel: string) => void
   setMaxPlayers: (value: number) => void
+  setLang: (lang: Lang) => void
   setTurnTimeSeconds: (value: number) => void
   setTargetPoints: (value: number) => void
   setBoosterSetSize: (value: number) => void
@@ -139,6 +144,8 @@ export const useGameStore = create<GameState>((set) => ({
   screen: "CHANNEL_SELECT",
   twitchChannel: "",
   maxPlayers: 20,
+
+  lang: detectInitialLang(),
 
   roomId: "",
   phase: "LOBBY",
@@ -173,6 +180,11 @@ export const useGameStore = create<GameState>((set) => ({
   setScreen: (screen) => set({ screen }),
   setTwitchChannel: (twitchChannel) => set({ twitchChannel }),
   setMaxPlayers: (maxPlayers) => set({ maxPlayers }),
+  setLang: (lang) => {
+    localStorage.setItem("lang", lang)
+    document.documentElement.lang = lang
+    set({ lang })
+  },
   setTurnTimeSeconds: (value) => set({ turnTimeSeconds: value }),
   setTargetPoints: (value) => set({ targetPoints: value }),
   setBoosterSetSize: (value) => set({ boosterSetSize: value }),

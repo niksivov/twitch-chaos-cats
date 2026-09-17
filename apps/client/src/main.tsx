@@ -3,7 +3,11 @@ import ReactDOM from 'react-dom/client'
 
 import App from './App'
 
+import { useGameStore } from './store/gameStore'
+
 import './index.css'
+
+document.documentElement.lang = useGameStore.getState().lang
 
 ReactDOM.createRoot(
   document.getElementById('root')!
