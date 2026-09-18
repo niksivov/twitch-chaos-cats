@@ -10,6 +10,19 @@
 
 body {
   margin: 0;
+  font-family: "Arial", sans-serif;
+}
+
+/* Формовые элементы и SVG-текст не наследуют font-family по умолчанию */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+svg text {
+  font-family: inherit;
 }
 
 /* Twitch Chaos Cats Scrollbar */
