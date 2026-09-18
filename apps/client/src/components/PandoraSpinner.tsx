@@ -99,7 +99,7 @@ export function PandoraSpinner({ effects, selectedIndex, onClose }: Props) {
 
   const getFontSize = (label: string) => {
     const maxLineLen = Math.max(...label.split("\n").map(l => l.length))
-    return maxLineLen > 18 ? 12 : maxLineLen > 14 ? 14 : 16
+    return maxLineLen > 18 ? 10 : maxLineLen > 14 ? 12 : 13
   }
 
   useEffect(() => {
