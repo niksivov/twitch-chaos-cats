@@ -154,7 +154,7 @@ useEffect(() => {
   if (screen === "CHANNEL_SELECT") {
     return (
       <>
-        <LangSwitch style={{ position: "fixed", top: 16, right: 16, zIndex: 5 }} />
+        <LangSwitch style={{ position: "fixed", top: 16, left: 16, zIndex: 5 }} />
 
         <img
           src={channelSelectBackground}
@@ -268,7 +268,7 @@ useEffect(() => {
   if (screen === "MATCH_SETTINGS") {
     return (
       <>
-        <LangSwitch style={{ position: "fixed", top: 16, right: 16, zIndex: 5 }} />
+        <LangSwitch style={{ position: "fixed", top: 16, left: 16, zIndex: 5 }} />
 
         <img
           src={settingsBackground}
