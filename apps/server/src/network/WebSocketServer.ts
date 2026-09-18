@@ -216,7 +216,8 @@ export class WebSocketServer {
       this.eventLog.add(
         match,
         [`💥 ХАОС: ${effect.label.replace(/\n/g, " ")}`, ...fragments.ru].join(" "),
-        [`💥 CHAOS: ${effect.labelEn.replace(/\n/g, " ")}`, ...fragments.en].join(" ")
+        [`💥 CHAOS: ${effect.labelEn.replace(/\n/g, " ")}`, ...fragments.en].join(" "),
+        pending.sourcePlayerId
       )
     }
   }

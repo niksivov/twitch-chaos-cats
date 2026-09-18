@@ -277,7 +277,8 @@ export class GameLoop {
       this.eventLog.add(
         match,
         `🏆 Победитель: ${winner.username}`,
-        `🏆 Winner: ${winner.username}`
+        `🏆 Winner: ${winner.username}`,
+        winnerId
       )
     }
 

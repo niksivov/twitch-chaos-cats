@@ -54,7 +54,8 @@ export class BoosterEngine {
     this.eventLog.add(
       match,
       [...ruParts, ...fragments.ru].join(" "),
-      [...enParts, ...fragments.en].join(" ")
+      [...enParts, ...fragments.en].join(" "),
+      playerId
     )
 
     // Удаляем слот из набора

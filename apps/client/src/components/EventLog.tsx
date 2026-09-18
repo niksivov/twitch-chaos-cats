@@ -8,6 +8,8 @@ interface MatchEventSnapshot {
   message: string
 
   messageEn: string
+
+  playerId?: string
 }
 
 interface Props {
@@ -66,9 +68,11 @@ export function EventLog({
               index ===
               events.length - 1
 
-            const player = players.find((p) =>
-              event.message.includes(p.nickname)
-            )
+            const player = event.playerId
+              ? players.find(
+                  (p) => p.id === event.playerId
+                )
+              : undefined
 
             return (
               <div

@@ -24,6 +24,7 @@ interface MatchEventSnapshot {
   id: string
   message: string
   messageEn: string
+  playerId?: string
 }
 
 interface BoosterSnapshot {

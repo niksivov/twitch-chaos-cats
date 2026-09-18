@@ -160,6 +160,7 @@ class SocketClient {
             message: event.message ?? event.text ?? "",
             messageEn:
               event.messageEn ?? event.message ?? event.text ?? "",
+            playerId: event.playerId,
           }))
 
           const boosterSet = (match.boosterSet ?? []).map((booster: any) => ({
