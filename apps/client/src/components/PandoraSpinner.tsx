@@ -16,7 +16,7 @@ interface Props {
   onClose: () => void
 }
 
-const PANDORA_COLORS = ["#9c27b0", "#c62828"]
+const PANDORA_COLORS = ["#c62828", "#9c27b0"]
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const rad = ((angleDeg - 90) * Math.PI) / 180
