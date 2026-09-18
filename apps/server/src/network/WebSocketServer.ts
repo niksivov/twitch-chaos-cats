@@ -9,7 +9,7 @@ import { applyPandoraEffect, PANDORA_EFFECTS } from "../core/boosters/definition
 import { normalizeBoosterPoolConfig } from "../core/boosters/boosterPoolConfig"
 import { applyBoosterPoolConfig } from "../core/boosters/boosterPoolApply"
 import { EventLog } from "../core/events/EventLog"
-import { snapshotPlayers, logStateChanges } from "../core/events/logStateChanges"
+import { snapshotPlayers, describeStateChanges } from "../core/events/logStateChanges"
 
 export class WebSocketServer {
   private wss: WSServer
@@ -209,14 +209,14 @@ export class WebSocketServer {
 
     const before = snapshotPlayers(match)
     applyPandoraEffect(match, pending.roll, pending.sourcePlayerId)
-    logStateChanges(this.eventLog, match, before)
+    const fragments = describeStateChanges(match, before)
 
     const effect = PANDORA_EFFECTS.find(e => e.id === pending.roll)
     if (effect) {
       this.eventLog.add(
         match,
-        `💥 ХАОС: ${effect.label.replace(/\n/g, " ")}`,
-        `💥 CHAOS: ${effect.labelEn.replace(/\n/g, " ")}`
+        [`💥 ХАОС: ${effect.label.replace(/\n/g, " ")}`, ...fragments.ru].join(" "),
+        [`💥 CHAOS: ${effect.labelEn.replace(/\n/g, " ")}`, ...fragments.en].join(" ")
       )
     }
   }

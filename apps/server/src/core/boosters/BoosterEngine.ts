@@ -2,7 +2,7 @@ import { Match } from "../Match"
 import { BoosterRegistry } from "./BoosterRegistry"
 import { BoosterSetManager } from "./BoosterSetManager"
 import { EventLog } from "../events/EventLog"
-import { snapshotPlayers, logStateChanges } from "../events/logStateChanges"
+import { snapshotPlayers, describeStateChanges } from "../events/logStateChanges"
 import { EffectEngine } from "../effects/EffectEngine"
 
 export class BoosterEngine {
@@ -36,26 +36,25 @@ export class BoosterEngine {
 
     this.applyEffects(match, playerId)
 
-    // Лог изменений состояния (очки, смерти)
-    logStateChanges(this.eventLog, match, before)
+    const fragments = describeStateChanges(match, before)
+
+    const ruParts = [`⚡ ${player.username} активирует ${booster.name}`]
+    const enParts = [`⚡ ${player.username} activates ${booster.nameEn}`]
 
     // Лог результата колеса
     if (booster.id === "WHEEL" && match.state.wheelResult) {
       const winner = match.state.registeredPlayers[match.state.wheelResult.winnerId]
       if (winner) {
-        this.eventLog.add(
-          match,
-          `🎡 ${winner.username} выигрывает колесо!`,
-          `🎡 ${winner.username} wins the wheel!`
-        )
+        ruParts.push(`🎡 ${winner.username} выигрывает колесо!`)
+        enParts.push(`🎡 ${winner.username} wins the wheel!`)
       }
     }
 
-    // Лог активации бустера
+    // Одна строка: активация + результаты
     this.eventLog.add(
       match,
-      `⚡ ${player.username} активирует ${booster.name}`,
-      `⚡ ${player.username} activates ${booster.nameEn}`
+      [...ruParts, ...fragments.ru].join(" "),
+      [...enParts, ...fragments.en].join(" ")
     )
 
     // Удаляем слот из набора
