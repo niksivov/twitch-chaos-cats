@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Twitch Chaos Cats — a chaotic multiplayer game played with the Twitch chat" />
+    <title>Twitch Chaos Cats</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #0d1117;
+      }
+
+      #game {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+      }
+
+      #fallback {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 10;
+        background: rgba(13, 17, 23, 0.9);
+        border: 1px solid #9575cd;
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      #fallback a {
+        color: #e1bee7;
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      #fallback a:hover {
+        text-decoration: underline;
+      }
+
+      #fallback .label {
+        display: block;
+        color: #9aa4b2;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe
+      id="game"
+      src="https://twitch-chaos-cats.onrender.com/"
+      title="Twitch Chaos Cats"
+      allow="fullscreen; autoplay"
+      allowfullscreen
+      referrerpolicy="no-referrer"
+    ></iframe>
+
+    <div id="fallback">
+      <span class="label">If the game doesn't load,</span>
+      <a href="https://twitch-chaos-cats.onrender.com/" target="_blank" rel="noopener">open it in a new tab ↗</a>
+    </div>
+  </body>
+</html>
