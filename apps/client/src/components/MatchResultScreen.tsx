@@ -23,7 +23,6 @@ interface MatchResultScreenProps {
 export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
   winnerId,
   players,
-  reason,
   onPlayAgain,
 }) => {
   const lang = useGameStore((s) => s.lang)
@@ -121,55 +120,42 @@ export const MatchResultScreen: React.FC<MatchResultScreenProps> = ({
             backdropFilter: "blur(6px)",
           }}
         >
-          {winner && (
-            <>
-              <img
-                src={`/avatars/${winner.avatarId}.webp`}
-                alt={winner.username}
-                style={{
-                  width: 380,
-                  height: 380,
-                  objectFit: "contain",
-                  marginBottom: 20,
-                  imageRendering: "pixelated",
-                }}
-              />
+{winner && (
+                <>
+                  <img
+                    src={`/avatars/${winner.avatarId}.webp`}
+                    alt={winner.username}
+                    style={{
+                      width: 380,
+                      height: 380,
+                      objectFit: "contain",
+                      marginBottom: 20,
+                      imageRendering: "pixelated",
+                    }}
+                  />
 
-              <div
-                style={{
-                  fontSize: 34,
-                  fontWeight: 800,
-                  marginBottom: 10,
-                }}
-              >
-                {winner.username}
-              </div>
+                  <div
+                    style={{
+                      fontSize: 34,
+                      fontWeight: 800,
+                      marginBottom: 10,
+                    }}
+                  >
+                    {winner.username}
+                  </div>
 
-              <div
-                style={{
-                  fontSize: 28,
-                  fontWeight: 700,
-                  color: "#ffd54f",
-                  marginBottom: 10,
-                }}
-              >
-                🪙 {winner.score}
-              </div>
-
-              {reason && (
-                <div
-                  style={{
-                    fontSize: 18,
-                    opacity: 0.85,
-                  }}
-                >
-                  {reason === "points"
-                    ? t(lang, "result.byPoints")
-                    : reason}
-                </div>
+                  <div
+                    style={{
+                      fontSize: 28,
+                      fontWeight: 700,
+                      color: "#ffd54f",
+                      marginBottom: 10,
+                    }}
+                  >
+                    🪙 {winner.score}
+                  </div>
+                </>
               )}
-            </>
-          )}
         </div>
 
         {/* Правая часть */}
