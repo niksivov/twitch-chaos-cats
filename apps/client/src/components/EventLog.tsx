@@ -91,7 +91,7 @@ export function EventLog({
                     : "white",
                 }}
               >
-                ⚡ {pickLang(lang, event.message, event.messageEn)}
+                {pickLang(lang, event.message, event.messageEn)}
               </div>
             )
           }

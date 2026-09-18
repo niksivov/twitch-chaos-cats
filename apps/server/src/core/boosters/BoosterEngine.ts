@@ -2,6 +2,7 @@ import { Match } from "../Match"
 import { BoosterRegistry } from "./BoosterRegistry"
 import { BoosterSetManager } from "./BoosterSetManager"
 import { EventLog } from "../events/EventLog"
+import { snapshotPlayers, logStateChanges } from "../events/logStateChanges"
 import { EffectEngine } from "../effects/EffectEngine"
 
 export class BoosterEngine {
@@ -25,6 +26,8 @@ export class BoosterEngine {
     const player = match.state.registeredPlayers[playerId]
     if (!player) return
 
+    const before = snapshotPlayers(match)
+
     // Выполнение эффекта бустера
     booster.execute({
       match,
@@ -33,7 +36,22 @@ export class BoosterEngine {
 
     this.applyEffects(match, playerId)
 
-    // 🔹 ДОБАВЛЕН ЛОГ АКТИВАЦИИ БУСТЕРА
+    // Лог изменений состояния (очки, смерти)
+    logStateChanges(this.eventLog, match, before)
+
+    // Лог результата колеса
+    if (booster.id === "WHEEL" && match.state.wheelResult) {
+      const winner = match.state.registeredPlayers[match.state.wheelResult.winnerId]
+      if (winner) {
+        this.eventLog.add(
+          match,
+          `🎡 ${winner.username} выигрывает колесо!`,
+          `🎡 ${winner.username} wins the wheel!`
+        )
+      }
+    }
+
+    // Лог активации бустера
     this.eventLog.add(
       match,
       `⚡ ${player.username} активирует ${booster.name}`,

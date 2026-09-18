@@ -5,15 +5,18 @@ import { Room } from "../core/Room"
 import { ALL_BOOSTERS } from "../core/boosters/definitions"
 
 import { startTwitchBot, createMatchFromLobby, rooms, getOrCreateRoom } from "../index"
-import { applyPandoraEffect } from "../core/boosters/definitions/pandoraBox"
+import { applyPandoraEffect, PANDORA_EFFECTS } from "../core/boosters/definitions/pandoraBox"
 import { normalizeBoosterPoolConfig } from "../core/boosters/boosterPoolConfig"
 import { applyBoosterPoolConfig } from "../core/boosters/boosterPoolApply"
+import { EventLog } from "../core/events/EventLog"
+import { snapshotPlayers, logStateChanges } from "../core/events/logStateChanges"
 
 export class WebSocketServer {
   private wss: WSServer
   private clients = new Map<WebSocket, string | null>()
   private matchManager: MatchManager
   private commandProcessor: CommandProcessor
+  private eventLog = new EventLog()
 
   constructor(
     server: any,
@@ -203,7 +206,19 @@ export class WebSocketServer {
     if (!pending) return
 
     match.state.pendingPandoraRoll = null
+
+    const before = snapshotPlayers(match)
     applyPandoraEffect(match, pending.roll, pending.sourcePlayerId)
+    logStateChanges(this.eventLog, match, before)
+
+    const effect = PANDORA_EFFECTS.find(e => e.id === pending.roll)
+    if (effect) {
+      this.eventLog.add(
+        match,
+        `💥 ХАОС: ${effect.label.replace(/\n/g, " ")}`,
+        `💥 CHAOS: ${effect.labelEn.replace(/\n/g, " ")}`
+      )
+    }
   }
 
   public sendLobbyState(socket: WebSocket, channel: string) {
