@@ -116,7 +116,7 @@ export class Match {
       registrationOpen: false,
       turnTimeSeconds: settings?.turnTimeSeconds ?? 30,
       targetPoints: settings?.targetPoints ?? 250,
-      boosterSetSize: settings?.boosterSetSize ?? 15,
+      boosterSetSize: settings?.boosterSetSize ?? 20,
       boosterPoolConfig: settings?.boosterPoolConfig ?? {},
       lastViewerNumber: null,
       lastBetNumber: {},

@@ -31,7 +31,7 @@ export class BoosterSetManager {
 
     const setSize =
       (match.state as any)
-        .boosterSetSize ?? 15
+        .boosterSetSize ?? 20
 
     for (
       let i = 1;

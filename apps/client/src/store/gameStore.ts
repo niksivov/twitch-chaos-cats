@@ -169,7 +169,7 @@ export const useGameStore = create<GameState>((set) => ({
 
   turnTimeSeconds: 30,
   targetPoints: 250,
-  boosterSetSize: 15,
+  boosterSetSize: 20,
 
   matchFinished: false,
   matchWinnerId: undefined,
