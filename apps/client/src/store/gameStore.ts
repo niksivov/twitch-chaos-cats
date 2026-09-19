@@ -168,8 +168,8 @@ export const useGameStore = create<GameState>((set) => ({
   lobbyPlayers: [],
 
   turnTimeSeconds: 30,
-  targetPoints: 100,
-  boosterSetSize: 3,
+  targetPoints: 250,
+  boosterSetSize: 15,
 
   matchFinished: false,
   matchWinnerId: undefined,

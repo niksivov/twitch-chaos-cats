@@ -95,7 +95,7 @@ export function applyPandoraEffect(match: Match, roll: number, sourcePlayerId: s
       break
   }
 
-  const targetPoints = match.state.targetPoints ?? 100
+  const targetPoints = match.state.targetPoints ?? 250
   const winnerByPoints = Object.values(match.state.registeredPlayers).find(
     p => p.score >= targetPoints
   )

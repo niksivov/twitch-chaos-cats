@@ -46,7 +46,7 @@ export const BetBooster: BoosterDefinition = {
     }
 
     const target =
-      match.state.targetPoints ?? 100
+      match.state.targetPoints ?? 250
 
     player.score +=
       Math.ceil((target * x) / 100)

@@ -37,7 +37,7 @@ export const WheelBooster: BoosterDefinition = {
 
     if (!player) return
 
-    const target = match.state.targetPoints ?? 100
+    const target = match.state.targetPoints ?? 250
 
     if (player.score <= target * 0.8) return
 

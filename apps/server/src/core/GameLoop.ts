@@ -210,7 +210,7 @@ export class GameLoop {
       return
     }
 
-    const targetPoints = match.state.targetPoints ?? 10
+    const targetPoints = match.state.targetPoints ?? 250
 
     const winnerByPoints = Object.values(match.state.registeredPlayers).find(
       p => p.score >= targetPoints

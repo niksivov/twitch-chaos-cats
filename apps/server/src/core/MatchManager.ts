@@ -13,8 +13,8 @@ export class MatchManager {
     match.state.twitchChannel = settings.twitchChannel
     match.state.maxPlayers = settings.maxPlayers
     match.state.turnTimeSeconds = settings.turnTimeSeconds ?? 30
-    match.state.targetPoints = settings.targetPoints ?? 10
-    match.state.boosterSetSize = settings.boosterSetSize ?? 3
+    match.state.targetPoints = settings.targetPoints ?? 250
+    match.state.boosterSetSize = settings.boosterSetSize ?? 15
     match.state.boosterPoolConfig = settings.boosterPoolConfig ?? {}
     match.state.registrationOpen = true
     this.matches.set(matchId, match)
