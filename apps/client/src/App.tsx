@@ -377,8 +377,8 @@ useEffect(() => {
                         e.currentTarget.src = "/avatars/default.webp"
                       }}
                       style={{
-                        width: 90,
-                        height: 90,
+                        width: 96,
+                        height: 96,
                         borderRadius: 12,
                         border: "1px solid #b14cff",
                         objectFit: "cover",
@@ -387,7 +387,7 @@ useEffect(() => {
                         display: "block",
                       }}
                     />
-                    <div style={{ fontSize: 13, fontWeight: 700, color: getPlayerColor(p.twitchUserId), maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: getPlayerColor(p.twitchUserId), maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {p.username}
                     </div>
                   </div>
