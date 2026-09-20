@@ -14,9 +14,10 @@ interface Props {
   player: PlayerSnapshot
   isCurrentTurn: boolean
   isLeader: boolean
+  isActive?: boolean
 }
 
-export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
+export function PlayerCard({ player, isCurrentTurn, isLeader, isActive }: Props) {
   const prevPointsRef = useRef(player.points)
   const [delta, setDelta] = useState<number | null>(null)
 
@@ -48,9 +49,17 @@ export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
         alignItems: "center",
         textAlign: "center",
         minHeight: 230, // фиксируем высоту, чтобы блоки не прыгали
-        boxShadow: isCurrentTurn
-          ? "0 0 0 3px #00ff66, 0 0 12px rgba(0,255,102,0.25)" // зеленая рамка поверх блока
-          : "none",
+        boxShadow: [
+          isCurrentTurn
+            ? "0 0 0 3px #00ff66, 0 0 12px rgba(0,255,102,0.25)"
+            : null,
+          isActive
+            ? "0 0 0 3px #f8d407, 0 0 16px rgba(248,212,7,0.5)"
+            : null,
+        ].filter(Boolean).join(", ") || "none",
+        animation: isActive
+          ? "activePulse 1.2s ease-in-out infinite"
+          : undefined,
       }}
     >
       <div
@@ -152,6 +161,10 @@ export function PlayerCard({ player, isCurrentTurn, isLeader }: Props) {
               opacity: 0;
               transform: translate(-50%, -40px);
             }
+          }
+          @keyframes activePulse {
+            0%, 100% { box-shadow: 0 0 0 3px #f8d407, 0 0 16px rgba(248, 212, 7, 0.5); }
+            50% { box-shadow: 0 0 0 3px #f8d407, 0 0 26px rgba(248, 212, 7, 0.9); }
           }
         `}
       </style>

@@ -35,9 +35,20 @@ export const en: Dict = {
   "game.statusSaved": "Saved",
   "game.statusReset": "Restored to default",
 
+  "banner.waitingJoin": "👋 Registration is open — type !join in chat",
+  "banner.roundStart": "🎯 Round {round} started",
+  "banner.resolve": "⚡ Booster applied",
+  "banner.roundEnd": "🎉 Round {round} finished",
+  "banner.turn": "⏳ {player}'s turn: type !1…!{count} in chat (or !0 to skip)",
+  "banner.next": "Next: {player}",
+
+  "commands.join": "!join — join the game",
+  "commands.booster": "!N — activate a booster on your turn",
+  "commands.skip": "!0 — skip your turn",
+
   "howToPlay.title": "How to play?",
 
-  "boosterSet.header": "Boosters (on your turn activate one booster with the command !boosterNumber, to skip the turn type !0)",
+  "boosterSet.header": "🗨 On your turn type !1…!{count} in chat (or !0 to skip)",
   "boosterSet.empty": "No boosters yet",
 
   "eventLog.title": "Events",

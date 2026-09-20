@@ -116,7 +116,7 @@ export function BoosterSet({ boosters }: Props) {
           fontSize: 16,
         }}
       >
-        {t(lang, "boosterSet.header")}
+        {t(lang, "boosterSet.header", { count: boosters.length })}
       </div>
 
       <div
@@ -167,20 +167,21 @@ export function BoosterSet({ boosters }: Props) {
                   top: 8,
                   left: 8,
                   zIndex: 10,
-                  minWidth: 26,
+                  minWidth: 34,
                   height: 28,
-                  padding: "0 8px",
-                  borderRadius: 8,
-                  background: "#2b3542",
+                  padding: "0 10px",
+                  borderRadius: 14,
+                  background: "linear-gradient(135deg, #f8d407, #ff9800)",
+                  color: "#1a1f26",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontWeight: 700,
-                  fontSize: 19,
-                  opacity: 0.9,
+                  fontWeight: 800,
+                  fontSize: 15,
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.35)",
                 }}
               >
-                {booster.slot}
+                !{booster.slot}
               </div>
 
               <div

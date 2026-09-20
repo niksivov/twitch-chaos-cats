@@ -35,9 +35,20 @@ export const ru: Dict = {
   "game.statusSaved": "Сохранено",
   "game.statusReset": "Возвращено к дефолту",
 
+  "banner.waitingJoin": "👋 Регистрация открыта — напиши !join в чат",
+  "banner.roundStart": "🎯 Раунд {round} начался",
+  "banner.resolve": "⚡ Бустер применён",
+  "banner.roundEnd": "🎉 Раунд {round} завершён",
+  "banner.turn": "⏳ Ход {player}: напиши !1…!{count} в чат (или !0 — пропустить)",
+  "banner.next": "Далее: {player}",
+
+  "commands.join": "!join — войти в игру",
+  "commands.booster": "!N — активировать бустер в свой ход",
+  "commands.skip": "!0 — пропустить ход",
+
   "howToPlay.title": "Как играть?",
 
-  "boosterSet.header": "Бустеры (в свой ход активируйте один бустер командой !номербустера, для пропуска хода введите !0)",
+  "boosterSet.header": "🗨 В свой ход напиши !1…!{count} в чат (или !0, чтобы пропустить)",
   "boosterSet.empty": "Бустеров пока нет",
 
   "eventLog.title": "События",

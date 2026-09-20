@@ -10,6 +10,8 @@ import { HowToPlayModal } from "./components/HowToPlayModal"
 import { WheelSpinner } from "./components/WheelSpinner"
 import { PandoraSpinner } from "./components/PandoraSpinner"
 import { LangSwitch } from "./components/LangSwitch"
+import { PhaseBanner } from "./components/PhaseBanner"
+import { LastActionBanner } from "./components/LastActionBanner"
 import { pickLang, t } from "./i18n"
 
 // Фоны
@@ -123,6 +125,8 @@ function App() {
   const roomId = useGameStore((s) => s.roomId)
   const wheelResult = useGameStore((s) => s.wheelResult)
   const pandoraResult = useGameStore((s) => s.pandoraResult)
+
+  const lastActionPlayerId = recentEvents[0]?.playerId
 
   const currentPlayer = players.find(
     (player) => player.id === currentTurnPlayerId
@@ -376,6 +380,29 @@ useEffect(() => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
+              {[
+                { text: t(lang, "commands.join"), color: "#00ff66" },
+                { text: t(lang, "commands.booster"), color: "#ffd54a" },
+                { text: t(lang, "commands.skip"), color: "#e0e0e0" },
+              ].map(({ text, color }) => (
+                <div
+                  key={text}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 14,
+                    background: "#11161d",
+                    border: `1px solid ${color}`,
+                    color,
+                    fontSize: 13,
+                    fontWeight: 700,
+                  }}
+                >
+                  {text}
+                </div>
+              ))}
             </div>
 
             <button
@@ -663,6 +690,9 @@ if (screen === "RESULT") {
             </div>
           </div>
 
+          <PhaseBanner />
+          <LastActionBanner />
+
           <div style={{
             textAlign: "right",
             fontSize: 16,
@@ -685,6 +715,7 @@ if (screen === "RESULT") {
                 player={player}
                 isCurrentTurn={player.id === currentTurnPlayerId}
                 isLeader={leaderIds.includes(player.id)}
+                isActive={player.id === lastActionPlayerId}
               />
             ))}
           </div>
