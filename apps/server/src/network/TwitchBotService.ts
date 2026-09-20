@@ -23,8 +23,6 @@ export class TwitchBotService {
   private websocketServer: WebSocketServer
   private channel: string
   private onStopped: () => void
-  private announceTimer: ReturnType<typeof setInterval> | null = null
-  private announcedMatchStart: string | null = null
 
   constructor(
     room: Room,
@@ -70,8 +68,6 @@ export class TwitchBotService {
     })
 
     await this.client.connect()
-
-    this.announceTimer = setInterval(() => this.announceMatchStart(), 3000)
   }
 
   public createMatch(config: MatchCreateInput) {
@@ -95,41 +91,11 @@ export class TwitchBotService {
   }
 
   stop() {
-    if (this.announceTimer) {
-      clearInterval(this.announceTimer)
-      this.announceTimer = null
-    }
     if (this.client) {
       this.client.disconnect()
       this.client = undefined as any
     }
     this.room.matchId = null
-  }
-
-  private announceMatchStart() {
-    if (!this.room.matchId) {
-      this.announcedMatchStart = null
-      return
-    }
-
-    const match = this.matchManager.getMatch(this.room.matchId)
-    if (!match) return
-
-    if (this.announcedMatchStart === match.id) return
-
-    if (match.round !== 1) return
-    if (!["ROUND_START", "TURN_START", "BOOSTER_SELECTION"].includes(match.phase)) return
-
-    this.announcedMatchStart = match.id
-
-    const maxSlot = match.state.boosterSetSize ?? 20
-
-    if (this.client) {
-      this.client.say(
-        this.channel,
-        `🎮 Игра началась! В свой ход напиши номер бустера в чат: !1…!${maxSlot} (или !0, чтобы пропустить)`
-      )
-    }
   }
 
   private recordViewerNumber(twitchUserId: string, message: string) {
