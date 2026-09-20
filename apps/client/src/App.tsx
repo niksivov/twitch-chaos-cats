@@ -101,6 +101,11 @@ function App() {
   const targetPoints = useValidatedNumericInput("targetPoints", 50, Infinity, t(lang, "validation.targetPoints"))
   const boosterSetSize = useValidatedNumericInput("boosterSetSize", 1, maxPoolSize, t(lang, "validation.boosterSetSize", { max: maxPoolSize }))
 
+  useEffect(() => {
+    if (maxPlayers.error) return
+    socketClient.setMaxPlayers(maxPlayers.value)
+  }, [maxPlayers.value, maxPlayers.error])
+
   const twitchChannel = useGameStore((s) => s.twitchChannel)
   const lobbyPlayers = useGameStore((s) => s.lobbyPlayers)
 

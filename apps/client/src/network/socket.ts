@@ -50,6 +50,10 @@ class SocketClient {
 
           useGameStore.setState({ twitchChannel: channel })
           useGameStore.getState().setLobbyPlayers(lobbyPlayers ?? [])
+          this.sendMessage({
+            type: "SET_MAX_PLAYERS",
+            payload: { maxPlayers: useGameStore.getState().maxPlayers },
+          })
           if (this.boosterPoolStatusTimer) {
             clearTimeout(this.boosterPoolStatusTimer)
             this.boosterPoolStatusTimer = null
@@ -272,6 +276,13 @@ class SocketClient {
     this.sendMessage({
       type: "SET_BOOSTER_POOL_DRAFT",
       payload: { poolCounts },
+    })
+  }
+
+  setMaxPlayers(maxPlayers: number) {
+    this.sendMessage({
+      type: "SET_MAX_PLAYERS",
+      payload: { maxPlayers },
     })
   }
 

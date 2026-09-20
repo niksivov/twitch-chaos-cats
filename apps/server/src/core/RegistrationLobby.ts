@@ -43,6 +43,11 @@ export class RegistrationLobby {
     return this.players.size < this.maxPlayers
   }
 
+  // Обновить лимит игроков в лобби
+  setMaxPlayers(maxPlayers: number) {
+    this.maxPlayers = maxPlayers
+  }
+
   // Очистка лобби после старта матча
   clear() {
     this.players.clear()

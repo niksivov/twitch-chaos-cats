@@ -49,7 +49,7 @@ const rooms = new Map<string, Room>()
 function getOrCreateRoom(channel: string): Room {
   let room = rooms.get(channel)
   if (!room) {
-    room = new Room(channel, availableAvatars.length)
+    room = new Room(channel, 20)
     rooms.set(channel, room)
   }
   return room

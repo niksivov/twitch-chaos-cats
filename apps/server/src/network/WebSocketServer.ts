@@ -80,6 +80,10 @@ export class WebSocketServer {
         this.handleSetBoosterPoolDraft(socket, message)
         break
 
+      case "SET_MAX_PLAYERS":
+        this.handleSetMaxPlayers(socket, message)
+        break
+
       // ==================== ВАРИАНТ Б (закомментирован): КНОПКИ ====================
       // case "SAVE_BOOSTER_POOL":
       //   this.handleSaveBoosterPool(socket)
@@ -107,6 +111,22 @@ export class WebSocketServer {
     }
 
     socket.send(JSON.stringify(this.buildRoomJoinedPayload(channel)))
+  }
+
+  private handleSetMaxPlayers(socket: WebSocket, message: any) {
+    const roomId = this.clients.get(socket)
+    if (!roomId) return
+
+    const room = rooms.get(roomId)
+    if (!room) return
+
+    const maxPlayersNum = Math.floor(Number(message.payload?.maxPlayers))
+    const maxPlayers = Math.min(
+      20,
+      Math.max(2, Number.isFinite(maxPlayersNum) ? maxPlayersNum : 10)
+    )
+
+    room.lobby.setMaxPlayers(maxPlayers)
   }
 
   private buildRoomJoinedPayload(channel: string) {
