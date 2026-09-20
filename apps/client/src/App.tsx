@@ -377,8 +377,8 @@ useEffect(() => {
                         e.currentTarget.src = "/avatars/default.webp"
                       }}
                       style={{
-                        width: 80,
-                        height: 80,
+                        width: 90,
+                        height: 90,
                         borderRadius: 12,
                         border: "1px solid #b14cff",
                         objectFit: "cover",
