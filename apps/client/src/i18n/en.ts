@@ -17,7 +17,7 @@ export const en: Dict = {
   "settings.turnTime": "Turn timer (seconds, 5 to 600)",
   "settings.targetPoints": "Points to win (from 50)",
   "settings.boosterSetSize": "Boosters per set (1 to {max})",
-  "settings.joinHint": "Type !join in chat. Registered players ({count}):",
+  "settings.joinHint": "Type !join in chat. Players ({count}):",
   "settings.waitingForPlayers": "Waiting for players in chat...",
   "settings.play": "Play",
   "settings.howToPlay": "How to play",
