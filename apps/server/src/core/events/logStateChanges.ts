@@ -62,8 +62,8 @@ export function describeStateChanges(
   }
 
   if (pointChanges.length > 0) {
-    ru.push(`📊 Очки: ${pointChanges.join(", ")}`)
-    en.push(`📊 Points: ${pointChanges.join(", ")}`)
+    ru.push(`📜 Очки: ${pointChanges.join(", ")}`)
+    en.push(`📜 Points: ${pointChanges.join(", ")}`)
   }
 
   return { ru, en }
