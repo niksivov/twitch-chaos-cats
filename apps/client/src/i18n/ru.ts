@@ -17,7 +17,7 @@ export const ru: Dict = {
   "settings.turnTime": "Таймер хода (в секундах, от 5 до 600)",
   "settings.targetPoints": "Очки для победы (от 50)",
   "settings.boosterSetSize": "Количество бустеров в наборе (от 1 до {max})",
-  "settings.joinHint": "Напиши в чат !join и присоединяйся. Зарегистрированные игроки ({count}):",
+  "settings.joinHint": "Напиши в чат !join. Зарегистрированные игроки ({count}):",
   "settings.waitingForPlayers": "Ожидание игроков в чате...",
   "settings.play": "Играть",
   "settings.howToPlay": "Как играть",
