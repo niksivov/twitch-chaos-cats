@@ -10,6 +10,7 @@ import { HowToPlayModal } from "./components/HowToPlayModal"
 import { WheelSpinner } from "./components/WheelSpinner"
 import { PandoraSpinner } from "./components/PandoraSpinner"
 import { LangSwitch } from "./components/LangSwitch"
+import { getPlayerColor } from "./utils/getPlayerColor"
 import { pickLang, t } from "./i18n"
 
 // Фоны
@@ -292,7 +293,8 @@ useEffect(() => {
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div
             style={{
-              width: 500,
+              width: 1000,
+              maxWidth: "95vw",
               background: "rgba(26,31,38,0.95)",
               border: "2px solid #6a1b9a",
               borderRadius: 20,
@@ -306,6 +308,7 @@ useEffect(() => {
               {t(lang, "settings.title")}
             </div>
 
+            <div className="settings-cols" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, alignItems: "start" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <label style={{ display: "flex", flexDirection: "column", fontSize: 16 }}>
                 {t(lang, "settings.turnTime")}
@@ -352,7 +355,7 @@ useEffect(() => {
               )}
             </div>
 
-            <div style={{ marginTop: 20 }}>
+            <div>
               <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
                 {t(lang, "settings.joinHint", { count: lobbyPlayers.length })}
               </div>
@@ -361,22 +364,43 @@ useEffect(() => {
                 <div style={{ color: "#ccc" }}>{t(lang, "settings.waitingForPlayers")}</div>
               )}
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(88px, 1fr))", gap: 10 }}>
                 {lobbyPlayers.map((p) => (
                   <div
                     key={`${p.twitchUserId}-${p.avatarId}-${p.username}`}
-                    style={{
-                      padding: "6px 12px",
-                      borderRadius: 8,
-                      background: "#2d2d2d",
-                      fontWeight: 600,
-                    }}
+                    style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 0 }}
                   >
-                    {p.username} ({p.avatarId})
+                    <img
+                      src={`/avatars/${p.avatarId}.webp`}
+                      alt={p.username}
+                      onError={(e) => {
+                        e.currentTarget.src = "/avatars/default.webp"
+                      }}
+                      style={{
+                        width: 76,
+                        height: 76,
+                        borderRadius: 12,
+                        border: "1px solid #b14cff",
+                        objectFit: "cover",
+                        background: "#2b3542",
+                        imageRendering: "pixelated",
+                        display: "block",
+                      }}
+                    />
+                    <div style={{ fontSize: 13, fontWeight: 700, color: getPlayerColor(p.twitchUserId), maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {p.username}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
+            </div>
+
+            <style>{`
+              @media (max-width: 920px) {
+                .settings-cols { grid-template-columns: 1fr !important; }
+              }
+            `}</style>
 
             <button
               disabled={!!turnTimeSeconds.error || !!targetPoints.error || !!boosterSetSize.error || lobbyPlayers.length < 2}
@@ -396,6 +420,9 @@ useEffect(() => {
                 marginTop: 20,
                 padding: "14px 0",
                 width: "100%",
+                maxWidth: 320,
+                marginLeft: "auto",
+                marginRight: "auto",
                 display: "block",
                 cursor: (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error || lobbyPlayers.length < 2) ? "not-allowed" : "pointer",
                 opacity: (turnTimeSeconds.error || targetPoints.error || boosterSetSize.error || lobbyPlayers.length < 2) ? 0.5 : 1,
