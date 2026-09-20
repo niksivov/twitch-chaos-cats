@@ -364,7 +364,7 @@ useEffect(() => {
                 <div style={{ color: "#ccc" }}>{t(lang, "settings.waitingForPlayers")}</div>
               )}
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(88px, 1fr))", gap: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(96px, 1fr))", gap: 10 }}>
                 {lobbyPlayers.map((p) => (
                   <div
                     key={`${p.twitchUserId}-${p.avatarId}-${p.username}`}
